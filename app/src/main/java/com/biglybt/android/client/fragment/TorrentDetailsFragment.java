@@ -73,6 +73,16 @@ public class TorrentDetailsFragment
 	TorrentListRowFiller torrentListRowFiller;
 
 	@Override
+	public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+		super.onActivityCreated(savedInstanceState);
+
+		View viewTorrentRow = requireActivity().findViewById(
+				R.id.activity_torrent_detail_row);
+		torrentListRowFiller = new TorrentListRowFiller(requireContext(), viewTorrentRow);
+		viewTorrentRow.setFocusable(false);
+	}
+
+	@Override
 	public View onCreateViewWithSession(@NonNull LayoutInflater inflater,
 			@Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 		Context context = requireContext();
@@ -82,11 +92,6 @@ public class TorrentDetailsFragment
 						: R.layout.frag_torrent_details_coord,
 				container, false);
 		assert view != null;
-
-		final View viewTorrentRow = requireActivity().findViewById(
-				R.id.activity_torrent_detail_row);
-		torrentListRowFiller = new TorrentListRowFiller(context, viewTorrentRow);
-		viewTorrentRow.setFocusable(false);
 
 		CollapsingToolbarLayout collapsingToolbarLayout = view.findViewById(
 				R.id.collapsing_toolbar);
@@ -433,7 +438,9 @@ public class TorrentDetailsFragment
 			final List<?> removedTorrentIDs) {
 		OffThread.runOnUIThread(this, false, activity -> {
 			Map<?, ?> mapTorrent = session.torrent.getCachedTorrent(torrentID);
-			torrentListRowFiller.fillHolder(mapTorrent, session);
+			if (torrentListRowFiller != null) {
+				torrentListRowFiller.fillHolder(mapTorrent, session);
+			}
 
 			AndroidUtilsUI.invalidateOptionsMenuHC(requireActivity());
 		});
