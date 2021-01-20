@@ -16,14 +16,13 @@
 
 package com.biglybt.android.widget;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-
 import android.content.Context;
 import android.os.Build;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.KeyEvent;
+import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.NumberPicker;
 import android.widget.Scroller;
@@ -31,6 +30,9 @@ import android.widget.Scroller;
 import androidx.annotation.RequiresApi;
 
 import com.biglybt.android.client.AndroidUtils;
+
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 
 /**
  * Number Picker with DPAD_CENTER switchinig to editable, and holding down
@@ -44,25 +46,17 @@ public class NumberPickerLB
 {
 	private Class<?> cla;
 
-	private Method meth_showSoftInput;
-
-	private Field fld_mHasSelectorWheel;
-
-	private Field fld_mWrapSelectorWheel;
-
-	private Field fld_mLastHandledDownDpadKeyCode;
-
 	private Method meth_removeAllCallbacks;
 
 	private Field fld_mFlingScroller;
 
-	private Method meth_setValueInternal;
-
 	private Method meth_ensureScrollWheelAdjusted;
 
-	private Method meth_changeValueByOne;
-
 	private Field fld_mInputText;
+
+	private Boolean mHasSelectorWheel;
+
+	private OnValueChangeListener onValueChangedListener;
 
 	public NumberPickerLB(Context context) {
 		super(context);
@@ -86,46 +80,39 @@ public class NumberPickerLB
 		initReflection();
 	}
 
+	@Override
+	public void setOnValueChangedListener(
+			OnValueChangeListener onValueChangedListener) {
+		this.onValueChangedListener = onValueChangedListener;
+		super.setOnValueChangedListener(onValueChangedListener);
+	}
+
 	private void initReflection() {
+		mHasSelectorWheel = !willNotDraw();
+
 		try {
 			cla = getClass().getSuperclass();
-			meth_showSoftInput = cla.getDeclaredMethod("showSoftInput");
-			meth_showSoftInput.setAccessible(true);
-
-			fld_mHasSelectorWheel = cla.getDeclaredField("mHasSelectorWheel");
-			fld_mHasSelectorWheel.setAccessible(true);
-
-			fld_mWrapSelectorWheel = cla.getDeclaredField("mWrapSelectorWheel");
-			fld_mWrapSelectorWheel.setAccessible(true);
-
-			fld_mLastHandledDownDpadKeyCode = cla.getDeclaredField(
-					"mLastHandledDownDpadKeyCode");
-			fld_mLastHandledDownDpadKeyCode.setAccessible(true);
 
 			meth_removeAllCallbacks = cla.getDeclaredMethod("removeAllCallbacks");
 			meth_removeAllCallbacks.setAccessible(true);
+		} catch (Throwable ignore) {
+		}
 
+		try {
 			fld_mFlingScroller = cla.getDeclaredField("mFlingScroller");
 			fld_mFlingScroller.setAccessible(true);
 
-			meth_setValueInternal = cla.getDeclaredMethod("setValueInternal",
-					int.class, boolean.class);
-			meth_setValueInternal.setAccessible(true);
-
-			meth_ensureScrollWheelAdjusted = cla.getDeclaredMethod(
-					"ensureScrollWheelAdjusted");
-			meth_ensureScrollWheelAdjusted.setAccessible(true);
-
-			meth_changeValueByOne = cla.getDeclaredMethod("changeValueByOne",
-					boolean.class);
-			meth_changeValueByOne.setAccessible(true);
-			if (AndroidUtils.DEBUG) {
-				Log.d("NumberPickerLB", "Reflection1 Success");
-			}
 		} catch (Throwable ignore) {
 			if (AndroidUtils.DEBUG) {
 				Log.e("NumberPickerLB", "initReflection", ignore);
 			}
+		}
+
+		try {
+			meth_ensureScrollWheelAdjusted = cla.getDeclaredMethod(
+					"ensureScrollWheelAdjusted");
+			meth_ensureScrollWheelAdjusted.setAccessible(true);
+		} catch (Throwable ignore) {
 		}
 
 		try {
@@ -156,29 +143,30 @@ public class NumberPickerLB
 				case KeyEvent.KEYCODE_DPAD_CENTER:
 				case KeyEvent.KEYCODE_ENTER:
 					//removeAllCallbacks();
-					//showSoftInput();
-					meth_removeAllCallbacks.invoke(this);
-					meth_showSoftInput.invoke(this);
-					EditText et = (EditText) fld_mInputText.get(this);
-					et.selectAll();
+					super.dispatchKeyEvent(event); // calls removeAllCallbacks
+					showSoftInput();
+					if (fld_mInputText != null) {
+						EditText et = (EditText) fld_mInputText.get(this);
+						et.selectAll();
+					}
 					return true;
 				case KeyEvent.KEYCODE_DPAD_DOWN:
 				case KeyEvent.KEYCODE_DPAD_UP:
-					boolean mHasSelectorWheel = fld_mHasSelectorWheel.getBoolean(this);
-					if (!mHasSelectorWheel) {
+					if (mHasSelectorWheel == null || !mHasSelectorWheel) {
 						break;
 					}
 					switch (event.getAction()) {
 						case KeyEvent.ACTION_DOWN:
-							boolean mWrapSelectorWheel = fld_mWrapSelectorWheel.getBoolean(
-									this);
-							if (mWrapSelectorWheel || ((keyCode == KeyEvent.KEYCODE_DPAD_DOWN)
-									? getValue() < getMaxValue() : getValue() > getMinValue())) {
+							if (getWrapSelectorWheel()
+									|| ((keyCode == KeyEvent.KEYCODE_DPAD_DOWN)
+											? getValue() < getMaxValue()
+											: getValue() > getMinValue())) {
 								requestFocus();
 								//mLastHandledDownDpadKeyCode = keyCode;
-								fld_mLastHandledDownDpadKeyCode.setInt(this, keyCode);
 								//removeAllCallbacks();
-								meth_removeAllCallbacks.invoke(this);
+								if (meth_removeAllCallbacks != null) {
+									meth_removeAllCallbacks.invoke(this);
+								}
 								Scroller mFlingScroller = (Scroller) fld_mFlingScroller.get(
 										this);
 								if (mFlingScroller.isFinished()) {
@@ -191,17 +179,23 @@ public class NumberPickerLB
 										//int step = (int) Math.min((repeatCount / 5) + 1, (mMaxValue - mMinValue) / 10);
 										int step = (int) Math.min((repeatCount / 5) + 1,
 												(getMaxValue() - getMinValue()) / 10);
-										int v = getValue() + (keyCode == KeyEvent.KEYCODE_DPAD_DOWN
-												? step : -step);
+										int old = getValue();
+										int v = old + (keyCode == KeyEvent.KEYCODE_DPAD_DOWN ? step
+												: -step);
 										//setValueInternal(v, true);
-										meth_setValueInternal.invoke(this, v, true);
+										setValue(v);
+										if (onValueChangedListener != null) {
+											onValueChangedListener.onValueChange(this, old, v);
+										}
 
 										//ensureScrollWheelAdjusted();
-										meth_ensureScrollWheelAdjusted.invoke(this);
+										if (meth_ensureScrollWheelAdjusted != null) {
+											meth_ensureScrollWheelAdjusted.invoke(this);
+										}
+									} else {
+										//changeValueByOne(keyCode == KeyEvent.KEYCODE_DPAD_DOWN);
+										return super.dispatchKeyEvent(event);
 									}
-									//changeValueByOne(keyCode == KeyEvent.KEYCODE_DPAD_DOWN);
-									meth_changeValueByOne.invoke(this,
-											keyCode == KeyEvent.KEYCODE_DPAD_DOWN);
 								}
 								return true;
 							}
@@ -211,5 +205,24 @@ public class NumberPickerLB
 		} catch (Throwable ignore) {
 		}
 		return super.dispatchKeyEvent(event);
+	}
+
+	/**
+	 * Shows the soft input for its input text.
+	 */
+	private void showSoftInput() {
+		if (fld_mInputText == null) {
+			return;
+		}
+		InputMethodManager inputMethodManager = (InputMethodManager) getContext().getSystemService(
+				Context.INPUT_METHOD_SERVICE);
+		if (inputMethodManager != null) {
+			EditText editText = getEditText();
+			if (mHasSelectorWheel) {
+				editText.setVisibility(View.VISIBLE);
+			}
+			editText.requestFocus();
+			inputMethodManager.showSoftInput(editText, 0);
+		}
 	}
 }
