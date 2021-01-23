@@ -124,8 +124,7 @@ public class DialogFragmentMoveData
 
 	@Override
 	protected void okClicked(Session session, PathInfo pathInfo) {
-		moveData(session, pathInfo);
-		dismissDialog();
+		moveDataAndClose(session, pathInfo);
 	}
 
 	@Override
@@ -150,7 +149,12 @@ public class DialogFragmentMoveData
 	}
 
 	@Thunk
-	void moveData(@NonNull Session session, @NonNull PathInfo pathInfo) {
+	void moveDataAndClose(@NonNull Session session, @NonNull PathInfo pathInfo) {
+		if (AndroidUtilsUI.isUIThread()) {
+			OffThread.runOffUIThread(() -> moveDataAndClose(session, pathInfo));
+			return;
+		}
+
 		// Move on Remote will have null uri
 		if (pathInfo.uri == null) {
 			String moveTo = pathInfo.file == null ? pathInfo.fullPath
@@ -168,7 +172,11 @@ public class DialogFragmentMoveData
 			}
 			session.torrent.moveDataTo(torrentId, file.toString());
 		}
-		triggerLocationChanged(pathInfo);
+
+		OffThread.runOnUIThread(() -> {
+			triggerLocationChanged(pathInfo);
+			dismissDialog();
+		});
 	}
 
 	@Override
