@@ -69,6 +69,7 @@ public class Session
 		TransmissionVars.FIELD_FILESTATS_PRIORITY,
 		TransmissionVars.FIELD_FILESTATS_WANTED,
 		TransmissionVars.FIELD_FILES_FULL_PATH,
+		TransmissionVars.FIELD_FILES_MUST_EXIST,
 	};
 
 	class HandlerRunnable
