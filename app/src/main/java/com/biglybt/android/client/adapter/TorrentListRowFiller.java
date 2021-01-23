@@ -124,14 +124,10 @@ public class TorrentListRowFiller
 			flipper.changeText(holder.tvProgress, s, holder.animateFlip, validator);
 		}
 		if (holder.pb != null) {
-			holder.pb.setVisibility(View.VISIBLE);
-			boolean shouldBeIndeterminate = pctDone < 0;
-			if (shouldBeIndeterminate != holder.pb.isIndeterminate()) {
-				holder.pb.setIndeterminate(shouldBeIndeterminate);
-			}
-			if (!shouldBeIndeterminate
-					&& holder.pb.getProgress() != (int) (pctDone * 10000)) {
-				holder.pb.setProgress((int) (pctDone * 10000));
+			holder.pb.setVisibility(pctDone < 0 ? View.INVISIBLE : View.VISIBLE);
+			int pctDoneInt = (int) (pctDone * 10000);
+			if (holder.pb.getProgress() != pctDoneInt) {
+				holder.pb.setProgress(pctDoneInt);
 			}
 		}
 
