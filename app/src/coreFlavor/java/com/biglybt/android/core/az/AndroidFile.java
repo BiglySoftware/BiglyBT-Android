@@ -311,7 +311,7 @@ public class AndroidFile
 	@Override
 	public boolean exists() {
 		boolean exists = getDocFile().exists();
-		if (exists) {
+		if (exists && path.contains("/raw%3A")) {
 			// Not always valid. For example:
 			// content://com.android.providers.downloads.documents/tree/raw%3A%2Fstorage%2Femulated%2F0%2FDownload%2Ffoobar/document/raw%3A%2Fstorage%2Femulated%2F0%2FDownload%2Ffoobar%2Fsamples
 			// DocumentId = raw:/storage/emulated/0/Download/foobar/samples
@@ -348,6 +348,11 @@ public class AndroidFile
 
 	@Override
 	public long lastModified() {
+		// Note: DocumentFile#lastModified() returns 0 on special folders, such as the "Downloads" folder:
+		//   content://com.android.providers.downloads.documents/tree/downloads
+		// our getDocFile() will convert the path to a real one:
+		//   content://com.android.providers.downloads.documents/tree/downloads/document/raw%3A%2Fstorage%2Femulated%2F0%2FDownload
+		// which does return a valid lastModified
 		long lastModified = getDocFile().lastModified();
 		log("lastModified=" + lastModified);
 		return lastModified;
