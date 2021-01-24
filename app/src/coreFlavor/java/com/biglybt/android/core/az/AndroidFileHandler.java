@@ -23,6 +23,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Build.VERSION;
 import android.os.Build.VERSION_CODES;
+import android.os.SystemClock;
 import android.util.Log;
 
 import androidx.annotation.Keep;
@@ -38,35 +39,103 @@ import com.biglybt.core.util.FileHandler;
 import com.biglybt.core.util.FileUtil;
 
 import java.io.*;
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.lang.ref.WeakReference;
+import java.util.*;
 
 @Keep
 public class AndroidFileHandler
 	extends FileHandler
 {
+	public static final String TAG = "AndroidFile: Handler";
+
 	private static final int ANDROID_MAX_FILENAME_BYTES = 255;
 
-	private static final Map<String, AndroidFile> cache = new LinkedHashMap<String, AndroidFile>(
-			64, 0.75f, true) {
-		@Override
-		protected boolean removeEldestEntry(Map.Entry<String, AndroidFile> eldest) {
-			return size() > 1024;
-		}
-	};
+	/**
+	 * Try to find subpath using findfile, which might result in a different path 
+	 * than the string appended one.
+	 * <br/>
+	 * Example:<br/>
+	 * <pre>
+	 *   parent     = content://com.android.providers.downloads.documents/tree/downloads/document/downloads
+	 *   subdirs = [ "test" ]
+	 *   append path= content://com.android.providers.downloads.documents/tree/downloads/document/downloads%2Ftest"
+	 *   real path  = content://com.android.providers.downloads.documents/tree/downloads/document/raw%3A%2Fstorage%2Femulated%2F0%2FDownload%2Ftest
+	 * </pre>
+	 * Note: findFile calls list() which can be incredibly slow on large folders
+	 * or if caller is iterating through every file
+	 */
+	private static final boolean USE_FINDFILE_FOR_SUBPATHS = false;
 
-	public static final String TAG = "AndroidFileHandler";
+	private static final boolean USE_CACHE = true;
+
+	private static final long CLEANUP_THRESHOLD_MS = 1000L * 30;
+
+	private static final Map<String, WeakReference<AndroidFile>> cache = new HashMap<>();
+
+	private static long LAST_CLEANUP = 0;
+
+	private static AndroidFile getCache(String path) {
+		if (!USE_CACHE) {
+			return null;
+		}
+
+		synchronized (cache) {
+			WeakReference<AndroidFile> reference = cache.get(path);
+			if (reference == null) {
+				return null;
+			}
+			AndroidFile file = reference.get();
+			if (file == null) {
+				if (SystemClock.uptimeMillis() - LAST_CLEANUP > CLEANUP_THRESHOLD_MS) {
+					int numRemoved = 0;
+					String key = null;
+
+					for (Iterator<String> iter = cache.keySet().iterator(); iter.hasNext();) {
+						key = iter.next();
+						WeakReference<AndroidFile> cleanupRef = cache.get(key);
+						if (cleanupRef.get() == null) {
+							iter.remove();
+							numRemoved++;
+						}
+					}
+
+					if (AndroidUtils.DEBUG) {
+						Log.d(TAG,
+								"getCache: cleaned up " + numRemoved + " (last: " + key + ")");
+					}
+					LAST_CLEANUP = SystemClock.uptimeMillis();
+				} else {
+					cache.remove(path);
+					if (AndroidUtils.DEBUG) {
+						Log.d(TAG, "getCache: cleaned up " + path);
+					}
+				}
+			}
+			return file;
+		}
+	}
+
+	@RequiresApi(api = VERSION_CODES.LOLLIPOP)
+	private static AndroidFile putCache(String key, AndroidFile file) {
+		if (!USE_CACHE) {
+			return file;
+		}
+		WeakReference<AndroidFile> old = cache.put(key, new WeakReference<>(file));
+		if (!key.equals(file.path)) {
+			cache.put(file.path, new WeakReference<>(file));
+		}
+		return old == null ? null : old.get();
+	}
 
 	@RequiresApi(api = VERSION_CODES.LOLLIPOP)
 	static AndroidFile newFile(@NonNull DocumentFile documentFile) {
 		Uri uri = documentFile.getUri();
 		String path = uri.toString();
-		AndroidFile file = cache.get(path);
+
+		AndroidFile file = getCache(path);
 		if (file == null) {
 			file = new AndroidFile(documentFile, uri, path);
-			cache.put(path, file);
-		} else {
-			//file.log("UsedCache (DocFile)");
+			putCache(path, file);
 		}
 		return file;
 	}
@@ -80,6 +149,7 @@ public class AndroidFileHandler
 			return super.newFile(parent, subDirs);
 		}
 		if (subDirs == null || subDirs.length == 0) {
+			((AndroidFile) parent).log("newFile(F)");
 			return parent;
 		}
 
@@ -92,21 +162,53 @@ public class AndroidFileHandler
 		fixupFileName(subDirs);
 
 		AndroidFile file = parent;
+		file.log("newFile(AF),subdirs=" + Arrays.toString(subDirs));
 		for (String subDir : subDirs) {
-			String subpath = file.path + "%2F" + Uri.encode(subDir);
-			AndroidFile subFile = cache.get(subpath);
-			if (subFile == null) {
-				subFile = new AndroidFile(subpath);
-				cache.put(subpath, subFile);
-			} else {
-				//subFile.log("UsedCache");
+			String[] moreSubDirs = subDir.split("/", 0);
+			for (String subDir2 : moreSubDirs) {
+				file = getAndroidFile(file, subDir2);
 			}
-			if (subDir.indexOf('/') < 0) {
-				subFile.parentFile = file;
-			}
-			file = subFile;
 		}
 		return file;
+	}
+
+	@RequiresApi(api = VERSION_CODES.LOLLIPOP)
+	@NonNull
+	private static AndroidFile getAndroidFile(@NonNull AndroidFile file,
+			String subDir) {
+		// Best guess what path will be by String manipulation
+		String path;
+		try {
+			// getCanonicalPath will convert special directories ("Downloads")
+			// as well as ensuring path isDocumentUri (contains '/document/')
+			path = file.getCanonicalPath();
+		} catch (IOException e) {
+			path = file.path;
+		}
+		String subpath = path + "%2F" + Uri.encode(subDir);
+
+		AndroidFile subFile = getCache(subpath);
+		if (subFile == null) {
+			DocumentFile dfSubDir = USE_FINDFILE_FOR_SUBPATHS
+					? file.getDocFile().findFile(subDir) : null;
+			if (dfSubDir != null) {
+				Uri subDirUri = dfSubDir.getUri();
+				String subDirPath = subDirUri.toString();
+				subFile = new AndroidFile(dfSubDir, subDirUri, subDirPath);
+				if (!subDirPath.equals(subpath)) {
+					// cache real path and String appended one
+					putCache(subDirPath, subFile);
+				}
+				subFile.log("foundViaFind");
+			} else {
+				subFile = new AndroidFile(subpath);
+			}
+			putCache(subpath, subFile);
+		}
+		if (subDir.indexOf('/') < 0) {
+			subFile.parentFile = file;
+		}
+		return subFile;
 	}
 
 	private static String fixupFileName(String name) {
@@ -165,27 +267,15 @@ public class AndroidFileHandler
 
 		AndroidFile file;
 		synchronized (cache) {
-			file = cache.get(parent);
+			file = getCache(parent);
 			if (file == null) {
-				DocumentFile docFile = DocumentFile.fromTreeUri(BiglyBTApp.getContext(),
-						Uri.parse(AndroidFile.fixDirName(parent)));
-				// make it a document uri (adds /document/* to path)
-				Uri uri = docFile.getUri();
-				String path = uri.toString();
-
-				file = cache.get(path);
-
-				if (file == null) {
-					file = new AndroidFile(docFile, uri, path);
-					cache.put(path, file);
-				} else {
-					//file.log("UsedCache2");
-				}
-			} else {
-				//file.log("UsedCache");
+				file = new AndroidFile(parent);
+				putCache(parent, file);
 			}
 		}
+
 		if (subDirs == null || subDirs.length == 0) {
+			file.log("newFile(S)");
 			return file;
 		}
 
