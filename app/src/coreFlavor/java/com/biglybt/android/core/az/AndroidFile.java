@@ -81,6 +81,8 @@ public class AndroidFile
 	@SuppressWarnings("ConstantConditions")
 	private static final boolean DEBUG_CALLS_SPAM = AndroidUtils.DEBUG && false;
 
+	private boolean needsBuilding = true;
+
 	@NonNull
 	String path;
 
@@ -245,6 +247,9 @@ public class AndroidFile
 			throws IOException {
 		if (DEBUG_CALLS_SPAM) {
 			log("getCanonicalPath");
+		}
+		if (needsBuilding) {
+			build();
 		}
 		return path;
 	}
@@ -910,7 +915,7 @@ public class AndroidFile
 
 	@NonNull
 	DocumentFile getDocFile() {
-		if (docFile == null) {
+		if (needsBuilding) {
 			build();
 		}
 		return docFile;
@@ -918,21 +923,99 @@ public class AndroidFile
 
 	@NonNull
 	public Uri getUri() {
-		if (uri == null) {
+		if (needsBuilding) {
 			build();
 		}
 		return uri;
 	}
 
 	private void build() {
-		DocumentFile docFile = DocumentFile.fromTreeUri(BiglyBTApp.getContext(),
-				Uri.parse(fixDirName(path)));
+		Context context = BiglyBTApp.getContext();
 		if (docFile == null) {
-			throw new IllegalArgumentException("Invalid path " + path);
+			DocumentFile docFile = DocumentFile.fromTreeUri(context,
+					Uri.parse(fixDirName(path)));
+			if (docFile == null) {
+				throw new IllegalArgumentException("Invalid path " + path);
+			}
+	
+			this.docFile = docFile;
+			// make it a document uri (adds /document/* to path)
+			uri = docFile.getUri();
+			path = uri.toString();
 		}
-		this.docFile = docFile;
-		// make it a document uri (adds /document/* to path)
-		uri = docFile.getUri();
-		path = uri.toString();
+
+		if (needsBuilding) {
+			String realPath = getRealPath();
+			needsBuilding = realPath == null;
+			if (realPath != null && !path.equals(realPath)) {
+				log("realPath=" + realPath);
+				docFile = DocumentFile.fromTreeUri(context, Uri.parse(path));
+				uri = docFile.getUri();
+				// We replace existing path, but it might make sense in the future to
+				// store the real path separately as a canonical variable
+				path = uri.toString();
+			}
+		}
 	}
+
+	private Uri getFirstFileUri() {
+		final ContentResolver resolver = BiglyBTApp.getContext().getContentResolver();
+		final Uri childrenUri = DocumentsContract.buildChildDocumentsUriUsingTree(
+				uri, DocumentsContract.getDocumentId(uri));
+
+		Cursor c = null;
+		try {
+			c = resolver.query(childrenUri, new String[] {
+				DocumentsContract.Document.COLUMN_DOCUMENT_ID
+			}, null, null, null);
+			while (c.moveToNext()) {
+				final String documentId = c.getString(0);
+				final Uri documentUri = DocumentsContract.buildDocumentUriUsingTree(uri,
+						documentId);
+				return documentUri;
+			}
+		} catch (Exception e) {
+			Log.w(TAG, "Failed query: " + e);
+		} finally {
+			closeQuietly(c);
+		}
+		return null;
+	}
+
+	/**
+	 * Converts special directories.
+	 * <p/>
+	 * For example:<br/>
+	 *   <tt>content://com.android.providers.downloads.documents/tree/downloads/document/downloads</tt><br/>
+	 * might actually be
+	 *   <tt>content://com.android.providers.downloads.documents/tree/downloads/document/raw%3A%2Fstorage%2Femulated%2F0%2FDownload</tt><br/>
+	 * for all files within the "downloads" folder.
+	 */
+	private String getRealPath() {
+		try {
+			if (!docFile.isDirectory()) {
+				return null;
+			}
+			Uri uri = getFirstFileUri();
+			if (uri == null) {
+				DocumentFile tmp = docFile.createDirectory("tmp");
+				if (tmp == null) {
+					return null;
+				}
+				uri = tmp.getUri();
+				tmp.delete();
+			}
+			String path = uri.toString();
+			int i = path.lastIndexOf("%2F");
+			if (i < 0) {
+				return null;
+			}
+			path = path.substring(0, i);
+			return path;
+		} catch (Throwable t) {
+			loge("getRealPath", t);
+			return null;
+		}
+	}
+
 }
