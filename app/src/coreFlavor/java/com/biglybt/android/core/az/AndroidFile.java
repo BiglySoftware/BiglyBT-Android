@@ -949,7 +949,7 @@ public class AndroidFile
 			needsBuilding = realPath == null;
 			if (realPath != null && !path.equals(realPath)) {
 				log("realPath=" + realPath);
-				docFile = DocumentFile.fromTreeUri(context, Uri.parse(path));
+				docFile = DocumentFile.fromTreeUri(context, Uri.parse(realPath));
 				uri = docFile.getUri();
 				// We replace existing path, but it might make sense in the future to
 				// store the real path separately as a canonical variable
