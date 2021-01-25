@@ -136,6 +136,22 @@ public class TorrentListFragment
 	TextView tvEmpty;
 
 	@Override
+	public void onStart() {
+		super.onStart();
+
+		if (torrentListAdapter != null) {
+			// Case: 
+			// 1) User leaves app, but keeps it running (activity still avail)
+			// 2) Loss of Session object (ex. due to limited memory)
+			// 3) User returns to app
+			// In this case, adapter will still exist, but will have an invalid
+			// neverSetItems value. This code will reset it to true if session isn't
+			// ready yet.
+			torrentListAdapter.setNeverSetItems(!session.isReadyForUI());
+		}
+	}
+
+	@Override
 	public void onAttachWithSession(Context context) {
 		super.onAttachWithSession(context);
 

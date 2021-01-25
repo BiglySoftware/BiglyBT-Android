@@ -1589,6 +1589,10 @@ public abstract class FlexibleRecyclerAdapter<ADAPTERTYPE extends RecyclerView.A
 	public boolean isNeverSetItems() {
 		return neverSetItems;
 	}
+	
+	public void setNeverSetItems(boolean neverSetItems) {
+		this.neverSetItems = neverSetItems;
+	}
 
 	public void triggerEmptyList() {
 		neverSetItems = false;
