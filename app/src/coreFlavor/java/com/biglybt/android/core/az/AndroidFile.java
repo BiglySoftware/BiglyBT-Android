@@ -144,7 +144,10 @@ public class AndroidFile
 		// docFile.getName() queries COLUMN_DISPLAY_NAME.  Seems excessive when 
 		// parsing the document id works.  Plus, Display name could be different
 		// than the file name.
-		String documentId = DocumentsContract.getDocumentId(getUri());
+		if (uri == null) {
+			build(true);
+		}
+		String documentId = DocumentsContract.getDocumentId(uri);
 
 		if (documentId != null) {
 			int slashPos = documentId.lastIndexOf(':');
@@ -249,7 +252,7 @@ public class AndroidFile
 			log("getCanonicalPath");
 		}
 		if (needsBuilding) {
-			build();
+			build(false);
 		}
 		return path;
 	}
@@ -921,7 +924,7 @@ public class AndroidFile
 	@NonNull
 	DocumentFile getDocFile() {
 		if (needsBuilding) {
-			build();
+			build(false);
 		}
 		return docFile;
 	}
@@ -929,12 +932,16 @@ public class AndroidFile
 	@NonNull
 	public Uri getUri() {
 		if (needsBuilding) {
-			build();
+			build(false);
 		}
 		return uri;
 	}
 
-	private void build() {
+	private void build(boolean skipRealPathCheck) {
+		if (DEBUG_CALLS_SPAM && (docFile == null || needsBuilding)) {
+			log("build" + (docFile == null ? "+DocFile" : "")
+					+ (needsBuilding ? "+Needed" : ""));
+		}
 		Context context = BiglyBTApp.getContext();
 		if (docFile == null) {
 			DocumentFile docFile = DocumentFile.fromTreeUri(context,
@@ -942,14 +949,14 @@ public class AndroidFile
 			if (docFile == null) {
 				throw new IllegalArgumentException("Invalid path " + path);
 			}
-	
+
 			this.docFile = docFile;
 			// make it a document uri (adds /document/* to path)
 			uri = docFile.getUri();
 			path = uri.toString();
 		}
 
-		if (needsBuilding) {
+		if (needsBuilding && !skipRealPathCheck) {
 			String realPath = getRealPath();
 			needsBuilding = realPath == null;
 			if (realPath != null && !path.equals(realPath)) {
