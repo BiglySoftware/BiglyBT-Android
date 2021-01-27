@@ -28,7 +28,6 @@ import androidx.annotation.NonNull;
 import com.biglybt.android.client.*;
 import com.biglybt.android.client.rpc.RPC;
 import com.biglybt.android.client.service.BiglyBTService;
-import com.biglybt.android.util.FileUtils;
 import com.biglybt.android.util.MapUtils;
 import com.biglybt.android.util.NetworkState;
 import com.biglybt.core.Core;
@@ -46,7 +45,7 @@ import com.biglybt.core.security.SESecurityManager;
 import com.biglybt.core.util.*;
 import com.biglybt.pif.PluginManager;
 import com.biglybt.pif.PluginManagerDefaults;
-import com.biglybt.ui.*;
+import com.biglybt.ui.UIFunctionsManager;
 import com.biglybt.util.Thunk;
 
 import net.grandcentrix.tray.TrayPreferences;
@@ -56,9 +55,7 @@ import java.io.*;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 /**
  * This class sets up and manages the Vuze Core.
@@ -100,6 +97,8 @@ public class BiglyBTManager
 	private static class MyOutputStream
 		extends OutputStream
 	{
+		final boolean SKIP_REPEAT_LINES = false;
+
 		final StringBuffer buffer = new StringBuffer(1024);
 
 		@NonNull
@@ -119,7 +118,9 @@ public class BiglyBTManager
 				String s = buffer.toString();
 				if (!lastLine.equals(s) && !s.startsWith("(HTTPLog")) { //NON-NLS
 					Log.println(type, "System", s);
-					lastLine = s;
+					if (SKIP_REPEAT_LINES) {
+						lastLine = s;
+					}
 				}
 				buffer.setLength(0);
 			} else if (c != '\r') {
@@ -264,6 +265,9 @@ public class BiglyBTManager
 		// CPU Intensive and we already check completed pieces as we download
 		def.addParameter(ConfigKeys.File.BCFG_CHECK_PIECES_ON_COMPLETION, false);
 		def.addParameter(ConfigKeys.File.ICFG_FILE_SAVE_PEERS_MAX, 50);
+
+		def.addParameter(ConfigKeys.File.BCFG_DISKMANAGER_ONE_OP_PER_FS, true);
+		def.addParameter(ConfigKeys.File.BCFG_SKIP_COMP_DL_FILE_CHECKS, true);
 
 		COConfigurationManager.initialise();
 		// custom config will be now applied
