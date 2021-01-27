@@ -186,16 +186,20 @@ dependencies {
     coreFlavorImplementation project(':core')
     coreFlavorImplementation project(':mldht')
     coreFlavorImplementation project(':BiglyBT-plugin-mlDHT')
+    coreFlavorImplementation project(':BiglyBT-plugin-mlDHT-Java6')
     coreFlavorImplementation project(':BiglyBT-plugin-aercm')
     coreFlavorImplementation project(':BiglyBT-plugin-xmwebui')
     coreFlavorImplementation project(':BiglyBT-plugin-azutp')
-    
+
     debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.5'
 }
 
 task copyPluginFiles() {
     doLast {
         def destDir = 'src/coreFlavor/assets/plugins'
+        delete destDir
+
+        destDir = 'src/coreFlavor/assets/plugins-v14'
         delete destDir
         copy {
             from('../BiglyBT-plugin-aercm') {
@@ -210,7 +214,7 @@ task copyPluginFiles() {
             into "$destDir/azutp"
         }
         copy {
-            from('../BiglyBT-plugin-mlDHT') {
+            from('../BiglyBT-plugin-mlDHT-java6') {
                 include '*.properties'
             }
             into "$destDir/mlDHT"
@@ -221,6 +225,15 @@ task copyPluginFiles() {
                 include '*.properties'
             }
             into "$destDir/xmwebui"
+        }
+        
+        destDir = 'src/coreFlavor/assets/plugins-v24'
+        delete destDir
+        copy {
+            from('../BiglyBT-plugin-mlDHT') {
+                include '*.properties'
+            }
+            into "$destDir/mlDHT"
         }
     }
 }

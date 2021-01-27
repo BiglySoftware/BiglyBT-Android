@@ -20,6 +20,7 @@ import android.annotation.SuppressLint;
 import android.content.res.AssetFileDescriptor;
 import android.content.res.AssetManager;
 import android.os.Build;
+import android.os.Build.VERSION;
 import android.os.Build.VERSION_CODES;
 import android.util.Log;
 
@@ -683,45 +684,56 @@ public class BiglyBTManager
 
 		try {
 			if (CorePrefs.DEBUG_CORE) {
-				Log.d("Core", "unzip plugins.zip");
+				Log.d("Core", "register plugins");
 			}
-			File destDir = FileUtil.newFile(SystemProperties.getUserPath());
+			File destDir = FileUtil.newFile(SystemProperties.getUserPath(),
+					"plugins");
 
-			// Unzip plugins.zip and/or copy "plugins/*"
-			// Note: f-droid doesn't allow zip files
 			AssetManager assets = BiglyBTApp.getContext().getAssets();
-			String[] list = assets.list("");
-			if (list != null) {
-				Arrays.sort(list);
-				if (Arrays.binarySearch(list, "plugins.zip") >= 0) {
-					InputStream inputStream = assets.open("plugins.zip");
-					FileUtils.unzip(inputStream, destDir, false);
-				}
-			}
 
 			// for clean copy
-			//FileUtil.recursiveDeleteNoCheck(new File(destDir, "plugins"));
-			copyAssetDir(assets, "plugins", destDir, new byte[2048], true);
+			//FileUtil.recursiveDeleteNoCheck(destDir);
+
+			String[] plugins24 = assets.list("plugins-v24");
+			String[] plugins14 = assets.list("plugins-v14");
+			byte[] buf = new byte[2048];
+			if (VERSION.SDK_INT >= 24 && plugins24 != null && plugins24.length > 0) {
+				copyAssetDir(assets, "plugins-v24", plugins24, destDir, buf, true);
+
+				if (plugins14 != null && plugins14.length > 0) {
+					List<String> list15 = new ArrayList<>(Arrays.asList(plugins14));
+					for (String dir : plugins24) {
+						list15.remove(dir);
+					}
+					plugins14 = list15.toArray(new String[0]);
+				}
+			}
+			if (plugins14 != null) {
+				copyAssetDir(assets, "plugins-v14", plugins14, destDir, buf, true);
+			}
 
 			if (!UPNPMS_ENABLE) {
 				removeDir(new File(new File(destDir, "plugins"), "azupnpav"));
 			}
 			if (CorePrefs.DEBUG_CORE) {
-				Log.d("Core", "unzip plugins.zip done");
+				Log.d("Core", "register plugins done");
 			}
 		} catch (IOException e) {
 			Log.e(TAG, "preinstallPlugins: ", e);
 		}
 	}
 
-	private final static boolean DEBUG_COPY_ASSET = false;
+	private final static boolean DEBUG_COPY_ASSET = true;
 
 	private static void copyAssetDir(@NonNull AssetManager assets,
-			String assetDir, File destDir, byte[] buf, boolean skipIfSame)
+			String assetDir, String[] list, File destDir, byte[] buf,
+			boolean skipIfSame)
 			throws IOException {
-		String[] list = assets.list(assetDir);
 		if (list == null) {
 			return;
+		}
+		if (!destDir.exists()) {
+			destDir.mkdirs();
 		}
 		for (String file : list) {
 			String assetFile = assetDir + "/" + file;
@@ -729,8 +741,8 @@ public class BiglyBTManager
 			if (sub_files == null) {
 				continue;
 			}
-			File destFile = new File(destDir, assetFile);
-			if (sub_files.length == 0) {
+			File destFile = new File(destDir, file);
+			if (sub_files.length == 0) { // not a folder
 				if (skipIfSame && destFile.exists()) {
 					long destLength = destFile.length();
 
@@ -789,7 +801,8 @@ public class BiglyBTManager
 				if (!destFile.exists()) {
 					destFile.mkdirs();
 				}
-				copyAssetDir(assets, assetFile, destDir, buf, skipIfSame);
+				copyAssetDir(assets, assetFile, assets.list(assetFile), destFile, buf,
+						skipIfSame);
 			}
 		}
 	}
