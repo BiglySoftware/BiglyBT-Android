@@ -6,7 +6,6 @@ project(':Android-DirectoryChooser').projectDir = new File('Android-DirectoryCho
 include ':core'
 include ':mldht'
 include ':BiglyBT-plugin-mlDHT'
-project(':BiglyBT-plugin-mlDHT').buildFileName = 'android-build.gradle'
 include ":BiglyBT-plugin-aercm"
 project(':BiglyBT-plugin-aercm').buildFileName = 'android-build.gradle'
 include ':BiglyBT-plugin-xmwebui'

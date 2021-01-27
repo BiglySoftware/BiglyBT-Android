@@ -90,6 +90,8 @@ android {
         fossFlavor.java.srcDirs = ['src/fossFlavor/java']
     }
     compileOptions {
+        // Flag to enable support for the new language APIs
+        coreLibraryDesugaringEnabled true
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
@@ -101,6 +103,8 @@ repositories {
 
 
 dependencies {
+    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:1.0.9'
+
     compileOnly 'org.jetbrains:annotations:+'
 
     // https://mvnrepository.com/artifact/dnsjava/dnsjava
