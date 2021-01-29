@@ -235,6 +235,21 @@ task copyPluginFiles() {
             }
             into "$destDir/mlDHT"
         }
+
+        def assetIndexFile = new File("${projectDir.name}/src/coreFlavor/assets/assets.index")
+        def contents = ""
+        def tree = fileTree(
+                dir: 'src/coreFlavor/assets', 
+                include: ['plugins-*/**'], 
+                exclude: ['assets.index'])
+
+        tree.visit { fileDetails ->
+            if (fileDetails.file.isFile())
+               contents += "${fileDetails.relativePath}" + "\n"
+        }
+        //println "Contents to {$assetIndexFile}:"
+        //println contents
+        assetIndexFile.write contents
     }
 }
 

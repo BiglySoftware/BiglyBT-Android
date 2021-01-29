@@ -677,6 +677,8 @@ public class BiglyBTManager
 		AEThread2.createAndStartDaemon("CoreInit", core::start);
 	}
 
+	private final static boolean DEBUG_COPY_ASSET = true;
+
 	@Thunk
 	static void preinstallPlugins() {
 		// Copy <assets>/plugins to <userpath>/plugins
@@ -691,25 +693,57 @@ public class BiglyBTManager
 
 			AssetManager assets = BiglyBTApp.getContext().getAssets();
 
-			// for clean copy
-			//FileUtil.recursiveDeleteNoCheck(destDir);
+			/* for clean copy * /
+			Log.d("Core", ">> clean plugins");
+			removeDir(destDir);
+			Log.d("Core", "<< clean plugins");
+			/**/
 
-			String[] plugins24 = assets.list("plugins-v24");
-			String[] plugins14 = assets.list("plugins-v14");
-			byte[] buf = new byte[2048];
-			if (VERSION.SDK_INT >= 24 && plugins24 != null && plugins24.length > 0) {
-				copyAssetDir(assets, "plugins-v24", plugins24, destDir, buf, true);
-
-				if (plugins14 != null && plugins14.length > 0) {
-					List<String> list15 = new ArrayList<>(Arrays.asList(plugins14));
-					for (String dir : plugins24) {
-						list15.remove(dir);
-					}
-					plugins14 = list15.toArray(new String[0]);
+			String[] list = new String(AndroidUtils.readInputStreamAsByteArray(
+					assets.open("assets.index"), Integer.MAX_VALUE), "UTF-8").split("\n");
+			Map<Integer, Map<String, List<String>>> mapSDKtoFiles = new TreeMap<>(
+					Comparator.reverseOrder());
+			for (String s : list) {
+				// plugins-vXX/pluginid/file/file
+				if (!s.startsWith("plugins-v")) {
+					continue;
 				}
+				Integer ver = Integer.parseInt(s.substring(9, 11));
+				String plugin = s.substring(12, s.indexOf('/', 12));
+				Map<String, List<String>> mapPluginFiles = mapSDKtoFiles.get(ver);
+				if (mapPluginFiles == null) {
+					mapPluginFiles = new HashMap<>();
+					mapSDKtoFiles.put(ver, mapPluginFiles);
+				}
+				List<String> files = mapPluginFiles.get(plugin);
+				if (files == null) {
+					files = new ArrayList<>();
+					mapPluginFiles.put(plugin, files);
+				}
+				files.add(s);
 			}
-			if (plugins14 != null) {
-				copyAssetDir(assets, "plugins-v14", plugins14, destDir, buf, true);
+
+			byte[] buf = new byte[2048];
+			Set<String> pluginsProcessed = new HashSet<>();
+			for (Integer ver : mapSDKtoFiles.keySet()) {
+				if (VERSION.SDK_INT < ver) {
+					continue;
+				}
+				Map<String, List<String>> mapPluginFiles = mapSDKtoFiles.get(ver);
+				for (String plugin : mapPluginFiles.keySet()) {
+					if (pluginsProcessed.contains(plugin)) {
+						continue;
+					}
+
+					List<String> files = mapPluginFiles.get(plugin);
+					for (String file : files) {
+						File destFile = new File(destDir, file.substring(12));
+
+						copyAssetFile(assets, file, destFile, buf, true);
+					}
+
+					pluginsProcessed.add(plugin);
+				}
 			}
 
 			if (!UPNPMS_ENABLE) {
@@ -723,88 +757,108 @@ public class BiglyBTManager
 		}
 	}
 
-	private final static boolean DEBUG_COPY_ASSET = true;
-
-	private static void copyAssetDir(@NonNull AssetManager assets,
-			String assetDir, String[] list, File destDir, byte[] buf,
-			boolean skipIfSame)
-			throws IOException {
-		if (list == null) {
-			return;
-		}
-		if (!destDir.exists()) {
-			destDir.mkdirs();
-		}
-		for (String file : list) {
-			String assetFile = assetDir + "/" + file;
-			String[] sub_files = assets.list(assetFile);
-			if (sub_files == null) {
-				continue;
+	private static void copyAssetFile(AssetManager assets, String assetFile,
+			File destFile, byte[] buf, boolean skipIfSame) {
+		try {
+			File parentFile = destFile.getParentFile();
+			if (!parentFile.exists()) {
+				parentFile.mkdirs();
 			}
-			File destFile = new File(destDir, file);
-			if (sub_files.length == 0) { // not a folder
-				if (skipIfSame && destFile.exists()) {
-					long destLength = destFile.length();
 
-					long length;
-					char d = ' ';
-					try {
-						AssetFileDescriptor fd = assets.openFd(assetFile);
-						length = fd.getLength();
-						fd.close();
-					} catch (FileNotFoundException e) {
-						if (DEBUG_COPY_ASSET) {
-							d = '*';
-						}
-						// compressed
-						InputStream in = assets.open(assetFile);
-						length = in.available();
-						// available() might be an under count, but in my experience is 
-						// correct for asset files. I suppose there's a tiny chance that 
-						// available() will be an under count AND match the existing file 
-						// length.
-						if (length != destLength) {
-							if (DEBUG_COPY_ASSET) {
-								d = '!';
-							}
-							int size;
-							while (length <= destLength && (size = in.read(buf)) > 0) {
-								length += size;
-							}
-							// note: length won't be accurate if over destLength
-						}
-						in.close();
-					}
-					if (length > 0 && length == destLength) {
-						if (DEBUG_COPY_ASSET) {
-							Log.d(TAG,
-									"copyAssetDir: skip " + d + assetFile + "(" + length + ")");
-						}
-						continue;
-					}
+			if (skipIfSame && destFile.exists()) {
+				long destLength = destFile.length();
+				char[] debug = {
+					' '
+				};
 
+				long assetLength = getAssetLength(assets, assetFile, destLength, buf,
+						debug);
+
+				if (assetLength > 0 && assetLength == destLength) {
 					if (DEBUG_COPY_ASSET) {
-						Log.d(TAG, "copyAssetDir: copy " + d + assetFile + " (" + length
-								+ " <> " + destFile.length() + ")");
+						Log.d(TAG, "copyAssetDir: skip " + debug[0] + assetFile + "("
+								+ assetLength + ")");
 					}
+					return;
 				}
 
-				InputStream in = assets.open(assetFile);
-				OutputStream out = new FileOutputStream(destFile);
-
-				int len;
-				while ((len = in.read(buf)) > 0)
-					out.write(buf, 0, len);
-				in.close();
-				out.close();
+				if (DEBUG_COPY_ASSET) {
+					Log.d(TAG, "copyAssetDir: copy " + debug[0] + assetFile + " ("
+							+ assetLength + " <> " + destFile.length() + ")");
+				}
 			} else {
-				if (!destFile.exists()) {
-					destFile.mkdirs();
+				if (DEBUG_COPY_ASSET) {
+					Log.d(TAG, "copyAssetDir: copy " + assetFile + " to " + destFile);
 				}
-				copyAssetDir(assets, assetFile, assets.list(assetFile), destFile, buf,
-						skipIfSame);
 			}
+
+			long copyStart = DEBUG_COPY_ASSET ? System.currentTimeMillis() : 0;
+
+			InputStream in = assets.open(assetFile);
+			OutputStream out = new FileOutputStream(destFile);
+
+			int len;
+			while ((len = in.read(buf)) > 0)
+				out.write(buf, 0, len);
+			in.close();
+			out.close();
+
+			if (DEBUG_COPY_ASSET) {
+				long diffMS = System.currentTimeMillis() - copyStart;
+				if (diffMS > 100) {
+					Log.d(TAG,
+							"copyAssetDir: copy " + assetFile + " took " + diffMS + "ms");
+				}
+			}
+		} catch (Throwable t) {
+			Log.e(TAG, "preinstallPlugins: ", t);
 		}
+	}
+
+	private static long getAssetLength(AssetManager assets, String assetFile,
+			long probableSize, byte[] buf, char[] d) {
+		long startLength = DEBUG_COPY_ASSET ? System.currentTimeMillis() : 0;
+		long length = -1;
+		try {
+			try {
+				AssetFileDescriptor fd = assets.openFd(assetFile);
+				length = fd.getLength();
+				fd.close();
+			} catch (FileNotFoundException e) {
+				if (DEBUG_COPY_ASSET) {
+					d[0] = '*';
+				}
+				// compressed
+				InputStream in = assets.open(assetFile);
+				length = in.available();
+				// available() might be an under count, but in my experience is 
+				// correct for asset files. I suppose there's a tiny chance that 
+				// available() will be an under count AND match the existing file 
+				// length.
+				if (length != probableSize) {
+					if (DEBUG_COPY_ASSET) {
+						d[0] = '!';
+					}
+					int size;
+					while (length <= probableSize && (size = in.read(buf)) > 0) {
+						length += size;
+					}
+					// note: length won't be accurate if over destLength
+				}
+				in.close();
+			}
+			if (DEBUG_COPY_ASSET) {
+				long diffMS = System.currentTimeMillis() - startLength;
+				if (diffMS > 100) {
+					Log.d(TAG,
+							"copyAssetDir: length " + assetFile + " took " + diffMS + "ms");
+				}
+			}
+		} catch (Throwable t) {
+			Log.e(TAG, "getAssetLength: ", t);
+		}
+
+		return length;
 	}
 
 	private static void removeDir(@NonNull File dir) {
