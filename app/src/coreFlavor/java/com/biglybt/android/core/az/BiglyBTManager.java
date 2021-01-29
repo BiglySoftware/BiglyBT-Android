@@ -677,7 +677,7 @@ public class BiglyBTManager
 		AEThread2.createAndStartDaemon("CoreInit", core::start);
 	}
 
-	private final static boolean DEBUG_COPY_ASSET = true;
+	private final static boolean DEBUG_COPY_ASSET = false;
 
 	@Thunk
 	static void preinstallPlugins() {
