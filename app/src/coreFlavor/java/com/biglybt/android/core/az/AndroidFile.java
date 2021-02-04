@@ -597,12 +597,17 @@ public class AndroidFile
 
 		log("renameTo: " + dest + " from " + this);
 
-		// TODO
-		// if (just a name change) {
-		// 	return docFile.renameTo(dest.getName());
-		// }
+		boolean sameName = getName().equals(dest.getName());
 
-		if (VERSION.SDK_INT >= VERSION_CODES.N) {
+		if (!sameName && getParent().equals(dest.getParent())
+				&& getDocFile().renameTo(dest.getName())) {
+			uri = docFile.getUri();
+			path = uri.toString();
+			needsBuilding = true;
+			return true;
+		}
+
+		if (VERSION.SDK_INT >= VERSION_CODES.N && sameName) {
 			AndroidFile parentDir = getParentFile();
 			AndroidFile destParent = (AndroidFile) dest.getParentFile();
 
@@ -617,9 +622,12 @@ public class AndroidFile
 					try {
 						log("renameTo: using moveDocument");
 						// non-'raw:" internal to non-'raw:' external tested and works
-						return DocumentsContract.moveDocument(
+						Uri movedDoc = DocumentsContract.moveDocument(
 								BiglyBTApp.getContext().getContentResolver(), this.getUri(),
-								parentUri, destParent.getUri()) != null;
+								parentUri, destParent.getUri());
+						if (movedDoc != null) {
+							return true;
+						}
 					} catch (Exception e) {
 						Log.e(TAG, "renameTo", e);
 					}
