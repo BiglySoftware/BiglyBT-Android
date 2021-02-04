@@ -224,7 +224,7 @@ public class AndroidUtils
 		try {
 			return id == View.NO_ID ? "" : res.getResourceEntryName(id);
 		} catch (Throwable t) {
-			return "" + id;
+			return Integer.toString(id);
 		}
 	}
 
@@ -797,7 +797,7 @@ public class AndroidUtils
 					s[i] = "state_window_focused";
 					break;
 				default:
-					s[i] = "" + state;
+					s[i] = Integer.toString(state);
 			}
 		}
 		return Arrays.toString(s);

@@ -225,7 +225,7 @@ public class SpanTags
 			Map mapTag = outTags.get(index);
 
 			final String word = MapUtils.getMapString(mapTag,
-					TransmissionVars.FIELD_TAG_NAME, "" + id);
+					TransmissionVars.FIELD_TAG_NAME, id);
 			final Map fMapTag = mapTag;
 
 			final int finalIndex = index;

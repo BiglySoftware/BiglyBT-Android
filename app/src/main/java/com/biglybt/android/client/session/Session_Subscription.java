@@ -294,7 +294,7 @@ public class Session_Subscription
 			titleID = R.string.subscription_remove_title;
 		} else {
 			message = resources.getString(R.string.subscriptions_remove_text,
-					"" + subscriptionIDs.length);
+					Integer.toString(subscriptionIDs.length));
 			titleID = R.string.subscriptions_remove_title;
 		}
 

@@ -813,7 +813,7 @@ public class PrefFragmentHandlerCore
 			changed |= coreInterface.setParamString(CoreParamKeys.SPARAM_PROXY_HOST,
 					ds.getString(KEY_PROXY_HOST));
 			changed |= coreInterface.setParamString(CoreParamKeys.SPARAM_PROXY_PORT,
-					"" + ds.getInt(KEY_PROXY_PORT, 0));
+					Integer.toString(ds.getInt(KEY_PROXY_PORT, 0)));
 			changed |= coreInterface.setParamString(CoreParamKeys.SPARAM_PROXY_USER,
 					ds.getString(KEY_PROXY_USER));
 			changed |= coreInterface.setParamString(CoreParamKeys.SPARAM_PROXY_PW,

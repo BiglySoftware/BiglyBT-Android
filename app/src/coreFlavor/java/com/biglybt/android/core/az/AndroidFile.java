@@ -95,7 +95,7 @@ public class AndroidFile
 	private PathInfo pathInfo;
 
 	AndroidFile(@NonNull String path) {
-		super("" + uniqueNumber++);
+		super(Long.toString(uniqueNumber++));
 		this.path = path;
 		if (DEBUG_CALLS && !path.contains("/document/")) {
 			logw("no /document/ in " + path);
@@ -106,7 +106,7 @@ public class AndroidFile
 
 	AndroidFile(@NonNull DocumentFile documentFile, @NonNull Uri uri,
 			@NonNull String path) {
-		super("" + uniqueNumber++);
+		super(Long.toString(uniqueNumber++));
 		this.uri = uri;
 		this.path = path;
 		docFile = documentFile;

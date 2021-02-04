@@ -201,7 +201,7 @@ public class AnalyticsTrackerBare
 				uhoh.printStackTrace();
 			}
 		}
-		return "" + t;
+		return t.toString();
 	}
 
 	@Override

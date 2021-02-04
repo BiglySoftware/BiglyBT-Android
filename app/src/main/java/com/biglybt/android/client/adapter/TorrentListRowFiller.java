@@ -119,8 +119,8 @@ public class TorrentListRowFiller
 
 		float pctDone = TorrentUtils.getPercentDone(item);
 		if (holder.tvProgress != null) {
-			String s = pctDone < 0 
-					|| (!holder.isSmall && pctDone >= 1) ? "" : nfPct1.format(pctDone);
+			String s = pctDone < 0 || (!holder.isSmall && pctDone >= 1) ? ""
+					: nfPct1.format(pctDone);
 			flipper.changeText(holder.tvProgress, s, holder.animateFlip, validator);
 		}
 		if (holder.pb != null) {
@@ -162,8 +162,8 @@ public class TorrentListRowFiller
 					sb.append(resources.getString(R.string.torrent_row_line_split));
 				}
 				sb.append(resources.getString(R.string.torrent_row_peers,
-						"" + (pctDone < 1.0 ? numPeersDLFrom : numPeersULTo),
-						"" + numPeersConnected));
+						Long.toString(pctDone < 1.0 ? numPeersDLFrom : numPeersULTo),
+						Long.toString(numPeersConnected)));
 			}
 			if (!hasScrapeError && error != TransmissionVars.TR_STAT_OK) {
 				// error

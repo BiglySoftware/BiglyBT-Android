@@ -352,7 +352,7 @@ public class PagerAdapter2UsingClasses
 
 	public String getTitle(int position) {
 		if (position < 0 || position >= pageItemTitles.length) {
-			return "" + position;
+			return Integer.toString(position);
 		}
 		return pageItemTitles[position];
 	}

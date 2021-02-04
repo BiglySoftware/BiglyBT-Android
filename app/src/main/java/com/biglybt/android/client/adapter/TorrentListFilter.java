@@ -794,7 +794,7 @@ public class TorrentListFilter
 						if (id >= 0) {
 							return resources.getString(id);
 						}
-						return "" + id;
+						return Integer.toString(id);
 					}
 				});
 

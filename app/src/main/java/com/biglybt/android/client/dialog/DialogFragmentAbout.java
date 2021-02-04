@@ -70,7 +70,7 @@ public class DialogFragmentAbout
 			PackageInfo info = manager.getPackageInfo(activity.getPackageName(), 0);
 			if (info != null && tvLicense != null) {
 				String license = getResources().getString(R.string.about_version,
-						info.versionName, "" + info.versionCode);
+						info.versionName, Integer.toString(info.versionCode));
 
 				tvLicense.setText(license);
 			}

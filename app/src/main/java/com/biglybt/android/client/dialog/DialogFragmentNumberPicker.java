@@ -127,7 +127,7 @@ public class DialogFragmentNumberPicker
 				if (params.suffix != null) {
 					tvSuffix.setText(val + " " + params.suffix);
 				} else {
-					tvSuffix.setText("" + val);
+					tvSuffix.setText(Integer.toString(val));
 				}
 			}
 		}
