@@ -2,6 +2,7 @@
 <com.biglybt.android.widget.CheckableRelativeLayout
 	xmlns:android="http://schemas.android.com/apk/res/android"
 	xmlns:tools="http://schemas.android.com/tools"
+	tools:theme="@style/AppThemeDark"
 	android:id="@+id/filerow_layout"
 	android:layout_width="fill_parent"
 	android:layout_height="wrap_content"
@@ -123,8 +124,8 @@
 
 			<ProgressBar
 				android:id="@+id/filerow_progress"
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
+				android:layout_width="70dp"
+				android:layout_height="70dp"
 				android:layout_alignParentStart="true"
 				android:layout_alignParentLeft="true"
 				android:layout_alignParentTop="true"
@@ -132,10 +133,6 @@
 				android:layout_marginRight="2dp"
 				android:indeterminateOnly="false"
 				android:max="10000"
-				android:maxWidth="500dp"
-				android:maxHeight="500dp"
-				android:minWidth="70dp"
-				android:minHeight="70dp"
 				android:progressDrawable="@drawable/progress_ring_files"
 				tools:progress="1110"
 				tools:visibility="visible"/>
@@ -143,13 +140,13 @@
 			<TextView
 				android:id="@+id/filerow_progress_pct"
 				android:layout_width="70dp"
-				android:layout_height="match_parent"
-				android:layout_alignEnd="@+id/filerow_progress"
-				android:layout_alignRight="@+id/filerow_progress"
-				android:layout_alignBottom="@+id/filerow_progress"
-				android:layout_alignTop="@+id/filerow_progress"
+				android:layout_height="70dp"
+				android:layout_alignParentStart="true"
+				android:layout_alignParentLeft="true"
+				android:layout_alignParentTop="true"
+				android:layout_marginEnd="2dp"
+				android:layout_marginRight="2dp"
 				android:gravity="center|center_vertical"
-				android:textAlignment="center"
 				android:textAppearance="?android:attr/textAppearanceMedium"
 				android:textSize="15sp"
 				tools:text="80%"/>
