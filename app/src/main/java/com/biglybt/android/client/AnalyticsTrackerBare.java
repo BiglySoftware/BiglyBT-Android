@@ -434,8 +434,8 @@ public class AnalyticsTrackerBare
 			} else {
 				StrictMode.ThreadPolicy old = enableNasty();
 				Response response = call.execute();
-				revertNasty(old);
 				int statusCode = response.code();
+				revertNasty(old);
 
 				if (AndroidUtils.DEBUG_RPC) {
 					if (statusCode != 200) {
