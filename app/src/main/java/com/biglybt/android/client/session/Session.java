@@ -908,6 +908,11 @@ public class Session
 		}
 		if (trigger && sessionSettings != null) {
 			l.sessionSettingsChanged(sessionSettings);
+			long dl = MapUtils.getMapLong(mapSessionStats,
+					TransmissionVars.TR_SESSION_STATS_DOWNLOAD_SPEED, 0);
+			long ul = MapUtils.getMapLong(mapSessionStats,
+					TransmissionVars.TR_SESSION_STATS_UPLOAD_SPEED, 0);
+			l.speedChanged(dl, ul);
 		}
 	}
 

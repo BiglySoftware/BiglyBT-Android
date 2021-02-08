@@ -150,7 +150,6 @@ public class TorrentViewActivity
 		activityIntent = savedInstanceState == null ? getIntent() : null;
 
 		session.addSessionListener(this);
-		session.addSessionSettingsChangedListeners(this);
 
 		int contentViewID = AndroidUtils.isTV(this)
 				? R.layout.activity_torrent_view_tv : R.layout.activity_torrent_view;
