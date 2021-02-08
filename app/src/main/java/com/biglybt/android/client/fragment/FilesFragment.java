@@ -1386,7 +1386,7 @@ public class FilesFragment
 				found = ((Number) key).longValue() == torrentID;
 				if (found) {
 					if (AndroidUtils.DEBUG) {
-						log(TAG, "TorrentListReceived, contains torrent #" + torrentID);
+						log(TAG, "TorrentListReceived(" + callID + "), contains torrent #" + torrentID);
 					}
 					break;
 				}
@@ -1394,7 +1394,7 @@ public class FilesFragment
 		}
 		if (!found) {
 			if (AndroidUtils.DEBUG) {
-				log(TAG, "TorrentListReceived, does not contain torrent #" + torrentID);
+				log(TAG, "TorrentListReceived(" + callID + "), does not contain torrent #" + torrentID);
 			}
 			return;
 		}
