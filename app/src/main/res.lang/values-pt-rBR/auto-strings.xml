@@ -40,4 +40,5 @@ Concordo que é minha responsabilidade garantir que estou apenas fazendo o downl
 	<string name="torrent_status_stopped">Parado</string>
 	<string name="torrent_status_stopping">Parando</string>
 	<string name="reset_to_default">Restaurar para Valor Padrão</string>
+	<string name="magnet_lookup">Pesquisar Magnet</string>
 </resources>

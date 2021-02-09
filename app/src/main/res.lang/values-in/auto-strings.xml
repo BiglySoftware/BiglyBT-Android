@@ -73,4 +73,5 @@ Saya setuju bahwa itu adalah tanggung jawab saya untuk memastikan bahwa saya han
 	<string name="torrent_status_stopped">Berhenti</string>
 	<string name="torrent_status_stopping">Menghentikan</string>
 	<!-- No entry for menu.config.reset.to.default -->
+	<!-- No entry for OpenTorrentWindow.mb.notTorrent.retry -->
 </resources>

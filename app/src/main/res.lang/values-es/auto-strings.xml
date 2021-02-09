@@ -90,4 +90,5 @@ Estoy de acuerdo de que es mi responsabilidad asegurar que sólo estoy descargan
 	<string name="torrent_status_stopped">Parado</string>
 	<string name="torrent_status_stopping">Parando</string>
 	<!-- No entry for menu.config.reset.to.default -->
+	<string name="magnet_lookup">Búsqueda magnet</string>
 </resources>

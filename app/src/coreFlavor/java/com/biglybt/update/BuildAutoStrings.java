@@ -104,9 +104,8 @@ public class BuildAutoStrings
 	public static void main(String[] args)
 			throws IOException {
 		System.setProperty("SKIP_SETRB", "1");
-
-		process("BiglyBT/src/coreFlavor/res");
-		process("BiglyBT/src/main/res.lang");
+		process("app/src/coreFlavor/res");
+		process("app/src/main/res.lang");
 	}
 
 	private static void process(String keysSubDir)

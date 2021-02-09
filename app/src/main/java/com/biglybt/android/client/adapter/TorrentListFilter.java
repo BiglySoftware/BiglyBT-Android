@@ -871,8 +871,8 @@ public class TorrentListFilter
 									TransmissionVars.FIELD_TORRENT_FILE_COUNT, 0);
 							if (numFiles < 0) {
 								return -1;
-							} else if (numFiles == 1) {
-								return 1;
+							} else if (numFiles <= 1) {
+								return numFiles;
 							} else if (numFiles < 4) {
 								return 2;
 							} else if (numFiles < 100) {
@@ -897,6 +897,8 @@ public class TorrentListFilter
 							case 3:
 								return resources.getString(
 										R.string.TorrentListSectionName_File_many);
+							case 0:
+								return resources.getString(R.string.magnet_lookup);
 							case 4:
 								return resources.getString(
 										R.string.TorrentListSectionName_File_hundreds);

@@ -38,4 +38,5 @@ I agree that is my responsibility to ensure that I am only downloading lawful an
 	<string name="torrent_status_stopped">Stoppad </string>
 	<string name="torrent_status_stopping">Stoppar</string>
 	<string name="reset_to_default">Återställ till standardvärde</string>
+	<string name="magnet_lookup">Magnetuppslagning</string>
 </resources>

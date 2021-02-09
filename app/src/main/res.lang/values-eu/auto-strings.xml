@@ -40,4 +40,5 @@ Onartzen dut nire erantzunkizuna dela legezkoak eta arauhauste-gabeko edukiak je
 	<string name="torrent_status_stopped">Geldituta</string>
 	<string name="torrent_status_stopping">Gelditzen</string>
 	<!-- No entry for menu.config.reset.to.default -->
+	<string name="magnet_lookup">Magnet Itxiera</string>
 </resources>

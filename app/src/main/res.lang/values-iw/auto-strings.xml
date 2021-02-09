@@ -66,4 +66,5 @@
 	<string name="torrent_status_stopped">עצר</string>
 	<string name="torrent_status_stopping">עוצר</string>
 	<!-- No entry for menu.config.reset.to.default -->
+	<!-- No entry for OpenTorrentWindow.mb.notTorrent.retry -->
 </resources>

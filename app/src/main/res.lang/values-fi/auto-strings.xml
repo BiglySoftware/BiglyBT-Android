@@ -38,4 +38,5 @@ I agree that is my responsibility to ensure that I am only downloading lawful an
 	<string name="torrent_status_stopped">Pysäytetty </string>
 	<string name="torrent_status_stopping">Pysäytetään</string>
 	<!-- No entry for menu.config.reset.to.default -->
+	<string name="magnet_lookup">Magnet-haku</string>
 </resources>

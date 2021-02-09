@@ -38,4 +38,5 @@ Sadece yasal ve ihlal edilmeyen içerik indirdiğimden emin olmanın benim sorum
 	<string name="torrent_status_stopped">Durduruldu</string>
 	<string name="torrent_status_stopping">Durduruluyor</string>
 	<string name="reset_to_default">Varsayılan Değere Sıfırla</string>
+	<string name="magnet_lookup">Magnet Arama</string>
 </resources>

@@ -38,4 +38,5 @@ I agree that is my responsibility to ensure that I am only downloading lawful an
 	<string name="torrent_status_stopped">정지됨</string>
 	<string name="torrent_status_stopping">정지하는 중</string>
 	<!-- No entry for menu.config.reset.to.default -->
+	<string name="magnet_lookup">마그넷 찾아가기</string>
 </resources>

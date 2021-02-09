@@ -38,4 +38,5 @@ I agree that is my responsibility to ensure that I am only downloading lawful an
 	<string name="torrent_status_stopped">已停止</string>
 	<string name="torrent_status_stopping">正在停止中</string>
 	<!-- No entry for menu.config.reset.to.default -->
+	<!-- No entry for OpenTorrentWindow.mb.notTorrent.retry -->
 </resources>
