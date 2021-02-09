@@ -38,7 +38,6 @@ import androidx.core.app.TaskStackBuilder;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
-import androidx.leanback.app.ProgressBarManager;
 import androidx.lifecycle.Lifecycle;
 
 import com.biglybt.android.adapter.SortableRecyclerAdapter;
@@ -59,6 +58,7 @@ import com.biglybt.android.util.NetworkState;
 import com.biglybt.util.DisplayFormatters;
 import com.biglybt.util.Thunk;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+import com.google.android.material.progressindicator.BaseProgressIndicator;
 
 import java.util.Arrays;
 
@@ -102,7 +102,8 @@ public class TorrentViewActivity
 	@Thunk
 	Intent activityIntent;
 
-	private ProgressBarManager progressBarManager;
+	@Thunk
+	BaseProgressIndicator progressBar;
 
 	/**
 	 * Used to capture the File Chooser results from {@link
@@ -192,11 +193,7 @@ public class TorrentViewActivity
 		super.onStart();
 
 		// may be inside FragmentContainerView which doesn't expand in #onCreate like Fragment does
-		View progressBar = findViewById(R.id.progress_spinner);
-		if (progressBar != null) {
-			progressBarManager = new ProgressBarManager();
-			progressBarManager.setProgressBarView(progressBar);
-		}
+		progressBar = findViewById(R.id.progress_spinner);
 	}
 
 	/** Called when a drawer has settled in a completely closed state. */
@@ -224,14 +221,14 @@ public class TorrentViewActivity
 				return;
 			}
 			supportInvalidateOptionsMenu();
-			if (progressBarManager != null) {
+			if (progressBar != null) {
 				if (refreshing) {
-					progressBarManager.show();
+					progressBar.show();
 				} else {
-					progressBarManager.hide();
+					progressBar.hide();
 				}
 			}
-		}, 500);
+		}, 300);
 	}
 
 	private void setSubtitle(String name) {

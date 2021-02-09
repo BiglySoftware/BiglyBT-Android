@@ -63,15 +63,14 @@
 				android:text="@string/textbubble_new"/>
 		</LinearLayout>
 
-		<ProgressBar
+		<com.google.android.material.progressindicator.LinearProgressIndicator
 			android:id="@+id/ms_result_rank"
 			android:layout_width="fill_parent"
-			android:layout_height="2dp"
+			android:layout_height="wrap_content"
 			android:layout_marginBottom="8dp"
 			android:background="#20000000"
 			android:indeterminateOnly="false"
 			android:max="10000"
-			android:progressDrawable="@drawable/lb_playback_progress_bar"
 			tools:progress="7000"
 			/>
 

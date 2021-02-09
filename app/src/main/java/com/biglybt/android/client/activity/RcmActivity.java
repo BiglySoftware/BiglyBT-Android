@@ -29,7 +29,6 @@ import android.widget.TextView;
 import androidx.annotation.*;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.widget.Toolbar;
-import androidx.leanback.app.ProgressBarManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.biglybt.android.adapter.SortableRecyclerAdapter;
@@ -56,6 +55,7 @@ import com.biglybt.util.DisplayFormatters;
 import com.biglybt.util.Thunk;
 import com.google.android.material.appbar.AppBarLayout;
 import com.google.android.material.appbar.CollapsingToolbarLayout;
+import com.google.android.material.progressindicator.BaseProgressIndicator;
 import com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView;
 
 import java.util.*;
@@ -144,7 +144,7 @@ public class RcmActivity
 
 	private TextView tvHeader;
 
-	private ProgressBarManager progressBarManager;
+	private BaseProgressIndicator progressBar;
 
 	@Override
 	protected void onCreateWithSession(final Bundle savedInstanceState) {
@@ -401,11 +401,7 @@ public class RcmActivity
 	@UiThread
 	private void setupListView() {
 
-		View progressBar = findViewById(R.id.progress_spinner);
-		if (progressBar != null) {
-			progressBarManager = new ProgressBarManager();
-			progressBarManager.setProgressBarView(progressBar);
-		}
+		progressBar = findViewById(R.id.progress_spinner);
 
 		TextView tvEmptyList = findViewById(R.id.tv_empty);
 
@@ -692,15 +688,12 @@ public class RcmActivity
 
 	@Thunk
 	void rpcRefreshingChanged(final boolean refreshing) {
-		runOnUiThread(() -> {
-			if (isFinishing()) {
-				return;
-			}
-			if (progressBarManager != null) {
+		OffThread.runOnUIThread(this, false, (a) -> {
+			if (progressBar != null) {
 				if (refreshing) {
-					progressBarManager.show();
+					progressBar.show();
 				} else {
-					progressBarManager.hide();
+					progressBar.hide();
 				}
 			}
 		});

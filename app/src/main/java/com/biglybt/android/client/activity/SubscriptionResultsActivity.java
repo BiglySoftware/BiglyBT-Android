@@ -34,7 +34,6 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.view.ActionMode;
 import androidx.appcompat.view.ActionMode.Callback;
 import androidx.appcompat.widget.Toolbar;
-import androidx.leanback.app.ProgressBarManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.biglybt.android.adapter.SortableRecyclerAdapter;
@@ -60,6 +59,7 @@ import com.biglybt.android.widget.SwipeRefreshLayoutExtra.SwipeTextUpdater;
 import com.biglybt.util.DisplayFormatters;
 import com.biglybt.util.Thunk;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+import com.google.android.material.progressindicator.BaseProgressIndicator;
 import com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView;
 
 import java.net.URI;
@@ -146,7 +146,8 @@ public class SubscriptionResultsActivity
 	@Thunk
 	CompoundButton switchAutoDL;
 
-	private ProgressBarManager progressBarManager;
+	@Thunk
+	BaseProgressIndicator progressBar;
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
@@ -170,11 +171,7 @@ public class SubscriptionResultsActivity
 						: R.layout.activity_subscription_drawer);
 		setupActionBar();
 
-		View progressBar = findViewById(R.id.progress_spinner);
-		if (progressBar != null) {
-			progressBarManager = new ProgressBarManager();
-			progressBarManager.setProgressBarView(progressBar);
-		}
+		progressBar = findViewById(R.id.progress_spinner);
 
 		tvFilterTop = findViewById(R.id.ms_top_filterarea);
 		if (tvFilterTop != null) {
@@ -848,18 +845,15 @@ public class SubscriptionResultsActivity
 	}
 
 	private void setRefreshVisible(final boolean visible) {
-		runOnUiThread(() -> {
-			if (isFinishing()) {
-				return;
-			}
+		OffThread.runOnUIThread(this, false, (a) -> {
 			if (swipeRefresh != null) {
 				swipeRefresh.setRefreshing(visible);
 			}
-			if (progressBarManager != null) {
+			if (progressBar != null) {
 				if (visible) {
-					progressBarManager.show();
+					progressBar.show();
 				} else {
-					progressBarManager.hide();
+					progressBar.hide();
 				}
 			}
 		});

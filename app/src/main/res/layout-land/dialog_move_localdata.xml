@@ -37,13 +37,12 @@
         android:textStyle="bold"
         />
 
-    <ProgressBar
+    <com.google.android.material.progressindicator.LinearProgressIndicator
         android:id="@+id/movedata_pb"
-        style="?android:attr/progressBarStyleHorizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:indeterminate="true"
-        android:paddingTop="16dp"
+        android:layout_marginTop="16dp"
         />
 
     <TextView

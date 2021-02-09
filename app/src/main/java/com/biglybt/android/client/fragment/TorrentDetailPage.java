@@ -19,7 +19,6 @@ package com.biglybt.android.client.fragment;
 import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.view.*;
-import android.widget.ProgressBar;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -27,7 +26,6 @@ import androidx.annotation.UiThread;
 import androidx.appcompat.view.menu.MenuBuilder;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.FragmentActivity;
-import androidx.leanback.app.ProgressBarManager;
 
 import com.biglybt.android.client.*;
 import com.biglybt.android.client.adapter.PagerAdapter2UsingClasses;
@@ -36,6 +34,7 @@ import com.biglybt.android.client.session.RefreshTriggerListener;
 import com.biglybt.android.client.session.Session;
 import com.biglybt.android.client.sidelist.*;
 import com.biglybt.util.Thunk;
+import com.google.android.material.progressindicator.BaseProgressIndicator;
 
 import java.util.List;
 import java.util.Map;
@@ -141,11 +140,11 @@ public abstract class TorrentDetailPage
 
 	private final TDPSideActionSelectionListener sideActionSelectionListener = new TDPSideActionSelectionListener();
 
-	private ProgressBarManager progressBarManager;
-
 	private final Object mLock = new Object();
 
 	private int numProgresses = 0;
+
+	private BaseProgressIndicator progressBar;
 
 	protected abstract MenuBuilder getActionMenuBuilder();
 
@@ -174,16 +173,13 @@ public abstract class TorrentDetailPage
 		FragmentActivity activity = requireActivity();
 
 		// PB belongs in TorrentDetailPage or TorrentDetailsFragment
-		ProgressBar progressBar = activity.findViewById(R.id.details_progress_bar);
+		progressBar = activity.findViewById(R.id.details_progress_bar);
 		if (progressBar == null) {
 			progressBar = activity.findViewById(R.id.sideaction_spinner);
 		}
 		if (progressBar != null) {
-			progressBarManager = new ProgressBarManager();
-			progressBarManager.setProgressBarView(progressBar);
-
 			if (numProgresses > 0) {
-				progressBarManager.show();
+				progressBar.show();
 			}
 		}
 	}
@@ -260,12 +256,14 @@ public abstract class TorrentDetailPage
 			*/
 		}
 
-		FragmentActivity activity = getActivity();
-		if (activity == null || progressBarManager == null || activity.isFinishing()
-				|| numProgresses <= 0) {
+		if (progressBar == null || numProgresses <= 0) {
 			return;
 		}
-		OffThread.runOnUIThread(this, false, a -> progressBarManager.show());
+		OffThread.runOnUIThread(this, false, a -> {
+			if (viewActive) {
+				progressBar.show();
+			}
+		});
 	}
 
 	@Thunk
@@ -285,12 +283,14 @@ public abstract class TorrentDetailPage
 			}
 		}
 
-		FragmentActivity activity = getActivity();
-		if (activity == null || progressBarManager == null
-				|| activity.isFinishing()) {
+		if (progressBar == null) {
 			return;
 		}
-		OffThread.runOnUIThread(this, false, a -> progressBarManager.hide());
+		OffThread.runOnUIThread(this, false, a -> {
+			if (viewActive) {
+				progressBar.hide();
+			}
+		});
 	}
 
 	@UiThread

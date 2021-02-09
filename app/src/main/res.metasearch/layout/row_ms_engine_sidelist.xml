@@ -92,13 +92,17 @@
 			tools:src="@drawable/tag_check"
 			android:layout_marginStart="8dp"/>
 
-		<ProgressBar
+		<com.google.android.material.progressindicator.CircularProgressIndicator
+			style="@style/Widget.MaterialComponents.CircularProgressIndicator.Smaller"
 			android:id="@+id/ms_engine_pb"
-			android:layout_width="32dp"
-			android:layout_height="32dp"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
 			android:layout_marginLeft="8dp"
+			android:layout_marginStart="8dp"
 			android:indeterminate="true"
-			android:layout_marginStart="8dp"/>
+			tools:progress="2"
+			tools:max="3"
+			tools:indeterminate="false"/>
 	</LinearLayout>
 
 

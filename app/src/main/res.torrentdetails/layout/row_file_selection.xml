@@ -2,7 +2,6 @@
 <com.biglybt.android.widget.CheckableRelativeLayout
 	xmlns:android="http://schemas.android.com/apk/res/android"
 	xmlns:tools="http://schemas.android.com/tools"
-	tools:theme="@style/AppThemeDark"
 	android:id="@+id/filerow_layout"
 	android:layout_width="fill_parent"
 	android:layout_height="wrap_content"

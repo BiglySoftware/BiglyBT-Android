@@ -35,7 +35,6 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.view.ActionMode;
 import androidx.appcompat.view.menu.MenuBuilder;
 import androidx.appcompat.widget.Toolbar;
-import androidx.leanback.app.ProgressBarManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.biglybt.android.adapter.DelayedFilter;
@@ -56,6 +55,7 @@ import com.biglybt.android.widget.SwipeRefreshLayoutExtra;
 import com.biglybt.android.widget.SwipeRefreshLayoutExtra.SwipeTextUpdater;
 import com.biglybt.util.DisplayFormatters;
 import com.biglybt.util.Thunk;
+import com.google.android.material.progressindicator.BaseProgressIndicator;
 import com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView;
 
 import org.xmlpull.v1.XmlPullParser;
@@ -146,7 +146,7 @@ public class SubscriptionListActivity
 
 	private SideActionSelectionListener sideActionSelectionListener;
 
-	private ProgressBarManager progressBarManager;
+	private BaseProgressIndicator progressBar;
 
 	@Override
 	protected void onCreateWithSession(@Nullable Bundle savedInstanceState) {
@@ -180,11 +180,7 @@ public class SubscriptionListActivity
 		setupActionBar();
 		setupActionModeCallback();
 
-		View progressBar = findViewById(R.id.progress_spinner);
-		if (progressBar != null) {
-			progressBarManager = new ProgressBarManager();
-			progressBarManager.setProgressBarView(progressBar);
-		}
+		progressBar = findViewById(R.id.progress_spinner);
 
 		tvHeader = findViewById(R.id.subscriptions_header);
 
@@ -810,18 +806,15 @@ public class SubscriptionListActivity
 	}
 
 	private void setRefreshVisible(final boolean visible) {
-		runOnUiThread(() -> {
-			if (isFinishing()) {
-				return;
-			}
+		OffThread.runOnUIThread(this, false, (a) -> {
 			if (swipeRefresh != null) {
 				swipeRefresh.setRefreshing(visible);
 			}
-			if (progressBarManager != null) {
+			if (progressBar != null) {
 				if (visible) {
-					progressBarManager.show();
+					progressBar.show();
 				} else {
-					progressBarManager.hide();
+					progressBar.hide();
 				}
 			}
 

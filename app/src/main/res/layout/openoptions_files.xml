@@ -49,19 +49,23 @@
 				tools:text="676.63 MB"/>
 
 			<FrameLayout
-				android:layout_width="32dp"
+				android:layout_width="wrap_content"
 				android:layout_height="match_parent"
 				android:layout_gravity="center_vertical"
 				android:background="?pager_bg"
 				android:paddingStart="8dp"
 				android:paddingLeft="8dp">
 
-				<ProgressBar
+				<com.google.android.material.progressindicator.CircularProgressIndicator
+					style="@style/SidebarCircularProgress"
 					android:id="@+id/sideaction_spinner"
 					android:layout_width="24dp"
 					android:layout_height="24dp"
 					android:indeterminate="true"
 					android:visibility="gone"
+					tools:progress="2"
+					tools:max="3"
+					tools:indeterminate="false"
 					tools:visibility="visible"/>
 			</FrameLayout>
 

@@ -35,7 +35,6 @@ import androidx.annotation.*;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.Toolbar;
-import androidx.leanback.app.ProgressBarManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.biglybt.android.adapter.FlexibleRecyclerAdapter;
@@ -61,6 +60,7 @@ import com.biglybt.android.widget.PreCachingLayoutManager;
 import com.biglybt.util.DisplayFormatters;
 import com.biglybt.util.Thunk;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+import com.google.android.material.progressindicator.BaseProgressIndicator;
 import com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView;
 
 import java.io.Serializable;
@@ -135,7 +135,7 @@ public class MetaSearchActivity
 	@Thunk
 	TextView tvHeader;
 
-	private ProgressBarManager progressBarManager;
+	private BaseProgressIndicator progressBar;
 
 	private static final Comparator<MetaSearchEnginesInfo> metaSearchEnginesInfoComparator = (
 			lhs, rhs) -> {
@@ -164,11 +164,7 @@ public class MetaSearchActivity
 						: R.layout.activity_metasearch_sb_drawer);
 		setupActionBar();
 
-		View progressBar = findViewById(R.id.progress_spinner);
-		if (progressBar != null) {
-			progressBarManager = new ProgressBarManager();
-			progressBarManager.setProgressBarView(progressBar);
-		}
+		progressBar = findViewById(R.id.progress_spinner);
 
 		tvFilterTop = findViewById(R.id.ms_top_filterarea);
 		if (tvFilterTop != null) {
@@ -533,15 +529,12 @@ public class MetaSearchActivity
 	@Override
 	public boolean onMetaSearchGotResults(Serializable searchID,
 			List<Map<String, Object>> engines, final boolean complete) {
-		if (isFinishing()) {
-			return false;
-		}
-		runOnUiThread(() -> {
-			if (progressBarManager != null) {
+		OffThread.runOnUIThread(this, false, (a) -> {
+			if (progressBar != null) {
 				if (complete) {
-					progressBarManager.hide();
+					progressBar.hide();
 				} else {
-					progressBarManager.show();
+					progressBar.show();
 				}
 			}
 			ProgressBar enginesPB = findViewById(R.id.metasearch_engines_spinner);

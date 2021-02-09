@@ -498,4 +498,19 @@
 		<item name="android:gravity">start</item>
 		<item name="android:textAlignment" tools:ignore="NewApi">viewStart</item>
 	</style>
+
+	<style name="Widget.MaterialComponents.CircularProgressIndicator.Smaller" parent="Widget.MaterialComponents.CircularProgressIndicator.Small">
+		<item name="indicatorSize">22dp</item>
+		<item name="showDelay">500</item>
+	</style>
+
+	<style name="SidebarCircularProgress" parent="Widget.MaterialComponents.CircularProgressIndicator.Small">
+		<item name="materialThemeOverlay">@style/ThemeOverlay.App.CircularProgressIndicator</item>
+		<item name="indicatorSize">22dp</item>
+		<item name="showDelay">500</item>
+	</style>
+
+	<style name="ThemeOverlay.App.CircularProgressIndicator" parent="">
+		<item name="colorPrimary">@color/list_sidebar_content_fg</item>
+	</style>
 </resources>

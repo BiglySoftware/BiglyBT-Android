@@ -22,10 +22,11 @@
 			android:text="@string/menu_actions"
 			/>
 
-		<ProgressBar
+		<com.google.android.material.progressindicator.CircularProgressIndicator
+			style="@style/SidebarCircularProgress"
 			android:id="@+id/sideaction_spinner"
-			android:layout_width="24dp"
-			android:layout_height="24dp"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
 			android:layout_gravity="center_vertical"
 			android:layout_marginEnd="8dp"
 			android:layout_marginRight="8dp"
