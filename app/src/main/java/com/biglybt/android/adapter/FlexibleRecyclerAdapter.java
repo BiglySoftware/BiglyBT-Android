@@ -830,28 +830,61 @@ public abstract class FlexibleRecyclerAdapter<ADAPTERTYPE extends RecyclerView.A
 						"SetItemsAsyncTask: oldCount=" + oldCount + ";new=" + newCount + ";"
 								+ this + " in " + (System.currentTimeMillis() - start) + "ms");
 
+				StringBuilder sb = new StringBuilder();
 				diffResult.dispatchUpdatesTo(new ListUpdateCallback() {
+					int last = -1;
+
 					@Override
 					public void onInserted(int position, int count) {
-						log(TAG, "-->Insert " + count + " at " + position);
+						if (last == 1) {
+							sb.append(", ").append(count).append(" at ").append(position);
+						} else {
+							last = 1;
+							sb.append("\n-->Insert ").append(count).append(" at ").append(
+									position);
+						}
 					}
 
 					@Override
 					public void onRemoved(int position, int count) {
-						log(TAG, "-->Remove " + count + " at " + position);
+						if (last == 2) {
+							sb.append(", ").append(count).append(" at ").append(position);
+						} else {
+							last = 2;
+							sb.append("\n-->Remove ").append(count).append(" at ").append(
+									position);
+						}
 					}
 
 					@Override
 					public void onMoved(int fromPosition, int toPosition) {
-						log(TAG, "-->move " + fromPosition + " to " + toPosition);
+						if (last == 3) {
+							sb.append(", ").append(fromPosition).append("->").append(
+									toPosition);
+						} else {
+							last = 3;
+							sb.append("\n-->Move ").append(fromPosition).append(
+									"->").append(toPosition);
+						}
 					}
 
 					@Override
 					public void onChanged(int position, int count, Object payload) {
 						T t = position < newItems.size() ? newItems.get(position) : null;
-						log(TAG, "-->Change " + count + " at " + position + "; " + t);
+						if (last == 4) {
+							sb.append(", ").append(count).append(" at ")
+								.append(position).append("; ").append(t);
+						} else {
+							last = 4;
+							sb.append("\n-->Change ").append(count).append(" at ")
+								.append(position).append("; ").append(t);
+						}
 					}
 				});
+				
+				if (sb.length() > 1) {
+					log(TAG, sb.toString().substring(1));
+				}
 			}
 
 			complete = true;
@@ -860,6 +893,11 @@ public abstract class FlexibleRecyclerAdapter<ADAPTERTYPE extends RecyclerView.A
 
 		@Override
 		protected void onPostExecute(Void aVoid) {
+			long start = 0;
+			if (AndroidUtils.DEBUG_ADAPTER) {
+				start = System.currentTimeMillis();
+			}
+
 			// Need to set items on UI Thread.  If we did it in background,
 			// there's a chance that the RecyclerView UI is walking through the items,
 			// starting before we set mItems (and caching length), but ending after
@@ -899,6 +937,10 @@ public abstract class FlexibleRecyclerAdapter<ADAPTERTYPE extends RecyclerView.A
 			}
 
 			lastSetItemsOn = System.currentTimeMillis();
+			if (AndroidUtils.DEBUG_ADAPTER) {
+				log(TAG, "SetItemsAsyncTask: onPostExecute; " + this + " in "
+						+ (System.currentTimeMillis() - start) + "ms");
+			}
 			triggerOnSetItemsCompleteListeners();
 		}
 
@@ -1589,7 +1631,7 @@ public abstract class FlexibleRecyclerAdapter<ADAPTERTYPE extends RecyclerView.A
 	public boolean isNeverSetItems() {
 		return neverSetItems;
 	}
-	
+
 	public void setNeverSetItems(boolean neverSetItems) {
 		this.neverSetItems = neverSetItems;
 	}
