@@ -33,6 +33,7 @@
 				android:layout_marginLeft="@dimen/activity_horizontal_margin"
 				android:layout_marginEnd="@dimen/activity_horizontal_margin"
 				android:layout_marginRight="@dimen/activity_horizontal_margin"
+				tools:layout_height="200dp"
 				tools:layout="@layout/frag_openoptions_general"/>
 
 			<androidx.fragment.app.FragmentContainerView
