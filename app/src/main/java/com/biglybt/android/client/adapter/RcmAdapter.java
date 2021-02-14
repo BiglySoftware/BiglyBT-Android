@@ -174,7 +174,7 @@ public class RcmAdapter
 
 		//sb.append("Discovery Strength: " + rank);
 
-		holder.pbRank.setProgress((int) rank);
+		AndroidUtilsUI.setProgress(holder.pbRank, (int) rank, true);
 
 		long pubDate = MapUtils.getMapLong(mapRCM,
 				TransmissionVars.FIELD_RCM_PUBLISHDATE, 0);

@@ -127,7 +127,7 @@ public class TorrentListRowFiller
 			holder.pb.setVisibility(pctDone < 0 ? View.INVISIBLE : View.VISIBLE);
 			int pctDoneInt = (int) (pctDone * 10000);
 			if (holder.pb.getProgress() != pctDoneInt) {
-				holder.pb.setProgress(pctDoneInt);
+				AndroidUtilsUI.setProgress(holder.pb, pctDoneInt, true);
 			}
 		}
 

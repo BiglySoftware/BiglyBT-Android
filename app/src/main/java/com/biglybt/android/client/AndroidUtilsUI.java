@@ -30,6 +30,7 @@ import android.graphics.PorterDuff;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
 import android.provider.Browser;
@@ -1573,5 +1574,14 @@ public class AndroidUtilsUI
 		}
 
 		return null;
+	}
+
+	public static void setProgress(@NonNull ProgressBar pb, int progress,
+			boolean animate) {
+		if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N || !animate) {
+			pb.setProgress(progress);
+			return;
+		}
+		pb.setProgress(progress, animate);
 	}
 }

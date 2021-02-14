@@ -387,7 +387,7 @@ public class FilesTreeAdapter
 				holder.pb.setVisibility(
 						inEditMode ? View.GONE : oFile.want ? View.VISIBLE : View.GONE);
 				if (oFile.want && !inEditMode) {
-					holder.pb.setProgress((int) (pctDone * 10000));
+					AndroidUtilsUI.setProgress(holder.pb, (int) (pctDone * 10000), true);
 				}
 			}
 		} else {

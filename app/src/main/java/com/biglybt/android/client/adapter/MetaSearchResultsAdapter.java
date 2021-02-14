@@ -243,7 +243,7 @@ public class MetaSearchResultsAdapter
 
 		double rank = MapUtils.parseMapDouble(map,
 				TransmissionVars.FIELD_SEARCHRESULT_RANK, 0);
-		holder.pbRank.setProgress((int) (rank * 1000));
+		AndroidUtilsUI.setProgress(holder.pbRank, (int) (rank * 1000), true);
 
 		if (holder.btnNew != null) {
 			holder.btnNew.setVisibility(MapUtils.getMapBoolean(map,
