@@ -178,11 +178,9 @@ public class BiglyCoreUtils
 									coreSession.getRemoteProfile().getID(), true);
 						}
 					}
-					detachCore();
 				} else if ("restarting".equals(state)) {
 					CustomToast.showText(R.string.toast_core_restarting,
 							Toast.LENGTH_LONG);
-					detachCore();
 				} else if ("ready-to-start".equals(state)) {
 					CustomToast.showText(R.string.toast_core_starting, Toast.LENGTH_LONG);
 				}

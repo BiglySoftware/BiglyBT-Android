@@ -203,6 +203,20 @@ public class BiglyBTService
 				if (webUIStarted) {
 					sendStuff(MSG_OUT_WEBUI_STARTED, "MSG_OUT_WEBUI_STARTED");
 				}
+			} else {
+				Map<String, Object> bundle = new HashMap<>();
+				bundle.put("data", msgOutCoreStoppedCalled ? "MSG_OUT_CORE_STOPPED"
+						: "MSG_OUT_CORE_STOPPING");
+				bundle.put("restarting", restartService);
+				sendStuff(msgOutCoreStoppedCalled ? MSG_OUT_CORE_STOPPED
+						: MSG_OUT_CORE_STOPPING, bundle);
+
+				if (msgOutCoreDestroyedCalled) {
+					bundle = new HashMap<>();
+					bundle.put("data", "MSG_OUT_SERVICE_DESTROY");
+					bundle.put("restarting", restartService);
+					sendStuff(MSG_OUT_SERVICE_DESTROY, bundle);
+				}
 			}
 
 			return added;
@@ -675,6 +689,9 @@ public class BiglyBTService
 
 	@Thunk
 	boolean msgOutCoreStoppedCalled = false;
+
+	@Thunk
+	boolean msgOutCoreDestroyedCalled = false;
 
 	private static Object staticVar = null;
 
@@ -1382,6 +1399,10 @@ public class BiglyBTService
 		bundle.put("data", "MSG_OUT_SERVICE_DESTROY");
 		bundle.put("restarting", restartService);
 		sendStuff(MSG_OUT_SERVICE_DESTROY, bundle);
+		
+		// There's still a chance this service can be bound to, even after 
+		// System.exit() is called. Flag so we can report back the state to the binder
+		msgOutCoreDestroyedCalled = true;
 
 		allowNotificationUpdate = false;
 		NotificationManager mNotificationManager = (NotificationManager) getSystemService(
@@ -1481,7 +1502,7 @@ public class BiglyBTService
 	}
 
 	private void onlineStateChangedNoDelay(@NonNull CorePrefs corePrefs,
-		boolean isOnline, boolean isOnlineMobile) {
+			boolean isOnline, boolean isOnlineMobile) {
 		boolean requireRestart = false;
 
 		if (lastOnline == null) {
