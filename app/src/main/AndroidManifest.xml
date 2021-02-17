@@ -1727,6 +1727,9 @@
 		<activity
 			android:name=".activity.SettingsActivity"
 			android:theme="@style/myThemePreferences"/>
+		<activity
+			android:name=".activity.SettingsActivityLB"
+			android:theme="@style/ThemeLeanbackSettings"/>
 
 		<activity android:name=".activity.DirectoryChooserActivity" />
 

@@ -19,6 +19,7 @@ package com.biglybt.android.client.activity;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Build.VERSION;
 import android.os.Build.VERSION_CODES;
 import android.os.Bundle;
@@ -414,7 +415,9 @@ public class TorrentViewActivity
 			return true;
 		} else if (itemId == R.id.action_settings) {
 			Intent intent = new Intent(Intent.ACTION_VIEW, null, this,
-					SettingsActivity.class);
+					AndroidUtils.isTV(this)
+							&& Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP
+									? SettingsActivityLB.class : SettingsActivity.class);
 			intent.setFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
 			intent.putExtra(SessionManager.BUNDLE_KEY, getRemoteProfileID());
 			startActivity(intent);

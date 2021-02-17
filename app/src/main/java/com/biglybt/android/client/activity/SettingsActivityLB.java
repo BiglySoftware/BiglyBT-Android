@@ -16,32 +16,32 @@
 
 package com.biglybt.android.client.activity;
 
-import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 
+import com.biglybt.android.client.AndroidUtils;
 import com.biglybt.android.client.R;
 import com.biglybt.android.client.dialog.DialogFragmentAbstractLocationPicker.LocationPickerListener;
 import com.biglybt.android.client.dialog.DialogFragmentNumberPicker.NumberPickerDialogListener;
-import com.biglybt.android.client.fragment.SettingsFragmentM;
+import com.biglybt.android.client.fragment.SettingsFragmentLB;
 import com.biglybt.android.util.PathInfo;
 
-public class SettingsActivity
-	extends SessionActivity
-	implements NumberPickerDialogListener, LocationPickerListener
+public class SettingsActivityLB
+	extends SettingsActivity
 {
-	public static final String TARGET_SETTING_PAGE = "rootKey";
-
 	private Fragment frag;
 
 	@Override
 	public void onNumberPickerChange(@Nullable String callbackID, int val) {
+
 		if (frag instanceof NumberPickerDialogListener) {
 			((NumberPickerDialogListener) frag).onNumberPickerChange(callbackID, val);
+		} else {
+			super.onNumberPickerChange(callbackID, val);
 		}
 	}
 
@@ -49,30 +49,25 @@ public class SettingsActivity
 	public void locationChanged(String callbackID, @NonNull PathInfo location) {
 		if (frag instanceof LocationPickerListener) {
 			((LocationPickerListener) frag).locationChanged(callbackID, location);
+		} else {
+			super.locationChanged(callbackID, location);
 		}
 	}
 
+
+	@Override
+	public int getThemeId() {
+		return 0; // Use AndroidManifest's value
+	}
+
+	@SuppressWarnings("MethodDoesntCallSuperMethod")
 	@Override
 	protected void onCreateWithSession(@Nullable Bundle savedInstanceState) {
-		setContentView(R.layout.activity_toolbar_frag);
-		Toolbar toolbar = findViewById(R.id.actionbar);
-		toolbar.setTitle(R.string.settings);
-		setSupportActionBar(toolbar);
-		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-		toolbar.setNavigationOnClickListener(v -> onBackPressed());
-		if (savedInstanceState == null) {
-			frag = new SettingsFragmentM();
-			Intent intent = getIntent();
-			if (intent != null) {
-				String rootKey = intent.getStringExtra(TARGET_SETTING_PAGE);
-				if (rootKey != null) {
-					final Bundle bundle = new Bundle();
-					bundle.putString(TARGET_SETTING_PAGE, rootKey);
-					frag.setArguments(bundle);
-				}
-			}
-			getSupportFragmentManager().beginTransaction().replace(
-					R.id.fragment_container, frag).commit();
+		if (savedInstanceState != null) {
+			return;
 		}
+		frag = new SettingsFragmentLB();
+		getSupportFragmentManager().beginTransaction().replace(android.R.id.content,
+				frag).commit();
 	}
 }
