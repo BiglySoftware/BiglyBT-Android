@@ -2,7 +2,7 @@
 <!-- Layout used by ButtonPreference. This is inflated
      inside android.R.layout.preference. -->
 <com.google.android.material.button.MaterialButton xmlns:android="http://schemas.android.com/apk/res/android"
-    style="?attr/materialButtonStyle"
+    style="@style/Widget.MaterialComponents.Button"
     android:id="@+id/button"
     android:duplicateParentState="true"
     android:layout_width="wrap_content"

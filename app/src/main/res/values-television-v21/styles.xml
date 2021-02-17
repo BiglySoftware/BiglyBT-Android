@@ -77,6 +77,19 @@
 		<item name="textAppearanceCaption">@style/TextAppearance.MaterialComponents.Caption</item>
 		<item name="textAppearanceButton">@style/TextAppearance.MaterialComponents.Button</item>
 		<item name="textAppearanceOverline">@style/TextAppearance.MaterialComponents.Overline</item>
+
+		<!-- Added Probably in Material 1.3.0 -->
+		<item name="minTouchTargetSize">@dimen/mtrl_min_touch_target_size</item>
+		<!-- Shape styles -->
+		<item name="shapeAppearanceSmallComponent">
+			@style/ShapeAppearance.MaterialComponents.SmallComponent
+		</item>
+		<item name="shapeAppearanceMediumComponent">
+			@style/ShapeAppearance.MaterialComponents.MediumComponent
+		</item>
+		<item name="shapeAppearanceLargeComponent">
+			@style/ShapeAppearance.MaterialComponents.LargeComponent
+		</item>
 	</style>
 
 	<style name="MySwitchStyle" parent="@style/Widget.MaterialComponents.CompoundButton.Switch">
