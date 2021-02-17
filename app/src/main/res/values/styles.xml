@@ -229,7 +229,7 @@
 	<style name="ThemeLeanbackSettings" parent="AppThemeDark">
 		<item name="android:windowIsTranslucent">true</item>
 		<item name="android:windowBackground">@color/transparent</item>
-		<item name="android:backgroundDimEnabled">false</item>
+		<item name="android:backgroundDimEnabled">true</item>
 	</style>
 
 	<style name="AppThemeNoBackground" parent="AppTheme">
