@@ -38,6 +38,9 @@ import com.biglybt.android.util.NetworkState;
 import com.biglybt.android.util.NetworkState.NetworkStateListener;
 import com.biglybt.core.*;
 import com.biglybt.core.config.COConfigurationManager;
+import com.biglybt.core.config.impl.ConfigurationDefaults;
+import com.biglybt.core.config.impl.ConfigurationManager;
+import com.biglybt.core.config.impl.ConfigurationParameterNotFoundException;
 import com.biglybt.core.download.DownloadManager;
 import com.biglybt.core.download.DownloadManagerEnhancer;
 import com.biglybt.core.global.GlobalManager;
@@ -58,9 +61,7 @@ import com.biglybt.util.Thunk;
 import java.io.File;
 import java.io.OutputStream;
 import java.io.PrintStream;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Android Service handling launch and shutting down BiglyBT core as well as
@@ -164,6 +165,10 @@ public class BiglyBTService
 
 	@SuppressWarnings("RedundantThrows")
 	private final IBiglyCoreInterface.Stub mBinder = new IBiglyCoreInterface.Stub() {
+
+		private ConfigurationManager configMan;
+
+		private ConfigurationDefaults defs;
 
 		@Override
 		public boolean addListener(IBiglyCoreCallback callback)
@@ -269,7 +274,16 @@ public class BiglyBTService
 		@Override
 		public boolean setParamInt(String key, int val)
 				throws RemoteException {
-			return COConfigurationManager.setParameter(key, val);
+			ConfigurationManager manager = getConfigurationManager();
+			boolean mightChange;
+			try {
+				int i = getConfigurationDefaults().getIntParameter(key);
+				mightChange = i != val || manager.hasParameter(key, true);
+			} catch (ConfigurationParameterNotFoundException e) {
+				mightChange = true;
+			}
+			boolean set = manager.setParameter(key, val);
+			return mightChange && set;
 		}
 
 		@Override
@@ -281,7 +295,16 @@ public class BiglyBTService
 		@Override
 		public boolean setParamLong(String key, long val)
 				throws RemoteException {
-			return COConfigurationManager.setParameter(key, val);
+			ConfigurationManager manager = getConfigurationManager();
+			boolean mightChange;
+			try {
+				long l = getConfigurationDefaults().getLongParameter(key);
+				mightChange = l != val || manager.hasParameter(key, true);
+			} catch (ConfigurationParameterNotFoundException e) {
+				mightChange = true;
+			}
+			boolean set = manager.setParameter(key, val);
+			return mightChange && set;
 		}
 
 		@Override
@@ -293,7 +316,16 @@ public class BiglyBTService
 		@Override
 		public boolean setParamFloat(String key, float val)
 				throws RemoteException {
-			return COConfigurationManager.setParameter(key, val);
+			ConfigurationManager manager = getConfigurationManager();
+			boolean mightChange;
+			try {
+				float f = getConfigurationDefaults().getFloatParameter(key);
+				mightChange = f != val || manager.hasParameter(key, true);
+			} catch (ConfigurationParameterNotFoundException e) {
+				mightChange = true;
+			}
+			boolean set = manager.setParameter(key, val);
+			return mightChange && set;
 		}
 
 		@Override
@@ -305,7 +337,16 @@ public class BiglyBTService
 		@Override
 		public boolean setParamString(String key, String val)
 				throws RemoteException {
-			return COConfigurationManager.setParameter(key, val);
+			ConfigurationManager manager = getConfigurationManager();
+			boolean mightChange;
+			try {
+				String s = getConfigurationDefaults().getStringParameter(key);
+				mightChange = Objects.equals(s, val) || manager.hasParameter(key, true);
+			} catch (ConfigurationParameterNotFoundException e) {
+				mightChange = true;
+			}
+			boolean set = manager.setParameter(key, val);
+			return mightChange && set;
 		}
 
 		@Override
@@ -317,7 +358,30 @@ public class BiglyBTService
 		@Override
 		public boolean setParamBool(String key, boolean val)
 				throws RemoteException {
-			return COConfigurationManager.setParameter(key, val);
+			ConfigurationManager manager = getConfigurationManager();
+			boolean mightChange;
+			try {
+				boolean b = getConfigurationDefaults().getBooleanParameter(key);
+				mightChange = b != val || manager.hasParameter(key, true);
+			} catch (ConfigurationParameterNotFoundException e) {
+				mightChange = true;
+			}
+			boolean set = manager.setParameter(key, val);
+			return mightChange && set;
+		}
+
+		private ConfigurationDefaults getConfigurationDefaults() {
+			if (defs == null) {
+				defs = ConfigurationDefaults.getInstance();
+			}
+			return defs;
+		}
+
+		private ConfigurationManager getConfigurationManager() {
+			if (configMan == null) {
+				configMan = ConfigurationManager.getInstance();
+			}
+			return configMan;
 		}
 	};
 
@@ -1399,7 +1463,7 @@ public class BiglyBTService
 		bundle.put("data", "MSG_OUT_SERVICE_DESTROY");
 		bundle.put("restarting", restartService);
 		sendStuff(MSG_OUT_SERVICE_DESTROY, bundle);
-		
+
 		// There's still a chance this service can be bound to, even after 
 		// System.exit() is called. Flag so we can report back the state to the binder
 		msgOutCoreDestroyedCalled = true;
