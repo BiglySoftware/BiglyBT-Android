@@ -60,6 +60,7 @@ import com.biglybt.android.util.OnSwipeTouchListener;
 import com.biglybt.android.widget.FlingLinearLayout;
 import com.biglybt.android.widget.PreCachingLayoutManager;
 import com.biglybt.util.Thunk;
+import com.google.android.material.progressindicator.BaseProgressIndicator;
 
 import org.jetbrains.annotations.NonNls;
 
@@ -1663,7 +1664,7 @@ public class SideListHelper<ADAPTERITEM extends Comparable<ADAPTERITEM>>
 			return;
 		}
 
-		ProgressBar spinner = activity.findViewById(R.id.sideaction_spinner);
+		BaseProgressIndicator spinner = activity.findViewById(R.id.sideaction_spinner);
 		if (spinner != null) {
 			if (((View) spinner.getParent()).getVisibility() == View.GONE) {
 				spinner = null;
@@ -1695,8 +1696,7 @@ public class SideListHelper<ADAPTERITEM extends Comparable<ADAPTERITEM>>
 			}
 			case DelayedFilter.FILTERSTATE_PUBLISHING: {
 				if (spinner != null) {
-					spinner.setVisibility(View.VISIBLE);
-					spinner.forceLayout();
+					spinner.show();
 				}
 				if (tvFilterCurrent != null) {
 					unpulsateTextView(tvFilterCurrent);
@@ -1712,8 +1712,7 @@ public class SideListHelper<ADAPTERITEM extends Comparable<ADAPTERITEM>>
 
 			case DelayedFilter.FILTERSTATE_IDLE: {
 				if (spinner != null) {
-					spinner.setVisibility(View.GONE);
-					spinner.forceLayout();
+					spinner.hide();
 				}
 				unpulsateTextView(tvSortCurrent);
 				if (tvFilterCurrent != null) {
