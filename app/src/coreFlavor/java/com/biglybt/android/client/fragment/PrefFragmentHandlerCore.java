@@ -100,7 +100,9 @@ public class PrefFragmentHandlerCore
 
 	private static final String KEY_RACCESS_PW = "core_remote_access_pw";
 
-	private static final String KEY_PREFSUMMARY_APPLIED_AFTER_CLOSING = "prefsummary_applied_after_closing";
+	private static final String KEY_PREFSUMMARY_APPLIED_AFTER_CLOSING_PROXY = "prefsummary_applied_after_closing_proxy";
+
+	private static final String KEY_PREFSUMMARY_APPLIED_AFTER_CLOSING_RA = "prefsummary_applied_after_closing_ra";
 
 	private static final String KEY_RACCESS_SHOWQR = "action_remote_access_qr";
 
@@ -581,7 +583,7 @@ public class PrefFragmentHandlerCore
 		boolean allowLANAccess = ds.getBoolean(KEY_ALLOW_LAN_ACCESS);
 
 		final Preference prefSummaryLine = findPreference(
-				KEY_PREFSUMMARY_APPLIED_AFTER_CLOSING);
+				KEY_PREFSUMMARY_APPLIED_AFTER_CLOSING_RA);
 		if (prefSummaryLine != null) {
 			prefSummaryLine.setSummary(
 					activity.getString(R.string.prefsummary_applied_after_closing,
@@ -633,7 +635,7 @@ public class PrefFragmentHandlerCore
 		}
 
 		final Preference prefSummaryLine = findPreference(
-				KEY_PREFSUMMARY_APPLIED_AFTER_CLOSING);
+				KEY_PREFSUMMARY_APPLIED_AFTER_CLOSING_PROXY);
 		if (prefSummaryLine != null) {
 			prefSummaryLine.setSummary(
 					activity.getString(R.string.prefsummary_applied_after_closing,

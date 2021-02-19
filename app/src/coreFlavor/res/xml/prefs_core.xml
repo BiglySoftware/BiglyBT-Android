@@ -121,7 +121,7 @@
 			tools:summary="Proxy is disabled">
 
 			<Preference
-				android:key="prefsummary_applied_after_closing"
+				android:key="prefsummary_applied_after_closing_proxy"
 				tools:summary="@string/prefsummary_applied_after_closing"/>
 
 			<SwitchPreference
@@ -265,7 +265,7 @@
 			tools:summary="Remote Access is disabled">
 
 			<Preference
-				android:key="prefsummary_applied_after_closing"
+				android:key="prefsummary_applied_after_closing_ra"
 				tools:summary="@string/prefsummary_applied_after_closing"/>
 
 			<SwitchPreference
