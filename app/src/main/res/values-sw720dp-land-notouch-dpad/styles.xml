@@ -98,4 +98,9 @@
 		<item name="android:gravity">left</item>
 	</style>
 
+	<style name="MyPreferenceTheme" parent="@style/PreferenceThemeOverlayLeanback">
+		<item name="switchPreferenceCompatStyle">@style/MySwitchPreferenceStyle</item>
+		<item name="switchPreferenceStyle">@style/MySwitchPreferenceStyle</item>
+		<item name="android:switchPreferenceStyle">@style/MySwitchPreferenceStyle</item>
+	</style>
 </resources>
