@@ -71,7 +71,6 @@
 				android:paddingBottom="8dp"
 				android:paddingTop="16dp"
 				android:text="@string/rangepicker_maximum_size"
-				app:showText="false"
 				/>
 		</LinearLayout>
 

@@ -1725,8 +1725,7 @@
 			</intent-filter>
 		</activity>
 		<activity
-			android:name=".activity.SettingsActivity"
-			android:theme="@style/myThemePreferences"/>
+			android:name=".activity.SettingsActivity"/>
 		<activity
 			android:name=".activity.SettingsActivityLB"
 			android:theme="@style/ThemeLeanbackSettings"/>

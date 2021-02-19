@@ -11,6 +11,8 @@
 		<item name="android:windowActionModeOverlay">true</item>
 		<item name="preserveIconSpacing">true</item>
 		<item name="checkboxStyle">@style/Widget.MaterialComponents.CompoundButton.CheckBox</item>
+		<item name="switchStyle">@style/MySwitchStyle</item>
+		<item name="preferenceTheme">@style/MyPreferenceTheme</item>
 		<!--
             Theme customizations available in newer API levels can go in
             res/values-vXX/styles.xml, while customizations related to
@@ -20,6 +22,8 @@
 
 	<style name="AppBaseThemeDark" parent="@style/Theme.MaterialComponents.NoActionBar">
 		<item name="switchStyle">@style/MySwitchStyle</item>
+		<item name="preferenceTheme">@style/MyPreferenceTheme</item>
+
 		<item name="android:windowOverscan" tools:targetApi="jelly_bean_mr2">false
 		</item>
 		<item name="android:windowNoTitle">true</item>
@@ -36,7 +40,13 @@
             backward-compatibility can go here.
 		-->
 	</style>
-
+	
+	<style name="MyPreferenceTheme" parent="@style/PreferenceThemeOverlay">
+		<item name="switchPreferenceCompatStyle">@style/MySwitchPreferenceStyle</item>
+		<item name="switchPreferenceStyle">@style/MySwitchPreferenceStyle</item>
+		<item name="android:switchPreferenceStyle">@style/MySwitchPreferenceStyle</item>
+	</style>
+	
 	<!-- 
 	Note: theme is set to ThemeBlack which only defines windowBackground as
 				black. When the activity is created, the standard theme is assigned
@@ -210,20 +220,25 @@
 	</style>
 
 	<style name="MySwitchStyle" parent="@style/Widget.MaterialComponents.CompoundButton.Switch">
+		<item name="android:thumb">@drawable/switch_inner_holo_light</item>
+		<item name="showText">true</item>
+		<item name="switchPadding">16dp</item>
+		<item name="switchTextAppearance">@style/MySwitchTextAppearance</item>
+		<item name="thumbTextPadding">4dp</item>
+		
 		<item name="thumbTint">@color/switch_thumbs</item>
-		<item name="track">@drawable/switch_track_dark</item>
-		<item name="android:thumb">@drawable/switch_thumb_material</item>
-		<item name="android:switchMinWidth">40dp</item>
-		<item name="showText">false</item>
+		<item name="trackTint">@color/transparent</item>
+		<!-- Needed for Amazon TV, otherwise selected switch's text will be black -->
+		<item name="android:textColor">?android:attr/textColorPrimary</item>
 	</style>
-	
 
-	<style name="myThemePreferences" parent="AppTheme">
-		<item name="android:windowIsTranslucent">true</item>
-		<item name="android:windowBackground">@android:color/transparent</item>
-		<item name="android:backgroundDimEnabled">true</item>
+	<style name="MySwitchPreferenceStyle" parent="@style/Preference.SwitchPreference.Material">
+		<item name="widgetLayout">@layout/custom_switch</item>
+		<item name="singleLineTitle">false</item>
+	</style>
 
-		<item name="preferenceTheme">@style/PreferenceThemeOverlay.v14</item>
+	<style name="MySwitchTextAppearance" parent="@style/TextAppearance.AppCompat.Widget.Switch">
+		<item name="android:textColor">?colorOnPrimary</item>
 	</style>
 
 	<style name="ThemeLeanbackSettings" parent="AppThemeDark">
@@ -399,9 +414,9 @@
 		<item name="android:layout_height">wrap_content</item>
 		<item name="android:background">@drawable/list_selector</item>
 		<item name="android:minHeight">48dp</item>
-		<item name="android:paddingEnd">16dp</item>
+		<item name="android:layout_marginEnd">@dimen/sidelist_filter_padding_x2</item>
 		<item name="android:paddingLeft">@dimen/sidelist_body_textpadding_x</item>
-		<item name="android:paddingRight">16dp</item>
+		<item name="android:layout_marginRight">@dimen/sidelist_filter_padding_x2</item>
 		<item name="android:paddingStart">@dimen/sidelist_body_textpadding_x</item>
 		<item name="android:textAppearance">?android:attr/textAppearanceMedium
 		</item>

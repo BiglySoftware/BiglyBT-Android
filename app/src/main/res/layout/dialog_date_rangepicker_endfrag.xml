@@ -19,8 +19,6 @@
             android:layout_height="wrap_content"
             android:paddingTop="8dp"
             android:text="@string/rangepicker_end_date"
-            app:showText="false"
-            app:switchMinWidth="32dp"
             />
 
         <DatePicker

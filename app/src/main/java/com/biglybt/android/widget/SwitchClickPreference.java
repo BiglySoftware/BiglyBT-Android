@@ -17,18 +17,22 @@
 package com.biglybt.android.widget;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.CompoundButton;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.widget.SwitchCompat;
 import androidx.core.view.ViewCompat;
 import androidx.preference.PreferenceViewHolder;
 import androidx.preference.SwitchPreferenceCompat;
 
 import com.biglybt.android.client.AndroidUtils;
 import com.biglybt.android.client.R;
+
+import java.lang.reflect.Field;
 
 /**
  * SwitchPreferenceCompat row with different actions for clicking on switch
@@ -66,10 +70,41 @@ public class SwitchClickPreference
 
 	@Override
 	public void onBindViewHolder(PreferenceViewHolder holder) {
-		super.onBindViewHolder(holder);
-
 		CompoundButton button = (CompoundButton) holder.findViewById(
 				R.id.switchWidget);
+
+		// SwitchCompat is designed to only allow setting On/Off text once
+		// This isn't compatible with recyclerview which will reuse widgets, and
+		// thus breaks when any one item uses different on/off text
+		//
+		// I've tried holder.setIsRecyclable(false), but that leaves random unattached items on the display
+		//
+		// One solution would be to tell the recycler view that SwitchPreference always
+		// needs a new holder, but I don't know how to do that.
+		//
+		// The following solution is to clear on/off layout object when on/off text doesn't match
+		if (button instanceof SwitchCompat) {
+			SwitchCompat switchView = (SwitchCompat) button;
+			try {
+				CharSequence textOn = switchView.getTextOn();
+				if (!getSwitchTextOn().equals(textOn)) {
+					Field mOnLayout = SwitchCompat.class.getDeclaredField("mOnLayout");
+					mOnLayout.setAccessible(true);
+					mOnLayout.set(switchView, null);
+				}
+				CharSequence textOff = switchView.getTextOff();
+				if (!getSwitchTextOff().equals(textOff)) {
+					Field mOffLayout = SwitchCompat.class.getDeclaredField("mOffLayout");
+					mOffLayout.setAccessible(true);
+					mOffLayout.set(switchView, null);
+				}
+			} catch (Exception e) {
+				Log.e("SO", "onBindViewHolder: ", e);
+			}
+		}
+
+		super.onBindViewHolder(holder);
+
 		View iv = holder.itemView;
 		if (button != null) {
 			iv.setClickable(true);

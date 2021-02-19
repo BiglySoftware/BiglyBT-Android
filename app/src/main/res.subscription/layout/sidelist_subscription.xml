@@ -45,7 +45,7 @@
 			style="@style/sidelist_item_switch"
 			android:onClick="showOnlyUnseen_clicked"
 			android:text="@string/only_unseen"
-			app:switchPadding="8dp"/>
+		/>
 
 
 		<LinearLayout

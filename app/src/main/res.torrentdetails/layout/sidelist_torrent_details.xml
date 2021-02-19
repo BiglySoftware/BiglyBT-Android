@@ -1,14 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-	xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
 	xmlns:tools="http://schemas.android.com/tools"
+	xmlns:app="http://schemas.android.com/apk/res-auto"
 	android:id="@+id/sidelist_layout"
 	style="@style/sidelist_main"
 	android:layout_width="@dimen/sidelist_torrentdetails_width"
 	android:layout_height="match_parent"
 	android:orientation="vertical"
 	tools:context="com.biglybt.android.client.fragment.TorrentListFragment"
-	tools:showIn="@layout/activity_torrent_detail_tv">
+	tools:showIn="@layout/activity_torrent_detail_tv"
+	>
 
 	<include layout="@layout/inc_sidelist_actions"/>
 
@@ -37,6 +38,7 @@
 			<com.google.android.material.switchmaterial.SwitchMaterial
 				android:id="@+id/files_editmode"
 				style="@style/sidelist_item_switch"
+				tools:checked="true"
 				android:text="@string/one_click_edit_mode"/>
 
 			<com.google.android.material.switchmaterial.SwitchMaterial

@@ -102,9 +102,6 @@
 						android:nextFocusLeft="@id/range0_picker_date"
 						android:nextFocusRight="@+id/range_set"
 						android:text="@string/rangepicker_end_date"
-						app:showText="false"
-						app:switchPadding="8dp"
-						app:switchMinWidth="32dp"
 						tools:checked="true"
 						/>
 				</LinearLayout>

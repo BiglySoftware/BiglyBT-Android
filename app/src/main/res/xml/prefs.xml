@@ -57,13 +57,12 @@
 			android:title="@string/preftitle_refresh_interval"
 			tools:summary="Refresh every 30 seconds\nRefresh every 90 seconds when on Mobile"/>
 
-		<SwitchPreference
+		<com.biglybt.android.widget.SwitchPreference
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:key="small_list"
-			android:singleLineTitle="false"
 			android:title="@string/rp_small_lists"
-			app:singleLineTitle="false"/>
+			/>
 
 		<Preference
 			android:layout_width="wrap_content"
@@ -73,30 +72,25 @@
 			tools:summary="Somewhere"
 			/>
 
-		<SwitchPreference
+		<com.biglybt.android.widget.SwitchPreference
 			android:id="@+id/settings_show_open_options"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:key="show_open_options"
-			android:singleLineTitle="false"
 			android:summary="@string/prefsummary_show_open_options"
 			android:title="@string/preftitle_show_open_options"
-			app:singleLineTitle="false"
 			/>
 
-		<SwitchPreferenceCompat
+		<com.biglybt.android.widget.SwitchPreference
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:key="ui_theme"
-			android:singleLineTitle="false"
 			android:summaryOff="@string/prefsummary_theme_light"
 			android:summaryOn="@string/prefsummary_theme_dark"
 			android:switchTextOff="@string/prefswitch_theme_light"
 			android:switchTextOn="@string/prefswitch_theme_dark"
-			android:title="@string/preftitle_ui_theme"
-			app:showText="true"
-			app:singleLineTitle="false"
-			app:widgetLayout="@layout/custom_switch" />
+			android:title="@string/preftitle_ui_theme" 
+			/>
 	</PreferenceCategory>
 
 	<PreferenceCategory android:title="@string/prefcat_network">

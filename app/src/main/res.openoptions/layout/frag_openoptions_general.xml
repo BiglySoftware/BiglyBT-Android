@@ -160,9 +160,6 @@
 					android:textOff="@string/openoptions_position_first"
 					android:textOn="@string/openoptions_position_last"
 					android:thumb="@drawable/switch_inner_holo_light"
-					app:showText="true"
-					app:switchPadding="16dp"
-					app:thumbTextPadding="12dp"
 					/>
 			</LinearLayout>
 
@@ -191,26 +188,38 @@
 					android:checked="true"
 					android:textOff="@string/openoptions_state_stopped"
 					android:textOn="@string/openoptions_state_queued"
-					android:thumb="@drawable/switch_inner_holo_light"
-					app:showText="true"
-					app:splitTrack="false"
-					app:switchPadding="16dp"
-					app:thumbTextPadding="12dp"/>
+					app:splitTrack="false"/>
 
 
 			</LinearLayout>
 
-			<com.google.android.material.switchmaterial.SwitchMaterial
-				android:id="@+id/openoptions_sw_sequential"
+			<LinearLayout
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
-				android:text="@string/sequential_download"
-				android:textAppearance="?android:attr/textAppearance"
-				android:textColor="?android:attr/textColorHint"
-				android:textSize="12sp"
-				app:switchPadding="16dp"
-				app:thumbTextPadding="12dp"
-				/>
+				android:layout_marginTop="8dp"
+				android:orientation="vertical">
+
+				<TextView
+					android:id="@+id/openoptions_lbl_sw_sequential"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:gravity="fill_vertical"
+					android:labelFor="@+id/openoptions_sw_sequential"
+					android:text="@string/sequential_download"
+					android:textAppearance="?android:attr/textAppearance"
+					android:textColor="?android:attr/textColorHint"
+					android:textSize="12sp"/>
+
+				<com.google.android.material.switchmaterial.SwitchMaterial
+					android:id="@+id/openoptions_sw_sequential"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:textColor="?android:attr/textColorHint"
+					android:textSize="12sp"
+					/>
+
+			</LinearLayout>
+
 		</com.google.android.flexbox.FlexboxLayout>
 
 	</LinearLayout>

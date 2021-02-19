@@ -48,7 +48,7 @@
 		<item name="switchStyle">@style/MySwitchStyle</item>
 		<item name="checkboxStyle">@style/MyCheckboxStyle</item>
 
-		<item name="preferenceTheme">@style/FixedPreferenceThemeOverlayLeanback</item>
+		<item name="preferenceTheme">@style/MyPreferenceTheme</item>
 
 		<!-- New MaterialComponents attributes. -->
 		<item name="materialAlertDialogTheme">@style/ThemeOverlay.MaterialComponents.MaterialAlertDialog</item>
@@ -92,15 +92,6 @@
 		</item>
 	</style>
 
-	<style name="MySwitchStyle" parent="@style/Widget.MaterialComponents.CompoundButton.Switch">
-		<item name="thumbTint">@color/switch_thumbs</item>
-		<item name="android:thumb">@drawable/abc_switch_thumb_material</item>
-		<item name="android:switchMinWidth">40dp</item>
-		<item name="switchMinWidth">40dp</item>
-		<!-- Needed for Amazon TV, otherwise selected switch's text will be black -->
-		<item name="android:textColor">?android:attr/textColorPrimary</item>
-	</style>
-	
 	<style name="MyCheckboxStyle" parent="@style/Widget.MaterialComponents.CompoundButton.CheckBox">
 		<!-- Needed for Amazon TV, otherwise selected text will be orange and I have no idea where the orange is defined -->
 		<item name="android:textColor">?android:attr/textColorPrimary</item>
@@ -109,20 +100,6 @@
 	<style name="sidelist_action_leftcol">
 		<item name="android:gravity">left</item>
 	</style>
-
-	<!-- 
-	Leanback Bug: SwitchPreferenceCompat in a LeanbackPreferenceFragmentCompat 
-	will not show enabled state because the widgetLayout is switch_widget instead
-	of switchWidget
-	-->
-	<style name="FixedPreferenceThemeOverlayLeanback" parent="PreferenceThemeOverlayLeanback">
-		<item name="switchPreferenceCompatStyle">@style/LeanbackPreference.FixedSwitchPreferenceCompat</item>
-	</style>
-
-	<style name="LeanbackPreference.FixedSwitchPreferenceCompat" parent="LeanbackPreference.SwitchPreferenceCompat">
-		<item name="android:widgetLayout">@layout/leanback_preference_widget_switch_compat</item>
-	</style>
-
 </resources>
 
 

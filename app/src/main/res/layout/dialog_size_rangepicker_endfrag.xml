@@ -20,9 +20,6 @@
             android:paddingTop="8dp"
             android:paddingBottom="8dp"
             android:text="@string/rangepicker_maximum_size"
-            app:showText="false"
-            app:switchMinWidth="32dp"
-            app:switchPadding="20dp"
             />
 
         <LinearLayout

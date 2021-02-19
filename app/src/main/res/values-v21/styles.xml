@@ -13,6 +13,8 @@
 		<item name="windowActionModeOverlay">true</item>
 
 		<item name="preserveIconSpacing">true</item>
+		<item name="switchStyle">@style/MySwitchStyle</item>
+		<item name="preferenceTheme">@style/MyPreferenceTheme</item>
 	</style>
 
 	<style name="AppBaseThemeDark" parent="@style/Theme.MaterialComponents.NoActionBar">
@@ -30,17 +32,12 @@
 		<item name="actionBarSize">?android:attr/actionBarSize</item>
 		<item name="homeAsUpIndicator">?android:attr/homeAsUpIndicator</item>
 		<item name="switchStyle">@style/MySwitchStyle</item>
+		<item name="preferenceTheme">@style/MyPreferenceTheme</item>
 
 		<item name="android:windowContentTransitions">true</item>
 
 		<item name="android:colorControlHighlight">#aaaaff</item>
 		<item name="preserveIconSpacing">true</item>
-	</style>
-
-	<style name="MySwitchStyle" parent="@style/Widget.MaterialComponents.CompoundButton.Switch">
-		<item name="thumbTint">@color/switch_thumbs</item>
-		<item name="android:switchMinWidth">40dp</item>
-		<item name="switchMinWidth">40dp</item>
 	</style>
 
 	<style name="CardButton" parent="Widget.AppCompat.ImageButton">

@@ -99,7 +99,6 @@
 				android:nextFocusForward="@+id/range_set"
 				android:nextFocusRight="@+id/range_set"
 				android:text="@string/rangepicker_maximum_size"
-				app:showText="false"
 				tools:checked="true"
 				/>
 		</LinearLayout>
