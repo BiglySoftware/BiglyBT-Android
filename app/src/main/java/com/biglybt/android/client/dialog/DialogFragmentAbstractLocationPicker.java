@@ -694,7 +694,7 @@ public abstract class DialogFragmentAbstractLocationPicker
 
 	void triggerLocationChanged(@NonNull PathInfo newLocation) {
 		LocationPickerListener listener = new TargetFragmentFinder<LocationPickerListener>(
-				LocationPickerListener.class).findTarget(this, requireContext());
+				LocationPickerListener.class).findTarget(this, getContext());
 		if (listener != null) {
 			listener.locationChanged(callbackID, newLocation);
 		}

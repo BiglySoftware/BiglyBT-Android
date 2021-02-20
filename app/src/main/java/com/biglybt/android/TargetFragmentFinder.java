@@ -20,6 +20,8 @@ import android.content.Context;
 import android.os.Build;
 import android.util.Log;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
@@ -41,7 +43,7 @@ public class TargetFragmentFinder<T>
 	}
 
 	@SuppressWarnings("unchecked")
-	public T findTarget(Fragment fragment, Context context) {
+	public T findTarget(@NonNull Fragment fragment, @Nullable Context context) {
 		T mListener = null;
 		Fragment targetFragment = fragment.getTargetFragment();
 		if (targetFragment != null
