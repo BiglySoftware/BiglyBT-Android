@@ -235,7 +235,6 @@
 	<style name="MySwitchPreferenceStyle" parent="@style/Preference.SwitchPreference.Material">
 		<item name="widgetLayout">@layout/custom_switch</item>
 		<item name="singleLineTitle">false</item>
-		<item name="iconSpaceReserved">false</item>
 	</style>
 
 	<style name="MySwitchTextAppearance" parent="@style/TextAppearance.AppCompat.Widget.Switch">

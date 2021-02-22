@@ -103,4 +103,10 @@
 		<item name="switchPreferenceStyle">@style/MySwitchPreferenceStyle</item>
 		<item name="android:switchPreferenceStyle">@style/MySwitchPreferenceStyle</item>
 	</style>
+
+	<style name="MySwitchPreferenceStyle" parent="@style/Preference.SwitchPreference.Material">
+		<item name="widgetLayout">@layout/custom_switch</item>
+		<item name="singleLineTitle">false</item>
+		<item name="iconSpaceReserved">false</item>
+	</style>
 </resources>
