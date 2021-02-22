@@ -1,4 +1,4 @@
-1.3.1.0
+1.3.1
 ★ Pesquisa de magnet mais rápida & melhor exibição de progresso
 ★ Bug corrigido em "Mover ao Completar" quando os arquivos torrent têm espaços
 ★ Exibe os estados "Parando", "Verificando" e "Movendo"

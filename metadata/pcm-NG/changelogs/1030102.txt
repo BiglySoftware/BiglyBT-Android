@@ -1,4 +1,4 @@
-1.3.1.0
+1.3.1
 ★ Faster magnet lookup & better progress display
 ★ Fixed bug in "Move on Complete" when torrent files have spaces
 ★ Display "Stopping", "Checking", and "Moving" states
