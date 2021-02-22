@@ -1,6 +1,6 @@
 1.3.1
-★ Daha hızlı magnet bağlantısı araması ve daha iyi ilerleme ekranı
-★ Torrent dosyalarında boşluk olduğunda "Tamamlanmada Taşı" hatası düzeltildi
-★ "Durduruluyor", "Denetleniyor" ve "Taşınıyor" durumları görüntülendi
-★ "Tam Ayarlar"daki tercihler, uzun tıklayarak varsayılana sıfırlanabilir
-★ BiglyBT Çekirdeği 2.6.0.0'a güncellendi
+★ Faster magnet lookup & better progress display
+★ Fixed bug in "Move on Complete" when torrent files have spaces
+★ Display "Stopping", "Checking", and "Moving" states
+★ Preferences in "Full Settings" can be reset to default by long-click
+★ Update BiglyBT Core to 2.6.0.0
