@@ -43,6 +43,7 @@ import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.CountDownLatch;
 
 import divstar.ico4a.codec.ico.ICODecoder;
 import divstar.ico4a.codec.ico.ICOImage;
@@ -59,7 +60,7 @@ public class BiglyBTApp
 
 	public static final String URL_BUGS = "https://bugs.biglybt.com/android";
 
-	private static final Object lock = new Object();
+	private static final CountDownLatch latchAppPrefs = new CountDownLatch(1);
 
 	private static AppPreferences appPreferences = null;
 
@@ -138,7 +139,9 @@ public class BiglyBTApp
 	private static void initCommonAsync() {
 		new Thread(() -> {
 			// Init App Preferences off of UI thread to prevent StrictModeDiskReadViolation
-			createAppPreferences();
+			appPreferences = AppPreferences.createAppPreferences(applicationContext);
+			latchAppPrefs.countDown();
+
 			IAnalyticsTracker vet = AnalyticsTracker.getInstance();
 			vet.registerExceptionReporter(applicationContext);
 
@@ -450,18 +453,12 @@ public class BiglyBTApp
 
 	@NonNull
 	public static AppPreferences getAppPreferences() {
-		synchronized (lock) {
-			return appPreferences;
+		try {
+			latchAppPrefs.await();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
 		}
-	}
-
-	private static void createAppPreferences() {
-		synchronized (lock) {
-			if (appPreferences != null) {
-				return;
-			}
-			appPreferences = AppPreferences.createAppPreferences(applicationContext);
-		}
+		return appPreferences;
 	}
 
 	@NonNull
