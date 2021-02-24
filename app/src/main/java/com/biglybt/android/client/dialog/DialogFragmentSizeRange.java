@@ -232,12 +232,16 @@ public class DialogFragmentSizeRange
 	void setupPicker0(@NonNull final NumberPicker pickerValue0,
 			@NonNull final NumberPicker pickerUnit0) {
 
+		pickerValue0.setSaveFromParentEnabled(false);
+		pickerValue0.setSaveEnabled(false);
 		pickerValue0.setMinValue(0);
 		pickerValue0.setMaxValue(1024);
 		pickerValue0.setOnValueChangedListener(
 				(picker, oldVal, newVal) -> start = AndroidUtils.mutiplyBy1024(
 						pickerValue0.getValue(), pickerUnit0.getValue() + 2));
 
+		pickerUnit0.setSaveFromParentEnabled(false);
+		pickerUnit0.setSaveEnabled(false);
 		pickerUnit0.setMinValue(0);
 		pickerUnit0.setMaxValue(2);
 		pickerUnit0.setDisplayedValues(new String[] {

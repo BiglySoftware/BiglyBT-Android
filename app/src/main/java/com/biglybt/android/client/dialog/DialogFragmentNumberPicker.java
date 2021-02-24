@@ -110,6 +110,8 @@ public class DialogFragmentNumberPicker
 
 		final NumberPicker numberPicker = view.findViewById(R.id.number_picker);
 		assert numberPicker != null;
+		numberPicker.setSaveFromParentEnabled(false);
+		numberPicker.setSaveEnabled(false);
 		numberPicker.setVisibility(params.showSpinner ? View.VISIBLE : View.GONE);
 		numberPicker.setMinValue(params.min);
 		numberPicker.setMaxValue(params.max);

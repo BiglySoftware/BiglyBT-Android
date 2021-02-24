@@ -142,6 +142,8 @@ public class DialogFragmentRefreshInterval
 		}
 
 		String[] displayedValues = values.toArray(new String[0]);
+		npInterval.setSaveFromParentEnabled(false);
+		npInterval.setSaveEnabled(false);
 		npInterval.setMinValue(0);
 		npInterval.setMaxValue(displayedValues.length - 1);
 		npInterval.setDisplayedValues(displayedValues);
@@ -160,6 +162,8 @@ public class DialogFragmentRefreshInterval
 			values.add(0, getString(R.string.rp_update_interval_mobile_same));
 			displayedValues = values.toArray(new String[0]);
 
+			npIntervalMobile.setSaveFromParentEnabled(false);
+			npIntervalMobile.setSaveEnabled(false);
 			npIntervalMobile.setMinValue(0);
 			npIntervalMobile.setMaxValue(values.size() - 1);
 			npIntervalMobile.setDisplayedValues(displayedValues);
