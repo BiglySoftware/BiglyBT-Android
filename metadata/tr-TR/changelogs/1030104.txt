@@ -1,2 +1,2 @@
 1.3.1.4
-★ Fix startup crash when Storage I/O is slow
+★ Depolama G/Ç yavaş olduğunda başlangıçta ​​çökme düzeltildi
