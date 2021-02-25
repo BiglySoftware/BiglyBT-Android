@@ -93,13 +93,6 @@ public class BiglyBTApp
 			networkState.dipose();
 			networkState = null;
 		}
-		appPreferences = null;
-		/*
-		if (picassoInstance != null) {
-			picassoInstance.shutdown();
-			picassoInstance = null;
-		}
-		*/
 	}
 
 	@Override
