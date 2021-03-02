@@ -372,7 +372,6 @@ public class SpanTags
 		int lineMaxWidth = calcWidgetWidth(tvTags);
 		if (lineMaxWidth <= 0) {
 			tvTags.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
-				@TargetApi(Build.VERSION_CODES.HONEYCOMB)
 				@Override
 				public void onLayoutChange(View v, int left, int top, int right,
 						int bottom, int oldLeft, int oldTop, int oldRight, int oldBottom) {
