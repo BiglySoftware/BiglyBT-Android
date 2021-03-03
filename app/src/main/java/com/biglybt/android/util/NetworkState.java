@@ -34,6 +34,8 @@ import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.Build;
 import androidx.annotation.Nullable;
+import androidx.annotation.WorkerThread;
+
 import android.util.Log;
 
 public class NetworkState
@@ -518,6 +520,7 @@ public class NetworkState
 		return onlineStateReason;
 	}
 
+	@WorkerThread
 	public static String getLocalIpAddress() {
 		try {
 			for (Enumeration<NetworkInterface> en = NetworkInterface.getNetworkInterfaces(); en.hasMoreElements();) {

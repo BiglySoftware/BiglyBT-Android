@@ -354,6 +354,29 @@ public class PrefFragmentHandlerCore
 			extras.putCharSequence("summary",
 					PathInfo.buildPathInfo(sDir).getFriendlyName());
 		}
+
+		final Preference prefRemAccessScreen = findPreference(KEY_RACCESS_SCREEN);
+		if (prefRemAccessScreen != null) {
+			String s;
+
+			CorePrefs corePrefs = CorePrefs.getInstance();
+			CoreRemoteAccessPreferences raPrefs = corePrefs.getRemoteAccessPreferences();
+
+			if (raPrefs != null && raPrefs.allowLANAccess) {
+				String address = NetworkState.getLocalIpAddress() + ":"
+						+ RPC.LOCAL_BIGLYBT_PORT;
+
+				s = activity.getString(
+						raPrefs.reqPW ? R.string.core_remote_access_summary_enabled_secure
+								: R.string.core_remote_access_summary_enabled,
+						address);
+			} else {
+				s = activity.getString(R.string.core_remote_access_summary_disabled);
+			}
+			Bundle extras = prefRemAccessScreen.getExtras();
+
+			extras.putCharSequence("summary",	s);
+		}
 	}
 
 	@Override
@@ -462,23 +485,8 @@ public class PrefFragmentHandlerCore
 
 		final Preference prefRemAccessScreen = findPreference(KEY_RACCESS_SCREEN);
 		if (prefRemAccessScreen != null) {
-			String s;
-
-			CorePrefs corePrefs = CorePrefs.getInstance();
-			CoreRemoteAccessPreferences raPrefs = corePrefs.getRemoteAccessPreferences();
-
-			if (raPrefs != null && raPrefs.allowLANAccess) {
-				String address = NetworkState.getLocalIpAddress() + ":"
-						+ RPC.LOCAL_BIGLYBT_PORT;
-
-				s = activity.getString(
-						raPrefs.reqPW ? R.string.core_remote_access_summary_enabled_secure
-								: R.string.core_remote_access_summary_enabled,
-						address);
-			} else {
-				s = activity.getString(R.string.core_remote_access_summary_disabled);
-			}
-			prefRemAccessScreen.setSummary(s);
+			prefRemAccessScreen.setSummary(
+					prefRemAccessScreen.getExtras().getCharSequence("summary"));
 		}
 
 		Preference prefEncryptScreen = findPreference(KEY_CONN_ENCRYPT_SCREEN);
