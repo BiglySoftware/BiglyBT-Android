@@ -198,13 +198,12 @@
 			android:title="@string/preftitle_refresh_interval"
 			tools:summary="Refresh every 30 seconds\nRefresh every 90 seconds when on Mobile"/>
 
-		<SwitchPreference
+		<com.biglybt.android.widget.SwitchPreference
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:key="small_list"
-			android:singleLineTitle="false"
 			android:title="@string/rp_small_lists"
-			app:singleLineTitle="false"/>
+			/>
 
 		<Preference
 			android:layout_width="wrap_content"
