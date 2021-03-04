@@ -274,18 +274,6 @@ public class AndroidUtilsUI
 	}
 
 	@UiThread
-	public static void setViewChecked(View child, boolean activate) {
-		if (child == null) {
-			return;
-		}
-		if (child instanceof Checkable) {
-			((Checkable) child).setChecked(activate);
-		} else {
-			child.setActivated(activate);
-		}
-	}
-
-	@UiThread
 	public static boolean handleBrokenListViewScrolling(@NonNull Activity a,
 			int keyCode) {
 		// Hack for FireTV 1st Gen (and possibly others):

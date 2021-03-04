@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <selector xmlns:a="http://schemas.android.com/apk/res/android">
 	<item
-		a:state_focused="false" a:state_checked="true" a:state_selected="true"
+		a:state_focused="false" a:state_activated="true" a:state_selected="true"
 		a:drawable="@color/list_bg__sc_"
 		a:color="@color/list_bg__sc_" />
 	<item
-		a:state_focused="true"  a:state_checked="true" a:state_selected="true"
+		a:state_focused="true"  a:state_activated="true" a:state_selected="true"
 		a:drawable="@color/list_bg_fsc_"
 		a:color="@color/list_bg_fsc_" />
 
@@ -18,11 +18,11 @@
 		a:drawable="@color/list_bg____p"
 		a:color="@color/list_bg____p" />
 	<item
-		a:state_focused="true"  a:state_checked="true"
+		a:state_focused="true"  a:state_activated="true"
 		a:drawable="@color/list_bg_f_c_"
 		a:color="@color/list_bg_f_c_" />
 	<item
-		a:state_focused="false" a:state_checked="true"
+		a:state_focused="false" a:state_activated="true"
 		a:drawable="@color/list_bg___c_"
 		a:color="@color/list_bg___c_" />
 	<item

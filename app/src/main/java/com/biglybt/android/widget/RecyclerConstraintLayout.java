@@ -20,64 +20,21 @@ import android.content.Context;
 import android.graphics.Rect;
 import android.util.AttributeSet;
 import android.view.View;
-import android.widget.Checkable;
-import android.widget.RelativeLayout;
 
 import androidx.annotation.Nullable;
+import androidx.constraintlayout.widget.ConstraintLayout;
 
 import com.biglybt.android.adapter.FlexibleRecyclerView;
 import com.biglybt.android.client.AndroidUtils;
 
 /**
- * FROM https://github.com/android/platform_packages_apps_music/blob/master/src/com/android/music/CheckableRelativeLayout.java
- * 
- * A special variation of RelativeLayout that can be used as a checkable object.
- * This allows it to be used as the top-level view of a list view item, which
- * also supports checking.  Otherwise, it works identically to a RelativeLayout.
- *
- * Checkable stuff not needed for API >= 11 / HONEYCOMB
- * Hack fix for left/right keeping focus would need to be moved if dropping
- * support for API < 11
+ * Hack fix for left/right keeping focus
  */
-public class CheckableRelativeLayout
-	extends RelativeLayout
-	implements Checkable
+public class RecyclerConstraintLayout
+	extends ConstraintLayout
 {
-	private boolean mChecked;
-
-	private static final int[] CHECKED_STATE_SET = {
-		android.R.attr.state_checked
-	};
-
-	public CheckableRelativeLayout(Context context, AttributeSet attrs) {
+	public RecyclerConstraintLayout(Context context, AttributeSet attrs) {
 		super(context, attrs);
-	}
-
-	@Override
-	protected int[] onCreateDrawableState(int extraSpace) {
-		final int[] drawableState = super.onCreateDrawableState(extraSpace + 1);
-		if (mChecked) {
-			mergeDrawableStates(drawableState, CHECKED_STATE_SET);
-		}
-		return drawableState;
-	}
-
-	@Override
-	public void toggle() {
-		setChecked(!mChecked);
-	}
-
-	@Override
-	public boolean isChecked() {
-		return mChecked;
-	}
-
-	@Override
-	public void setChecked(boolean checked) {
-		if (mChecked != checked) {
-			mChecked = checked;
-			refreshDrawableState();
-		}
 	}
 
 	@Nullable

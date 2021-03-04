@@ -431,7 +431,7 @@ public abstract class FlexibleRecyclerAdapter<ADAPTERTYPE extends RecyclerView.A
 		boolean checked = isItemChecked(position);
 		boolean selected = isItemSelected(position);
 		holder.itemView.setSelected(selected);
-		AndroidUtilsUI.setViewChecked(holder.itemView, checked);
+		holder.itemView.setActivated(checked);
 	}
 
 	public abstract void onBindFlexibleViewHolder(@NonNull VH holder,
@@ -1353,7 +1353,7 @@ public abstract class FlexibleRecyclerAdapter<ADAPTERTYPE extends RecyclerView.A
 		if (AndroidUtils.DEBUG_ADAPTER) {
 			log(TAG, "toggleItemChecked to " + nowChecked + " for " + position);
 		}
-		AndroidUtilsUI.setViewChecked(holder.itemView, nowChecked);
+		holder.itemView.setActivated(nowChecked);
 
 		safeNotifyItemChanged(position);
 		if (selector != null) {
@@ -1385,7 +1385,7 @@ public abstract class FlexibleRecyclerAdapter<ADAPTERTYPE extends RecyclerView.A
 					}
 				}
 			}
-			AndroidUtilsUI.setViewChecked(holder.itemView, on);
+			holder.itemView.setActivated(on);
 			safeNotifyItemChanged(position);
 
 			if (selector != null) {

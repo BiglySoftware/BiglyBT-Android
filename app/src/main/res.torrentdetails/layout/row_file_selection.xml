@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.biglybt.android.widget.CheckableRelativeLayout
+<com.biglybt.android.widget.RecyclerRelativeLayout
 	xmlns:android="http://schemas.android.com/apk/res/android"
 	xmlns:tools="http://schemas.android.com/tools"
 	android:id="@+id/filerow_layout"
@@ -153,4 +153,4 @@
 
 	</LinearLayout>
 
-</com.biglybt.android.widget.CheckableRelativeLayout>
+</com.biglybt.android.widget.RecyclerRelativeLayout>

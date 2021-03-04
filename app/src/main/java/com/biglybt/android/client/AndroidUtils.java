@@ -1008,58 +1008,6 @@ public class AndroidUtils
 		return newState;
 	}
 
-	@NonNull
-	@SuppressLint("InlinedApi")
-	@SuppressWarnings("unused,nls")
-	public static String statesDebug(int[] states) {
-		if (states == null) {
-			return "null";
-		}
-		if (states.length == 0) {
-			return "[]";
-		}
-		SparseArray<String> map = new SparseArray<>();
-		map.put(android.R.attr.state_above_anchor, "above_anchor");
-		map.put(android.R.attr.state_accelerated, "accelerated");
-		map.put(android.R.attr.state_activated, "activated");
-		map.put(android.R.attr.state_active, "active");
-		map.put(android.R.attr.state_checkable, "checkable");
-		map.put(android.R.attr.state_checked, "checked");
-		map.put(android.R.attr.state_drag_can_accept, "drag_can_accept");
-		map.put(android.R.attr.state_drag_hovered, "drag_hovered");
-		map.put(android.R.attr.state_empty, "empty");
-		map.put(android.R.attr.state_enabled, "enabled");
-		map.put(android.R.attr.state_expanded, "expanded");
-		map.put(android.R.attr.state_first, "first");
-		map.put(android.R.attr.state_focused, "focused");
-		map.put(android.R.attr.state_hovered, "hovered");
-		map.put(android.R.attr.state_last, "last");
-		map.put(android.R.attr.state_long_pressable, "long_pressable");
-		map.put(android.R.attr.state_middle, "middle");
-		map.put(android.R.attr.state_multiline, "multiline");
-		map.put(android.R.attr.state_pressed, "pressed");
-		map.put(android.R.attr.state_selected, "selected");
-		map.put(android.R.attr.state_single, "single");
-		map.put(android.R.attr.state_window_focused, "window_focused");
-
-		StringBuilder sb = new StringBuilder();
-		sb.append("[");
-		for (int state : states) {
-			if (sb.length() > 1) {
-				sb.append(',');
-			}
-			String s = map.get(state);
-			if (s == null) {
-				sb.append(state);
-			} else {
-				sb.append(s);
-			}
-		}
-		sb.append(']');
-
-		return sb.toString();
-	}
-
 	@SuppressLint("LogConditional")
 	public static boolean hasPermisssion(@NonNull Context context,
 			@NonNull String permission) {

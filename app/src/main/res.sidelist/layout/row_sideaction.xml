@@ -15,7 +15,7 @@
   ~ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
   -->
 
-<com.biglybt.android.widget.CheckableFrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<com.biglybt.android.widget.RecyclerFrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
 	xmlns:tools="http://schemas.android.com/tools"
 	android:layout_width="fill_parent"
 	android:layout_height="wrap_content"
@@ -76,4 +76,4 @@
 			tools:text="Action Long\nTwo Lines"
 			tools:visibility="visible"/>
 	</LinearLayout>
-</com.biglybt.android.widget.CheckableFrameLayout>
+</com.biglybt.android.widget.RecyclerFrameLayout>
