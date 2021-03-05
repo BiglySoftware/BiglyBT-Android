@@ -1,188 +1,225 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.biglybt.android.widget.RecyclerRelativeLayout
-	xmlns:android="http://schemas.android.com/apk/res/android"
-	xmlns:tools="http://schemas.android.com/tools"
-	android:layout_width="match_parent"
-	android:layout_height="wrap_content"
-	android:background="@drawable/list_selector"
-	android:focusable="true"
-	android:focusableInTouchMode="false"
-	android:paddingBottom="5dp"
-	android:paddingTop="5dp"
-	android:transitionName="TVtoTD"
-	tools:layout_height="120dp">
+<com.biglybt.android.widget.RecyclerRelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/list_selector"
+    android:focusable="true"
+    android:focusableInTouchMode="false"
+    android:paddingTop="5dp"
+    android:paddingBottom="5dp"
+    android:transitionName="TVtoTD"
+    >
 
-	<RelativeLayout
-		android:id="@+id/row_torrent_list"
-		android:layout_width="match_parent"
-		android:layout_height="wrap_content"
-		android:duplicateParentState="true"
-		android:paddingEnd="@dimen/torrentlist_row_paddingRight"
-		android:paddingLeft="@dimen/torrentlist_row_paddingLeft"
-		android:paddingRight="@dimen/torrentlist_row_paddingRight"
-		android:paddingStart="@dimen/torrentlist_row_paddingLeft"
-		>
-
-
-		<LinearLayout
-			android:layout_width="match_parent"
-			android:layout_height="wrap_content"
-			android:layout_alignParentEnd="true"
-			android:layout_alignParentRight="true"
-			android:layout_alignParentTop="true"
-			android:layout_toEndOf="@+id/torrentrow_progress"
-			android:layout_toRightOf="@+id/torrentrow_progress"
-			android:orientation="vertical">
-
-			<TextView
-				android:id="@+id/torrentrow_name"
-				android:layout_width="match_parent"
-				android:layout_height="wrap_content"
-				android:ellipsize="end"
-				android:gravity="center_vertical|start"
-				android:maxLines="4"
-				android:shadowColor="#20000000"
-				android:shadowDx="1"
-				android:shadowDy="1"
-				android:shadowRadius="1"
-				android:textAlignment="viewStart"
-				android:textAppearance="?android:attr/textAppearanceMedium"
-				android:textSize="@dimen/row_title_fontsize"
-				tools:text="Torrent Name"/>
+    <RelativeLayout
+        android:id="@+id/row_torrent_list"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:duplicateParentState="true"
+        android:paddingStart="@dimen/torrentlist_row_paddingLeft"
+        android:paddingLeft="@dimen/torrentlist_row_paddingLeft"
+        android:paddingEnd="@dimen/torrentlist_row_paddingRight"
+        android:paddingRight="@dimen/torrentlist_row_paddingRight"
+        >
 
 
-			<LinearLayout
-				android:layout_width="fill_parent"
-				android:layout_height="wrap_content"
-				android:orientation="horizontal">
+        <LinearLayout
+            android:id="@+id/torrentrow_topright"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:layout_toEndOf="@+id/torrentrow_leftArea"
+            android:layout_toRightOf="@+id/torrentrow_leftArea"
+            android:background="#0000FF00"
+            android:orientation="vertical"
+            >
 
-				<TextView
-					android:id="@+id/torrentrow_info"
-					android:layout_width="0dp"
-					android:layout_height="wrap_content"
-					android:layout_gravity="center_vertical"
-					android:layout_weight="1"
-					android:alpha="0.9"
-					android:gravity="center_vertical|start"
-					android:textAlignment="viewStart"
-					android:textAppearance="?android:attr/textAppearanceSmall"
-					tools:text="20 Files, 1234 MB\n5 Seeds, 2 Peers"/>
+            <TextView
+                android:id="@+id/torrentrow_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:gravity="center_vertical|start"
+                android:maxLines="4"
+                android:shadowColor="#20000000"
+                android:shadowDx="1"
+                android:shadowDy="1"
+                android:shadowRadius="1"
+                android:textAlignment="viewStart"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textSize="@dimen/row_title_fontsize"
+                tools:text="Torrent Name"
+                />
 
-				<TextView
-					android:id="@+id/torrentrow_downspeed"
-					android:layout_width="wrap_content"
-					android:layout_height="wrap_content"
-					android:layout_gravity="center_vertical"
-					android:layout_marginEnd="5dp"
-					android:layout_marginRight="5dp"
-					android:gravity="center_vertical|start"
-					android:textAlignment="viewStart"
-					android:textAppearance="?android:attr/textAppearanceSmall"
-					android:textSize="12sp"
-					tools:text="5 kb/s"/>
 
-				<TextView
-					android:id="@+id/torrentrow_upspeed"
-					android:layout_width="wrap_content"
-					android:layout_height="wrap_content"
-					android:layout_gravity="center_vertical"
-					android:gravity="center_vertical|start"
-					android:textAlignment="viewStart"
-					android:textAppearance="?android:attr/textAppearanceSmall"
-					android:textSize="12sp"
-					tools:text="2 kb/s"/>
-			</LinearLayout>
+            <TextView
+                android:id="@+id/torrentrow_state"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical|start"
+                android:includeFontPadding="true"
+                android:textAlignment="viewStart"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:textSize="@dimen/torrentrow_state_size"
+                tools:text="[Queued] [Inactive] [Incomplete]"
+                />
 
-			<TextView
-				android:id="@+id/torrentrow_state"
-				android:layout_width="match_parent"
-				android:layout_height="wrap_content"
-				android:gravity="center_vertical|start"
-				android:includeFontPadding="true"
-				android:textAlignment="viewStart"
-				android:textAppearance="?android:attr/textAppearanceSmall"
-				android:textSize="@dimen/torrentrow_state_size"
-				tools:text="Stopped"/>
+            <TextView
+                android:id="@+id/torrentrow_info"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:alpha="0.9"
+                android:gravity="center_vertical|start"
+                android:textAlignment="viewStart"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                tools:text="20 Files, 1234 MB • 5 Seeds, 2 Peers"
+                />
 
-			<TextView
-				android:id="@+id/torrentrow_tags"
-				android:layout_width="match_parent"
-				android:layout_height="wrap_content"
-				android:layout_marginTop="4dp"
-				android:gravity="center_vertical|start"
-				android:includeFontPadding="true"
-				android:textAlignment="viewStart"
-				android:textSize="@dimen/torrentrow_tag_size"
-				tools:text="Tag1 Tag2 Tag3 Tag4 Tag5 Tag6 Tagagagagagaga Tagoooo Tag Tag Tug Tig Tag Toog Titag TooTag"/>
+        </LinearLayout>
 
-		</LinearLayout>
+        <TextView
+            android:id="@+id/torrentrow_tags"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/torrentrow_topright"
+            android:layout_toEndOf="@+id/torrentrow_leftArea"
+            android:layout_toRightOf="@+id/torrentrow_leftArea"
+            android:background="#000000FF"
+            android:includeFontPadding="true"
+            android:textSize="@dimen/torrentrow_tag_size"
+            tools:text="[Tag1) [Tag2) [Tag3) [Tag4) [Tag5) [Tag6) [Tagagagagagaga) [Tagoooo) [Tag7) [Tag8) [Tug) [Tig) [Tag9) [Toog) [Titag) [TooTag)"
+            />
 
-		<ProgressBar
-			android:id="@+id/torrentrow_progress"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:layout_alignParentLeft="true"
-			android:layout_alignParentStart="true"
-			android:layout_alignParentTop="true"
-			android:layout_marginEnd="2dp"
-			android:layout_marginRight="2dp"
-			android:indeterminate="false"
-			android:indeterminateOnly="false"
-			android:max="10000"
-			android:maxHeight="500dp"
-			android:maxWidth="500dp"
-			android:minHeight="@dimen/torrentrow_ring_size"
-			android:minWidth="@dimen/torrentrow_ring_size"
-			android:progressDrawable="?drawable_progress_ring"
-			tools:progress="8000"/>
 
-		<LinearLayout
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:layout_alignBottom="@id/torrentrow_progress"
-			android:layout_alignEnd="@id/torrentrow_progress"
-			android:layout_alignLeft="@id/torrentrow_progress"
-			android:layout_alignRight="@id/torrentrow_progress"
-			android:layout_alignStart="@id/torrentrow_progress"
-			android:layout_alignTop="@id/torrentrow_progress"
-			android:gravity="center_vertical"
-			android:paddingRight="16dp"
-			android:paddingLeft="16dp"
-			android:orientation="vertical">
+        <RelativeLayout
+            android:id="@+id/torrentrow_leftArea"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            >
 
-			<TextView
-				android:id="@+id/torrentrow_progress_pct"
-				android:layout_width="fill_parent"
-				android:layout_height="wrap_content"
-				android:gravity="center"
-				android:textAlignment="center"
-				android:textSize="@dimen/torrentrow_pct_size"
-				tools:visibility="gone"
-				tools:text="80%"/>
+            <ProgressBar
+                android:id="@+id/torrentrow_progress"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentTop="true"
+                android:layout_marginEnd="2dp"
+                android:layout_marginRight="2dp"
+                android:indeterminate="false"
+                android:indeterminateOnly="false"
+                android:max="10000"
+                android:maxWidth="500dp"
+                android:maxHeight="500dp"
+                android:minWidth="@dimen/torrentrow_ring_size"
+                android:minHeight="@dimen/torrentrow_ring_size"
+                android:progressDrawable="?drawable_progress_ring"
+                tools:progress="8000"
+                />
 
-			<TextView
-				android:id="@+id/torrentrow_eta"
-				android:layout_width="fill_parent"
-				android:layout_height="wrap_content"
-				android:gravity="center"
-				android:textSize="@dimen/torrentrow_eta_size"
-				android:visibility="gone"
-				tools:visibility="visible"
-				tools:text="@string/torrent_row_share_ratio_circle"/>
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignStart="@id/torrentrow_progress"
+                android:layout_alignLeft="@id/torrentrow_progress"
+                android:layout_alignTop="@id/torrentrow_progress"
+                android:layout_alignEnd="@id/torrentrow_progress"
+                android:layout_alignRight="@id/torrentrow_progress"
+                android:layout_alignBottom="@id/torrentrow_progress"
+                android:background="#00FF0000"
+                android:gravity="center_vertical"
+                android:orientation="vertical"
+                android:paddingLeft="16dp"
+                android:paddingRight="16dp"
+                >
 
-		</LinearLayout>
+                <TextView
+                    android:id="@+id/torrentrow_progress_pct"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:textAlignment="center"
+                    android:textSize="@dimen/torrentrow_pct_size"
+                    tools:text="80%"
+                    tools:visibility="gone"
+                    />
 
-	</RelativeLayout>
+                <TextView
+                    android:id="@+id/torrentrow_eta"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:textSize="@dimen/torrentrow_eta_size"
+                    android:visibility="gone"
+                    tools:text="@string/torrent_row_share_ratio_circle"
+                    tools:visibility="visible"
+                    />
 
-	<ImageView
-		android:id="@+id/torrentrow_checked"
-		android:layout_width="30dp"
-		android:layout_height="30dp"
-		android:layout_gravity="end|top"
-		android:contentDescription="@string/spoken_selected"
-		android:duplicateParentState="true"
-		android:scaleType="fitStart"
-		android:src="@drawable/selected_row_drawable"
-		android:visibility="gone"/>
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/torrentrow_downspeed"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/torrentrow_progress"
+                android:layout_alignLeft="@id/torrentrow_progress"
+                android:layout_alignRight="@id/torrentrow_progress"
+                android:background="#00FF0000"
+                android:gravity="center_horizontal"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:textSize="12sp"
+                tools:text="▼ 125kb/s"
+                />
+
+            <TextView
+                android:id="@+id/torrentrow_upspeed"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/torrentrow_downspeed"
+                android:layout_alignLeft="@id/torrentrow_progress"
+                android:layout_alignRight="@id/torrentrow_progress"
+                android:background="#00FF0000"
+                android:gravity="center_horizontal"
+                android:paddingBottom="4dp"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:textSize="12sp"
+                tools:text="▲ 112kb/s"
+                />
+        </RelativeLayout>
+    </RelativeLayout>
+
+    <TextView
+        android:id="@+id/torrentrow_tracker_error"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/row_torrent_list"
+        android:layout_marginStart="20dp"
+        android:layout_marginLeft="20dp"
+        android:paddingStart="@dimen/torrentlist_row_paddingLeft"
+        android:paddingLeft="@dimen/torrentlist_row_paddingLeft"
+        android:paddingEnd="@dimen/torrentlist_row_paddingRight"
+        android:paddingRight="@dimen/torrentlist_row_paddingRight"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:textColor="?colorError"
+        android:visibility="gone"
+        tools:text="Some Tracker Error here"
+        tools:visibility="visible"
+        />
+
+    <ImageView
+        android:id="@+id/torrentrow_checked"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_gravity="end|top"
+        android:contentDescription="@string/spoken_selected"
+        android:duplicateParentState="true"
+        android:scaleType="fitStart"
+        android:src="@drawable/selected_row_drawable"
+        android:visibility="gone"
+        />
 
 </com.biglybt.android.widget.RecyclerRelativeLayout>

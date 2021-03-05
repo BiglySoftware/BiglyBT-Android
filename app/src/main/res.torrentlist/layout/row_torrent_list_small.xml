@@ -1,167 +1,229 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.biglybt.android.widget.RecyclerRelativeLayout
-	xmlns:android="http://schemas.android.com/apk/res/android"
-	xmlns:tools="http://schemas.android.com/tools"
-	android:layout_width="match_parent"
-	android:layout_height="wrap_content"
-	android:background="@drawable/list_selector"
-	android:focusable="true"
-	android:paddingBottom="5dp"
-	android:paddingLeft="5dp"
-	android:paddingRight="5dp"
-	android:paddingTop="5dp"
-	android:paddingStart="5dp"
-	android:paddingEnd="5dp">
+<com.biglybt.android.widget.RecyclerConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/list_selector"
+    android:focusable="true"
+    android:paddingStart="@dimen/torrentlist_row_paddingLeft"
+    android:paddingLeft="@dimen/torrentlist_row_paddingLeft"
+    android:paddingTop="5dp"
+    android:paddingEnd="@dimen/torrentlist_row_paddingRight"
+    android:paddingRight="@dimen/torrentlist_row_paddingRight"
+    android:paddingBottom="5dp"
+    >
 
-	<TableLayout
-		android:layout_width="match_parent"
-		android:layout_height="wrap_content"
-		android:layout_alignParentRight="true"
-		android:layout_alignParentEnd="true"
-		android:layout_alignParentTop="true"
-		android:orientation="vertical"
-		android:shrinkColumns="0"
-		android:stretchColumns="1">
+    <View
+        android:id="@+id/torrentrow_statebar"
+        android:layout_width="4dp"
+        android:layout_height="0dp"
+        android:background="#30808080"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:visibility="visible"
+        />
 
-		<TableRow android:layout_width="fill_parent">
+    <TextView
+        android:id="@+id/torrentrow_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="4dp"
+        android:layout_marginLeft="4dp"
+        android:layout_span="2"
+        android:ellipsize="end"
+        android:gravity="center_vertical|start"
+        android:maxLines="4"
+        android:shadowColor="#20000000"
+        android:shadowDx="1"
+        android:shadowDy="1"
+        android:shadowRadius="1"
+        android:textAlignment="viewStart"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textColor="?android:attr/textColorPrimary"
+        android:textSize="@dimen/row_title_fontsize"
+        app:layout_constraintStart_toEndOf="@+id/torrentrow_statebar"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="This is the torrent's name"
+        />
 
-			<TextView
-				android:id="@+id/torrentrow_name"
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
-				android:layout_span="2"
-				android:ellipsize="end"
-				android:maxLines="4"
-				android:gravity="center_vertical|start"
-				android:textAlignment="viewStart"
-				android:shadowColor="#20000000"
-				android:shadowDx="1"
-				android:shadowDy="1"
-				android:shadowRadius="1"
-				android:textAppearance="?android:attr/textAppearanceMedium"
-				android:textColor="?android:attr/textColorPrimary"
-				android:textSize="@dimen/row_title_fontsize"
-				tools:text="This is the torrent's name"/>
+    <com.google.android.material.progressindicator.LinearProgressIndicator
+        android:id="@+id/torrentrow_progress"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="4dp"
+        android:layout_marginLeft="4dp"
+        android:layout_span="2"
+        android:indeterminate="false"
+        android:max="10000"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/torrentrow_statebar"
+        app:layout_constraintTop_toBottomOf="@+id/torrentrow_name"
+        app:showAnimationBehavior="none"
+        tools:progress="7000"
+        />
 
-		</TableRow>
 
-		<TableRow android:layout_width="fill_parent">
+    <androidx.constraintlayout.helper.widget.Flow
+        android:id="@+id/flow"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="4dp"
+        android:layout_marginLeft="4dp"
+        app:constraint_referenced_ids="torrentrow_progress_pct,dot1,torrentrow_eta,dot2,torrentrow_info"
+        app:flow_horizontalBias="0"
+        app:flow_horizontalStyle="packed"
+        app:flow_verticalStyle="packed"
+        app:flow_wrapMode="chain"
+        app:layout_constraintEnd_toStartOf="@+id/barrier"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toEndOf="@+id/torrentrow_statebar"
+        app:layout_constraintTop_toBottomOf="@+id/torrentrow_progress"
+        />
 
-			<LinearLayout
-				android:layout_width="match_parent"
-				android:layout_height="wrap_content"
-				android:orientation="vertical">
+    <TextView
+        android:id="@+id/torrentrow_progress_pct"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:textAlignment="center"
+        app:layout_constrainedWidth="true"
+        app:layout_constraintVertical_bias="0"
+        tools:text="80%"
+        />
 
-				<LinearLayout
-					android:layout_width="fill_parent"
-					android:layout_height="wrap_content"
-					android:orientation="horizontal">
+    <TextView
+        android:id="@+id/torrentrow_eta"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        app:layout_constrainedWidth="true"
+        tools:text="20m 30s"
+        />
 
-					<TextView
-						android:id="@+id/torrentrow_progress_pct"
-						android:layout_width="wrap_content"
-						android:layout_height="wrap_content"
-						android:layout_marginRight="5dp"
-						android:gravity="center"
-						android:textAlignment="center"
-						tools:text="80%"
-						android:layout_marginEnd="5dp"/>
+    <TextView
+        android:id="@+id/dot1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/torrent_row_line_split"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        />
 
-					<TextView
-						android:layout_width="wrap_content"
-						android:layout_height="wrap_content"
-						android:layout_marginRight="5dp"
-						android:text="@string/torrent_row_line_split"
-						android:textAppearance="?android:attr/textAppearanceSmall"
-						android:layout_marginEnd="5dp"/>
+    <TextView
+        android:id="@+id/dot2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/torrent_row_line_split"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        />
 
-					<TextView
-						android:id="@+id/torrentrow_eta"
-						android:layout_width="wrap_content"
-						android:layout_height="wrap_content"
-						android:gravity="center"
-						tools:text="20m 30s"/>
+    <TextView
+        android:id="@+id/torrentrow_info"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:alpha="0.9"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        app:layout_constrainedWidth="true"
+        tools:text="110 Files, 1.76GB • 4 of 4 peers active"
+        />
 
-					<TextView
-						android:id="@+id/openoptions_tags"
-						android:layout_width="wrap_content"
-						android:layout_height="wrap_content"
-						android:layout_marginLeft="5dp"
-						android:layout_marginRight="5dp"
-						android:text="@string/torrent_row_line_split"
-						android:textAppearance="?android:attr/textAppearanceSmall"
-						android:layout_marginStart="5dp"
-						android:layout_marginEnd="5dp"/>
+    <androidx.constraintlayout.widget.Barrier
+        android:id="@+id/barrier_stat_line"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:barrierDirection="bottom"
+        app:constraint_referenced_ids="torrentrow_info,torrentrow_eta,torrentrow_progress_pct"
+        />
 
-					<TextView
-						android:id="@+id/torrentrow_info"
-						android:layout_width="wrap_content"
-						android:layout_height="wrap_content"
-						android:alpha="0.9"
-						android:textAppearance="?android:attr/textAppearanceSmall"
-						tools:text="Other Torrent Info (Size)"/>
 
-				</LinearLayout>
+    <TextView
+        android:id="@+id/torrentrow_tracker_error"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="4dp"
+        android:layout_marginLeft="4dp"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:textColor="?colorError"
+        android:visibility="gone"
+        app:layout_constrainedWidth="true"
+        app:layout_constraintEnd_toStartOf="@+id/barrier"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toEndOf="@+id/torrentrow_statebar"
+        app:layout_constraintTop_toBottomOf="@+id/barrier_stat_line"
+        tools:text="Tracker is a bad tracker that is erroring with a bad error that we don't like"
+        tools:visibility="visible"
+        />
 
-				<TextView
-					android:id="@+id/torrentrow_tracker_error"
-					android:layout_width="wrap_content"
-					android:layout_height="wrap_content"
-					android:textAppearance="?android:attr/textAppearanceSmall"
-					tools:visibility="visible"
-					tools:text="Tracker Error!!"
-					android:visibility="gone"/>
+    <TextView
+        android:id="@+id/torrentrow_state"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="4dp"
+        android:layout_marginLeft="4dp"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:textSize="@dimen/torrentrow_state_size"
+        app:layout_constrainedWidth="true"
+        app:layout_constraintEnd_toStartOf="@+id/barrier"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toEndOf="@+id/torrentrow_statebar"
+        app:layout_constraintTop_toBottomOf="@+id/torrentrow_tracker_error"
+        tools:text="[Active] [Downloading] [Incomplete] [Some Very Long State Ispum Lorem]"
+        />
 
-				<TextView
-					android:id="@+id/torrentrow_state"
-					android:layout_width="wrap_content"
-					android:layout_height="wrap_content"
-					android:textAppearance="?android:attr/textAppearanceSmall"
-					android:textSize="@dimen/torrentrow_state_size"
-					tools:text="Torrent State"/>
+    <TextView
+        android:id="@+id/torrentrow_tags"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="4dp"
+        android:layout_marginLeft="4dp"
+        android:layout_marginTop="4dp"
+        android:includeFontPadding="true"
+        android:textSize="@dimen/torrentrow_tag_size"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toEndOf="@+id/torrentrow_statebar"
+        app:layout_constraintTop_toBottomOf="@+id/torrentrow_state"
+        tools:text="Tag Tag Tag Tag Tag Tag Tag Tag Tag Tag Tag Tag TagTag Tag Tag TAG TAG TAAAG SO MANY TAGS"
+        />
 
-				<TextView
-					android:id="@+id/torrentrow_tags"
-					android:layout_width="wrap_content"
-					android:layout_height="wrap_content"
-					android:layout_marginTop="1dp"
-					android:includeFontPadding="true"
-					android:textSize="@dimen/torrentrow_tag_size"
-					tools:text="Tag Tag Tag Tag Tag Tag Tag Tag Tag Tag Tag Tag TagTag Tag Tag TAG TAG TAAAG SO MANY TAGS"/>
-			</LinearLayout>
+    <androidx.constraintlayout.widget.Barrier
+        android:id="@+id/barrier"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:barrierDirection="left"
+        app:constraint_referenced_ids="torrentrow_upspeed,torrentrow_downspeed"
+        />
 
-			<LinearLayout
-				android:layout_width="wrap_content"
-				android:layout_height="fill_parent"
-				android:gravity="bottom"
-				android:orientation="vertical"
-				tools:visibility="gone">
+    <TextView
+        android:id="@+id/torrentrow_downspeed"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end"
+        android:gravity="end"
+        android:textAlignment="viewEnd"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:textSize="12sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/torrentrow_progress"
+        tools:text="▼ 125kb/s"
+        tools:visibility="visible"
+        />
 
-				<TextView
-					android:id="@+id/torrentrow_upspeed"
-					android:layout_width="wrap_content"
-					android:layout_height="wrap_content"
-					android:layout_gravity="end"
-					android:textAlignment="viewEnd"
-					android:gravity="end"
-					android:textAppearance="?android:attr/textAppearanceSmall"
-					android:textSize="12sp"
-					tools:text="20 kb/s"
-					tools:visibility="gone"/>
 
-				<TextView
-					android:id="@+id/torrentrow_downspeed"
-					android:layout_width="wrap_content"
-					android:layout_height="wrap_content"
-					android:layout_gravity="end"
-					android:textAlignment="viewEnd"
-					android:gravity="end"
-					android:textAppearance="?android:attr/textAppearanceSmall"
-					android:textSize="12sp"
-					tools:text="20 kb/s"
-					tools:visibility="gone"/>
-			</LinearLayout>
-		</TableRow>
-	</TableLayout>
+    <TextView
+        android:id="@+id/torrentrow_upspeed"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end"
+        android:gravity="end"
+        android:textAlignment="viewEnd"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:textSize="12sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/torrentrow_downspeed"
+        tools:text="▲ 112kb/s"
+        tools:visibility="visible"
+        />
 
-</com.biglybt.android.widget.RecyclerRelativeLayout>
+</com.biglybt.android.widget.RecyclerConstraintLayout>

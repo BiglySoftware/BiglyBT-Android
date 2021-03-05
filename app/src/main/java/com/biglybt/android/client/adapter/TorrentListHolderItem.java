@@ -16,19 +16,27 @@
 
 package com.biglybt.android.client.adapter;
 
+import android.os.Build.VERSION;
+import android.os.Build.VERSION_CODES;
+import android.util.Log;
 import android.view.View;
-import android.widget.ImageView;
-import android.widget.ProgressBar;
-import android.widget.TextView;
+import android.view.View.OnLayoutChangeListener;
+import android.view.ViewGroup;
+import android.widget.*;
+import android.widget.RelativeLayout.LayoutParams;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.biglybt.android.adapter.FlexibleRecyclerAdapter;
+import com.biglybt.android.client.AndroidUtilsUI;
 import com.biglybt.android.client.R;
 
 class TorrentListHolderItem
 	extends TorrentListHolder
 {
+	private static final boolean DEBUG = true;
+
 	final boolean isSmall;
 
 	long torrentID = -1;
@@ -57,6 +65,16 @@ class TorrentListHolderItem
 
 	boolean animateFlip;
 
+	private final ViewGroup topRightArea;
+
+	private final ViewGroup leftArea;
+
+	private boolean areTagsIndented = true;
+
+	private boolean isUnderRightArea = true;
+
+	private boolean layoutQueued = false;
+
 	TorrentListHolderItem(
 			@Nullable RecyclerSelectorInternal<TorrentListHolder> selector,
 			@NonNull View rowView, boolean isSmall) {
@@ -73,5 +91,115 @@ class TorrentListHolderItem
 		tvTags = rowView.findViewById(R.id.torrentrow_tags);
 		tvTrackerError = rowView.findViewById(R.id.torrentrow_tracker_error);
 		ivChecked = rowView.findViewById(R.id.torrentrow_checked);
+		topRightArea = rowView.findViewById(R.id.torrentrow_topright);
+		leftArea = rowView.findViewById(R.id.torrentrow_leftArea);
+
+		if (tvTags != null && topRightArea != null && leftArea != null) {
+			OnLayoutChangeListener onLayoutChangeListener = (v, left, top, right,
+					bottom, oldLeft, oldTop, oldRight, oldBottom) -> recalcLayout(v);
+			tvTags.addOnLayoutChangeListener(onLayoutChangeListener);
+			// Must listen to the left/right areas in case one of them becomes the new
+			// bottom
+			topRightArea.addOnLayoutChangeListener(onLayoutChangeListener);
+			leftArea.addOnLayoutChangeListener(onLayoutChangeListener);
+		}
+	}
+
+	private void recalcLayout(View view) {
+		if (tvTags.getText().length() == 0) {
+			return;
+		}
+
+		int bottomOfRightArea = topRightArea.getBottom();
+		int bottomOfLeftArea = leftArea.getBottom();
+		int tagsWidth = tvTags.getWidth();
+		int rightWidth = topRightArea.getWidth();
+
+		boolean indentTags = tagsWidth < rightWidth
+				|| bottomOfLeftArea - bottomOfRightArea > tvTags.getLineHeight() * 2;
+		boolean underRightArea = indentTags || bottomOfRightArea > bottomOfLeftArea;
+
+		if (DEBUG) {
+			Log.d("TorrentListHolderItem",
+					this + ":" + tvName.getText() + "] bottoms l/r=" + +bottomOfLeftArea
+							+ "/" + bottomOfRightArea + "; tagsW=" + tagsWidth + "; rW="
+							+ rightWidth + "; indent? " + areTagsIndented + "->" + indentTags
+							+ ";" + (underRightArea ? "underR" : "underL") + "; Relayout? "
+							+ (indentTags != areTagsIndented
+									|| underRightArea != isUnderRightArea));
+		}
+
+		if (indentTags == areTagsIndented && underRightArea == isUnderRightArea) {
+			return;
+		}
+
+		LayoutParams lp = (LayoutParams) tvTags.getLayoutParams();
+		if (indentTags) {
+			if (VERSION.SDK_INT >= VERSION_CODES.JELLY_BEAN_MR1) {
+				lp.addRule(RelativeLayout.END_OF, R.id.torrentrow_leftArea);
+				lp.setMarginStart(0);
+			} else {
+				lp.leftMargin = 0;
+			}
+			lp.addRule(RelativeLayout.RIGHT_OF, R.id.torrentrow_leftArea);
+			lp.addRule(RelativeLayout.BELOW, R.id.torrentrow_topright);
+		} else {
+			if (VERSION.SDK_INT >= VERSION_CODES.JELLY_BEAN_MR1) {
+				lp.addRule(RelativeLayout.END_OF, 0);
+				lp.setMarginStart(AndroidUtilsUI.dpToPx(20));
+			} else {
+				lp.leftMargin = AndroidUtilsUI.dpToPx(20);
+			}
+			lp.addRule(RelativeLayout.RIGHT_OF, 0);
+			lp.addRule(RelativeLayout.BELOW,
+					underRightArea ? R.id.torrentrow_topright : R.id.torrentrow_leftArea);
+		}
+		if (layoutQueued) {
+			// Only need one setTagLayout() call; it will use our current LayoutParams
+			if (DEBUG) {
+				Log.d("TorrentListHolderItem",
+						this + ":" + tvName.getText() + "] skip setTagLayout, already Qd");
+			}
+			return;
+		}
+
+		if (VERSION.SDK_INT <= VERSION_CODES.M || view.isInLayout()) {
+			final long currentTorrentId = torrentID;
+			layoutQueued = true;
+			tvTags.post(() -> {
+				layoutQueued = false;
+				if (torrentID == currentTorrentId) {
+					if (DEBUG) {
+						Log.d("TorrentListHolderItem",
+								this + ":" + tvName.getText() + "] set setTagLayout");
+					}
+					setTagLayout(lp);
+					isUnderRightArea = underRightArea;
+					areTagsIndented = indentTags;
+				} else {
+					if (DEBUG) {
+						Log.d("TorrentListHolderItem",
+								this + ":" + tvName.getText()
+										+ "] skip setTagLayout, torrent id changed "
+										+ currentTorrentId + "->" + torrentID);
+					}
+				}
+			});
+		} else {
+			setTagLayout(lp);
+			isUnderRightArea = underRightArea;
+			areTagsIndented = indentTags;
+		}
+	}
+
+	private void setTagLayout(LayoutParams lp) {
+		tvTags.setLayoutParams(lp);
+		// Need to tell adapter we messed around with things outside of its onBindViewHolder
+		Object bindingAdapter = getBindingAdapter();
+		if (bindingAdapter instanceof FlexibleRecyclerAdapter) {
+			//noinspection rawtypes
+			((FlexibleRecyclerAdapter) bindingAdapter).safeNotifyItemChanged(
+					getLayoutPosition());
+		}
 	}
 }

@@ -33,6 +33,7 @@ import com.biglybt.android.client.spanbubbles.SpanTags;
 import com.biglybt.android.util.MapUtils;
 import com.biglybt.android.util.TextViewFlipper;
 import com.biglybt.util.DisplayFormatters;
+import com.google.android.material.progressindicator.LinearProgressIndicator;
 
 import java.text.NumberFormat;
 import java.util.ArrayList;
@@ -124,7 +125,9 @@ public class TorrentListRowFiller
 			flipper.changeText(holder.tvProgress, s, holder.animateFlip, validator);
 		}
 		if (holder.pb != null) {
-			holder.pb.setVisibility(pctDone < 0 ? View.INVISIBLE : View.VISIBLE);
+			if (!(holder.pb instanceof LinearProgressIndicator)) {
+				holder.pb.setVisibility(pctDone < 0 ? View.INVISIBLE : View.VISIBLE);
+			}
 			int pctDoneInt = (int) (pctDone * 10000);
 			if (holder.pb.getProgress() != pctDoneInt) {
 				AndroidUtilsUI.setProgress(holder.pb, pctDoneInt, true);
@@ -171,8 +174,9 @@ public class TorrentListRowFiller
 				String errorString = MapUtils.getMapString(item,
 						TransmissionVars.FIELD_TORRENT_ERROR_STRING, "");
 				if (holder.tvTrackerError != null) {
-					flipper.changeText(holder.tvTrackerError, errorString,
-							holder.animateFlip, validator);
+					flipper.changeText(holder.tvTrackerError,
+							AndroidUtils.lineBreaker(errorString), holder.animateFlip,
+							validator);
 				} else {
 					if (sb.length() > 0) {
 						sb.append(holder.isSmall
@@ -211,18 +215,32 @@ public class TorrentListRowFiller
 			long rateUpload = MapUtils.getMapLong(item,
 					TransmissionVars.FIELD_TORRENT_RATE_UPLOAD, 0);
 
-			String rateString = rateUpload <= 0 ? "" : "\u25B2 "
-					+ DisplayFormatters.formatByteCountToKiBEtcPerSec(rateUpload);
-			flipper.changeText(holder.tvUlRate, rateString, holder.animateFlip,
-					validator);
+			if (rateUpload > 0) {
+				String text = "|\u25B2 "
+						+ DisplayFormatters.formatByteCountToKiBEtcPerSec(rateUpload) + '|';
+				SpannableStringBuilder ss = new SpannableStringBuilder(text);
+				SpanBubbles.setSpanBubbles(ss, text, "|", holder.tvUlRate.getPaint(),
+						0xFF40A080, colorFGTagState, 0x3040A080, null);
+				flipper.changeText(holder.tvUlRate, ss, holder.animateFlip, validator);
+			} else {
+				flipper.changeText(holder.tvUlRate, "", holder.animateFlip, validator);
+			}
 		}
 		if (holder.tvDlRate != null) {
 			long rateDownload = MapUtils.getMapLong(item,
 					TransmissionVars.FIELD_TORRENT_RATE_DOWNLOAD, 0);
-			String rateString = rateDownload <= 0 ? "" : "\u25BC "
-					+ DisplayFormatters.formatByteCountToKiBEtcPerSec(rateDownload);
-			flipper.changeText(holder.tvDlRate, rateString, holder.animateFlip,
-					validator);
+
+			if (rateDownload > 0) {
+				String text = "|\u25BC "
+						+ DisplayFormatters.formatByteCountToKiBEtcPerSec(rateDownload)
+						+ '|';
+				SpannableStringBuilder ss = new SpannableStringBuilder(text);
+				SpanBubbles.setSpanBubbles(ss, text, "|", holder.tvDlRate.getPaint(),
+						0xFF2a8bcb, colorFGTagState, 0x302a8bcb, null);
+				flipper.changeText(holder.tvDlRate, ss, holder.animateFlip, validator);
+			} else {
+				flipper.changeText(holder.tvDlRate, "", holder.animateFlip, validator);
+			}
 		}
 
 		if (holder.tvStatus != null) {
@@ -418,7 +436,7 @@ public class TorrentListRowFiller
 					t.printStackTrace();
 				}
 			} else {
-				flipper.changeText(holder.tvTags, "", holder.animateFlip, validator);
+				flipper.changeText(holder.tvTags, "", false, validator);
 			}
 		}
 	}
