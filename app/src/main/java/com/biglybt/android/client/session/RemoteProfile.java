@@ -423,22 +423,26 @@ public class RemoteProfile
 	}
 
 	public void addOpenOptionsWaiter(String hashString) {
-		Map mapOpenOptionHashes = MapUtils.getMapMap(mapRemote,
-				ID_OPEN_OPTION_HASHES, null);
-		if (mapOpenOptionHashes == null) {
-			mapOpenOptionHashes = new HashMap<>();
-			mapRemote.put(ID_OPEN_OPTION_HASHES, mapOpenOptionHashes);
+		synchronized (mapRemote) {
+			Map mapOpenOptionHashes = MapUtils.getMapMap(mapRemote,
+					ID_OPEN_OPTION_HASHES, null);
+			if (mapOpenOptionHashes == null) {
+				mapOpenOptionHashes = new HashMap<>();
+				mapRemote.put(ID_OPEN_OPTION_HASHES, mapOpenOptionHashes);
+			}
+			mapOpenOptionHashes.put(hashString, System.currentTimeMillis());
 		}
-		mapOpenOptionHashes.put(hashString, System.currentTimeMillis());
 	}
 
 	public void removeOpenOptionsWaiter(String hashString) {
-		Map mapOpenOptionHashes = MapUtils.getMapMap(mapRemote,
-				ID_OPEN_OPTION_HASHES, null);
-		if (mapOpenOptionHashes == null) {
-			return;
+		synchronized (mapRemote) {
+			Map mapOpenOptionHashes = MapUtils.getMapMap(mapRemote,
+					ID_OPEN_OPTION_HASHES, null);
+			if (mapOpenOptionHashes == null) {
+				return;
+			}
+			mapOpenOptionHashes.remove(hashString);
 		}
-		mapOpenOptionHashes.remove(hashString);
 	}
 
 	/**
@@ -447,32 +451,38 @@ public class RemoteProfile
 	 * @return Copy of a list of hashes
 	 */
 	public List<String> getOpenOptionsWaiterList() {
-		Map mapOpenOptionHashes = MapUtils.getMapMap(mapRemote,
-				ID_OPEN_OPTION_HASHES, null);
-		if (mapOpenOptionHashes == null) {
-			return Collections.emptyList();
+		synchronized (mapRemote) {
+			Map mapOpenOptionHashes = MapUtils.getMapMap(mapRemote,
+					ID_OPEN_OPTION_HASHES, null);
+			if (mapOpenOptionHashes == null) {
+				return Collections.emptyList();
+			}
+			return new ArrayList<>(mapOpenOptionHashes.keySet());
 		}
-		return new ArrayList<>(mapOpenOptionHashes.keySet());
 	}
 
 	public boolean hasOpenOptionsWaiters() {
-		Map mapOpenOptionHashes = MapUtils.getMapMap(mapRemote,
-				ID_OPEN_OPTION_HASHES, null);
-		return mapOpenOptionHashes != null && mapOpenOptionHashes.size() > 0;
+		synchronized (mapRemote) {
+			Map mapOpenOptionHashes = MapUtils.getMapMap(mapRemote,
+					ID_OPEN_OPTION_HASHES, null);
+			return mapOpenOptionHashes != null && mapOpenOptionHashes.size() > 0;
+		}
 	}
 
 	public void cleanupOpenOptionsWaiterList() {
-		Map<String, Long> mapOpenOptionHashes = MapUtils.getMapMap(mapRemote,
-				ID_OPEN_OPTION_HASHES, null);
-		if (mapOpenOptionHashes == null) {
-			return;
-		}
-		long tooOld = System.currentTimeMillis() - (1000L * 3600 * 2); // 2 hours
+		synchronized (mapRemote) {
+			Map<String, Long> mapOpenOptionHashes = MapUtils.getMapMap(mapRemote,
+					ID_OPEN_OPTION_HASHES, null);
+			if (mapOpenOptionHashes == null) {
+				return;
+			}
+			long tooOld = System.currentTimeMillis() - (1000L * 3600 * 2); // 2 hours
 
-		for (Iterator<Long> it = mapOpenOptionHashes.values().iterator(); it.hasNext();) {
-			Long since = it.next();
-			if (since < tooOld) {
-				it.remove();
+			for (Iterator<Long> it = mapOpenOptionHashes.values().iterator(); it.hasNext();) {
+				Long since = it.next();
+				if (since < tooOld) {
+					it.remove();
+				}
 			}
 		}
 	}
