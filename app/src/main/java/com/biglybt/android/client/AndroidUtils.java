@@ -589,6 +589,9 @@ public class AndroidUtils
 				} else if (fileName != null) {
 					if ("lambda".equals(fileName)) {
 						fileName = null;
+						if (cnShort.length() <= 3) {
+							cnShort = classname;
+						}
 					} else {
 						// remove ".java"
 						int posDot = fileName.indexOf('.');
