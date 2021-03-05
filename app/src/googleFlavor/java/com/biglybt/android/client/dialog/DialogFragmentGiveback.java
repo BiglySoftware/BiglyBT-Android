@@ -28,6 +28,7 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.StringRes;
+import androidx.annotation.WorkerThread;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
@@ -108,14 +109,15 @@ public class DialogFragmentGiveback
 			@Override
 			public void onBillingSetupFinished(@NonNull BillingResult billingResult) {
 				int responseCode = billingResult.getResponseCode();
-				if (responseCode == BillingResponseCode.OK) {
-					billingReady(activity, fm, userInvoked, source);
-				} else {
+				if (responseCode != BillingResponseCode.OK) {
 					// Oh no, there was a problem.
 					Log.d(TAG, "Problem setting up In-app Billing: " + responseCode);
 
 					AndroidUtilsUI.showDialog(activity, R.string.giveback_title,
 							R.string.giveback_no_google);
+				} else {
+					// ANR in the wild, in the "Main" thread (MiBox S, Android 9, API 28)
+					OffThread.runOffUIThread(() -> billingReady(activity, fm, userInvoked, source));
 				}
 			}
 
@@ -218,6 +220,7 @@ public class DialogFragmentGiveback
 	}
 
 	@Thunk
+	@WorkerThread
 	static void billingReady(FragmentActivity activity, final FragmentManager fm,
 			final boolean userInvoked, final String source) {
 
