@@ -99,4 +99,7 @@
 		-->
 	</style>
 
+	<style name="borderlessRipple" parent="Widget.MaterialComponents.TextView">
+		<item name="android:foreground">?android:attr/selectableItemBackgroundBorderless</item>
+	</style>
 </resources>

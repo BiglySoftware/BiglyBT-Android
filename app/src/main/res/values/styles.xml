@@ -528,4 +528,8 @@
 	<style name="ThemeOverlay.App.CircularProgressIndicator" parent="">
 		<item name="colorPrimary">@color/list_sidebar_content_fg</item>
 	</style>
+
+    <style name="borderlessRipple" parent="Widget.MaterialComponents.TextView">
+        <item name="android:foreground">?android:attr/selectableItemBackground</item>
+    </style>
 </resources>

@@ -8,10 +8,13 @@
 	android:fitsSystemWindows="true"
 	tools:context="com.biglybt.android.client.activity.TorrentViewActivity">
 
+	<!-- clipChildren and clipToPadding are for the ripple effect in incl_torrent_view_header -->
 	<LinearLayout
 		android:layout_width="match_parent"
 		android:layout_height="match_parent"
 		android:background="?android:colorBackground"
+		android:clipChildren="false"
+		android:clipToPadding="false"
 		android:orientation="vertical">
 
 		<include layout="@layout/actionbar_optional_merge"/>

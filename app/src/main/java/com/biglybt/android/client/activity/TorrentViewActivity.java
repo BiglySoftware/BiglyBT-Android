@@ -30,6 +30,7 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.view.ActionMode;
@@ -43,9 +44,7 @@ import androidx.lifecycle.Lifecycle;
 
 import com.biglybt.android.adapter.SortableRecyclerAdapter;
 import com.biglybt.android.client.*;
-import com.biglybt.android.client.dialog.DialogFragmentAbout;
-import com.biglybt.android.client.dialog.DialogFragmentGiveback;
-import com.biglybt.android.client.dialog.DialogFragmentOpenTorrent;
+import com.biglybt.android.client.dialog.*;
 import com.biglybt.android.client.fragment.ActionModeBeingReplacedListener;
 import com.biglybt.android.client.fragment.TorrentDetailsFragment;
 import com.biglybt.android.client.fragment.TorrentListFragment;
@@ -73,8 +72,12 @@ public class TorrentViewActivity
 	extends SideListActivity
 	implements SessionSettingsChangedListener,
 	TorrentListFragment.OnTorrentSelectedListener, SessionListener,
+	DialogFragmentNumberPicker.NumberPickerDialogListener,
 	NetworkState.NetworkStateListener, TorrentListRefreshingListener
 {
+	private static final String KEY_SESSION_DOWNLOAD = "session_download";
+
+	private static final String KEY_SESSION_UPLOAD = "session_upload";
 
 	private static final int[] fragmentIDS = {
 		R.id.frag_torrent_list,
@@ -161,7 +164,35 @@ public class TorrentViewActivity
 		// setup view ids now because listeners below may trigger as soon as we
 		// get them
 		tvUpSpeed = findViewById(R.id.wvUpSpeed);
+		if (tvUpSpeed != null) {
+			tvUpSpeed.setOnLongClickListener(v -> {
+				DialogFragmentNumberPicker.NumberPickerBuilder builder = new DialogFragmentNumberPicker.NumberPickerBuilder(
+						getSupportFragmentManager(),
+						KEY_SESSION_DOWNLOAD,
+						(int) session.getSessionSettingsClone().getManualDlSpeed()).setTitleId(
+						R.string.rp_download_speed).setMin(0).setMax(99999).setSuffix(
+						R.string.kbps).setClearButtonText(
+						R.string.unlimited);
+				// Results handled in onNumberPickerChange
+				DialogFragmentNumberPicker.openDialog(builder);
+				return true;
+			});
+		}
 		tvDownSpeed = findViewById(R.id.wvDnSpeed);
+		if (tvDownSpeed != null) {
+			tvDownSpeed.setOnLongClickListener(v -> {
+				DialogFragmentNumberPicker.NumberPickerBuilder builder = new DialogFragmentNumberPicker.NumberPickerBuilder(
+						getSupportFragmentManager(),
+						KEY_SESSION_UPLOAD,
+						(int) session.getSessionSettingsClone().getManualUlSpeed()).setTitleId(
+						R.string.rp_upload_speed).setMin(0).setMax(99999).setSuffix(
+						R.string.kbps).setClearButtonText(
+						R.string.unlimited);
+				// Results handled in onNumberPickerChange
+				DialogFragmentNumberPicker.openDialog(builder);
+				return true;
+			});
+		}
 		tvCenter = findViewById(R.id.wvCenter);
 		tvTVHeader = findViewById(R.id.torrentview_tv_header);
 
@@ -892,5 +923,28 @@ public class TorrentViewActivity
 	@Override
 	public boolean showFilterEntry() {
 		return true;
+	}
+
+	@Override
+	public void onNumberPickerChange(@Nullable String callbackID, int val) {
+		SessionSettings sessionSettings = session.getSessionSettingsClone();
+		if (sessionSettings == null) {
+			return;
+		}
+
+		if (KEY_SESSION_DOWNLOAD.equals(callbackID)) {
+			sessionSettings.setDLIsManual(val > 0);
+			if (val > 0) {
+				sessionSettings.setManualDlSpeed(val);
+			}
+			session.updateSessionSettings(sessionSettings);
+		}
+		if (KEY_SESSION_UPLOAD.equals(callbackID)) {
+			sessionSettings.setULIsManual(val > 0);
+			if (val > 0) {
+				sessionSettings.setManualUlSpeed(val);
+			}
+			session.updateSessionSettings(sessionSettings);
+		}
 	}
 }
