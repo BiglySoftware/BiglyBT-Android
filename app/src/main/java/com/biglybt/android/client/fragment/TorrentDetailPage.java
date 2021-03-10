@@ -180,6 +180,9 @@ public abstract class TorrentDetailPage
 		if (progressBar != null) {
 			if (numProgresses > 0) {
 				progressBar.show();
+				numProgresses--;
+			} else {
+				hideProgressBar();
 			}
 		}
 	}
@@ -288,7 +291,7 @@ public abstract class TorrentDetailPage
 		}
 		OffThread.runOnUIThread(this, false, a -> {
 			if (viewActive) {
-				progressBar.hide();
+				AndroidUtilsUI.hideProgressBar(progressBar);
 			}
 		});
 	}

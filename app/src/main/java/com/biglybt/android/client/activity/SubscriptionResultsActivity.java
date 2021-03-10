@@ -853,7 +853,7 @@ public class SubscriptionResultsActivity
 				if (visible) {
 					progressBar.show();
 				} else {
-					progressBar.hide();
+					AndroidUtilsUI.hideProgressBar(progressBar);
 				}
 			}
 		});

@@ -693,7 +693,7 @@ public class RcmActivity
 				if (refreshing) {
 					progressBar.show();
 				} else {
-					progressBar.hide();
+					AndroidUtilsUI.hideProgressBar(progressBar);
 				}
 			}
 		});

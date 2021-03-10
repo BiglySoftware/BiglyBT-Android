@@ -814,7 +814,7 @@ public class SubscriptionListActivity
 				if (visible) {
 					progressBar.show();
 				} else {
-					progressBar.hide();
+					AndroidUtilsUI.hideProgressBar(progressBar);
 				}
 			}
 

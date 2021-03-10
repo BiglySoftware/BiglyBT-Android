@@ -66,6 +66,7 @@ import com.biglybt.android.client.session.SessionManager;
 import com.biglybt.util.RunnableUIThread;
 import com.biglybt.util.RunnableWorkerThread;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+import com.google.android.material.progressindicator.BaseProgressIndicator;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
@@ -1571,5 +1572,12 @@ public class AndroidUtilsUI
 			return;
 		}
 		pb.setProgress(progress, animate);
+	}
+
+	public static void hideProgressBar(BaseProgressIndicator pb) {
+		// Bug on older OS: hide() stops the animation, but leaves the widget 
+		// visible (probably only when showAnimation is running)
+		pb.hide();
+		pb.setVisibility(View.GONE);
 	}
 }

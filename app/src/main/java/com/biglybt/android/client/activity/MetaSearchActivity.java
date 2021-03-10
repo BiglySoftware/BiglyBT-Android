@@ -532,7 +532,7 @@ public class MetaSearchActivity
 		OffThread.runOnUIThread(this, false, (a) -> {
 			if (progressBar != null) {
 				if (complete) {
-					progressBar.hide();
+					AndroidUtilsUI.hideProgressBar(progressBar);
 				} else {
 					progressBar.show();
 				}

@@ -257,7 +257,7 @@ public class TorrentViewActivity
 				if (refreshing) {
 					progressBar.show();
 				} else {
-					progressBar.hide();
+					AndroidUtilsUI.hideProgressBar(progressBar);
 				}
 			}
 		}, 300);
