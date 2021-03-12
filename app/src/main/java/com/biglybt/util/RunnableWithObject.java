@@ -20,15 +20,15 @@ package com.biglybt.util;
  * Created by TuxPaper on 1/23/17.
  */
 
-public abstract class RunnableWithObject
+public abstract class RunnableWithObject<T>
 	implements Runnable
 {
-	public Object object = null;
+	public T object = null;
 
 	public RunnableWithObject() {
 	}
 
-	public RunnableWithObject(Object o) {
+	public RunnableWithObject(T o) {
 		object = o;
 	}
 }
