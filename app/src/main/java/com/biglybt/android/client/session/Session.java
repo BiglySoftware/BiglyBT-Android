@@ -1113,7 +1113,7 @@ public class Session
 		if (remoteProfile == null) {
 			return;
 		}
-		remoteProfile.setSavePathHistory(history);
+		remoteProfile.setSavePathHistory(new ArrayList<>(history));
 		saveProfile();
 	}
 
