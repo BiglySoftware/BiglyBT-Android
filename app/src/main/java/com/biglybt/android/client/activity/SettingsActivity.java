@@ -24,6 +24,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 
+import com.biglybt.android.client.AndroidUtilsUI;
 import com.biglybt.android.client.R;
 import com.biglybt.android.client.dialog.DialogFragmentAbstractLocationPicker.LocationPickerListener;
 import com.biglybt.android.client.dialog.DialogFragmentNumberPicker.NumberPickerDialogListener;
@@ -36,10 +37,10 @@ public class SettingsActivity
 {
 	public static final String TARGET_SETTING_PAGE = "rootKey";
 
-	private Fragment frag;
-
 	@Override
 	public void onNumberPickerChange(@Nullable String callbackID, int val) {
+		Fragment frag = AndroidUtilsUI.findFragmentByClass(this,
+				NumberPickerDialogListener.class);
 		if (frag instanceof NumberPickerDialogListener) {
 			((NumberPickerDialogListener) frag).onNumberPickerChange(callbackID, val);
 		}
@@ -47,6 +48,8 @@ public class SettingsActivity
 
 	@Override
 	public void locationChanged(String callbackID, @NonNull PathInfo location) {
+		Fragment frag = AndroidUtilsUI.findFragmentByClass(this,
+				LocationPickerListener.class);
 		if (frag instanceof LocationPickerListener) {
 			((LocationPickerListener) frag).locationChanged(callbackID, location);
 		}
@@ -61,7 +64,7 @@ public class SettingsActivity
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 		toolbar.setNavigationOnClickListener(v -> onBackPressed());
 		if (savedInstanceState == null) {
-			frag = new SettingsFragmentM();
+			SettingsFragmentM frag = new SettingsFragmentM();
 			Intent intent = getIntent();
 			if (intent != null) {
 				String rootKey = intent.getStringExtra(TARGET_SETTING_PAGE);

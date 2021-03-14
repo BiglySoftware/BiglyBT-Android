@@ -1284,6 +1284,17 @@ public class AndroidUtilsUI
 		}
 	}
 
+	public static Fragment findFragmentByClass(FragmentActivity activity,
+			Class cla) {
+		List<Fragment> fragments = activity.getSupportFragmentManager().getFragments();
+		for (Fragment frag : fragments) {
+			if (frag != null && cla.isAssignableFrom(frag.getClass())) {
+				return frag;
+			}
+		}
+		return null;
+	}
+
 	@AnyThread
 	public static boolean runIfNotUIThread(
 			@UiThread @NonNull RunnableUIThread uiThreadRunnable) {
