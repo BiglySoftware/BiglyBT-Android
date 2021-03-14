@@ -485,7 +485,8 @@ public class BiglyBTManager
 					paramToCustom("Plugin.xmwebui.Port", RPC.LOCAL_BIGLYBT_PORT));
 			CoreRemoteAccessPreferences raPrefs = corePrefs.getRemoteAccessPreferences();
 			if (raPrefs.allowLANAccess) {
-				writeLine(fw, paramToCustom(CoreParamKeys.SPARAM_XMWEBUI_BIND_IP, ""));
+				writeLine(fw,
+						paramToCustom(CoreParamKeys.SPARAM_XMWEBUI_BIND_IP, "0.0.0.0"));
 				writeLine(fw,
 						paramToCustom(CoreParamKeys.SPARAM_XMWEBUI_PW_DISABLED_WHITELIST,
 								DEFAULT_WEBUI_PW_LAN_ONLY));
