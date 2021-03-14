@@ -208,7 +208,9 @@ public abstract class DialogFragmentAbstractLocationPicker
 		if (cbRememberLocation != null && cbRememberLocation.isChecked()) {
 			if (history != null && location != null
 					&& !history.contains(location.fullPath)) {
-				history.add(0, location.fullPath);
+				synchronized (history) {
+					history.add(0, location.fullPath);
+				}
 				session.moveDataHistoryChanged(history);
 			}
 		}
@@ -307,11 +309,9 @@ public abstract class DialogFragmentAbstractLocationPicker
 					PathInfo pathInfo = PathInfo.buildPathInfo(currentDir);
 					CharSequence s = pathInfo.getFriendlyName();
 
-					OffThread.runOnUIThread(this, false, a -> {
-						tv.setText(AndroidUtils.fromHTML(resources,
-								R.string.movedata_currentlocation, s));
-						updateItemSelected(pathInfo, false);
-					});
+					OffThread.runOnUIThread(this, false,
+							a -> tv.setText(AndroidUtils.fromHTML(resources,
+									R.string.movedata_currentlocation, s)));
 				});
 			}
 		}
@@ -381,18 +381,7 @@ public abstract class DialogFragmentAbstractLocationPicker
 				}
 				int numOSFolderChoosers = FileUtils.numOSFolderChoosers(
 						offThreadContext);
-				int selectPos = -1;
-				if (listPathInfos != null && newLocation != null) {
-					for (int i = 0; i < listPathInfos.size(); i++) {
-						PathInfo iterPathInfo = listPathInfos.get(i);
-						if (newLocation.equals(iterPathInfo)) {
-							selectPos = i;
-							break;
-						}
-					}
-				}
 
-				int finalSelectPos = selectPos;
 				OffThread.runOnUIThread(() -> {
 					if (isRemoving() || isDetached()) {
 						return;
@@ -406,8 +395,28 @@ public abstract class DialogFragmentAbstractLocationPicker
 							tvWarning.setVisibility(View.VISIBLE);
 						}
 					}
+					int selectPos = -1;
+					if (list != null && newLocation != null) {
+						for (int i = 0; i < list.size(); i++) {
+							PathInfo iterPathInfo = list.get(i);
+							// Unknown if File.equals takes time, but we can't calculate
+							// selectPos until we are about to build adapter, otherwise
+							// changes from onActivityResult may not apply if it's run
+							// before us
+							if (newLocation.equals(iterPathInfo)) {
+								selectPos = i;
+								break;
+							}
+						}
+					}
+					if (selectPos < 0 && newLocation != null) {
+						list.add(0, newLocation);
+						selectPos = 0;
+					}
+
 					listPathInfos = list;
-					if (finalSelectPos >= 0) {
+					if (selectPos >= 0) {
+						int finalSelectPos = selectPos;
 						adapter.addOnSetItemsCompleteListener(
 								new FlexibleRecyclerAdapter.OnSetItemsCompleteListener<PathArrayAdapter>() {
 									@Override
@@ -475,8 +484,10 @@ public abstract class DialogFragmentAbstractLocationPicker
 		}
 
 		if (history != null && history.size() > 0) {
-			for (String loc : history) {
-				addPath(list, PathInfo.buildPathInfo(loc));
+			synchronized (history) {
+				for (String loc : history) {
+					addPath(list, PathInfo.buildPathInfo(loc));
+				}
 			}
 		}
 
@@ -597,14 +608,13 @@ public abstract class DialogFragmentAbstractLocationPicker
 
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
-		PathInfo chosenPath = null;
+		String chosenPathString = null;
 		if (requestCode == REQUEST_PATHCHOOSER && resultCode == Activity.RESULT_OK
 				&& data != null) {
 			// Result from Android OS File Picker, which is only used on local core
 
 			Uri uri = data.getData();
 			if (uri != null) {
-				chosenPath = PathInfo.buildPathInfo(uri.toString());
 				// Persist access permissions.
 				final int takeFlags = data.getFlags()
 						& (Intent.FLAG_GRANT_READ_URI_PERMISSION
@@ -613,6 +623,7 @@ public abstract class DialogFragmentAbstractLocationPicker
 					ContentResolver contentResolver = requireActivity().getContentResolver();
 					contentResolver.takePersistableUriPermission(uri, takeFlags);
 				}
+				chosenPathString = uri.toString();
 			}
 		}
 
@@ -621,41 +632,52 @@ public abstract class DialogFragmentAbstractLocationPicker
 		if (requestCode == REQUEST_PATHCHOOSER
 				&& resultCode == DirectoryChooserActivity.RESULT_CODE_DIR_SELECTED
 				&& data != null) {
-			String result = data.getStringExtra(
+			chosenPathString = data.getStringExtra(
 					DirectoryChooserActivity.RESULT_SELECTED_DIR);
-			if (result != null) {
-				chosenPath = PathInfo.buildPathInfo(result);
-			}
 		}
 
 		if (DEBUG) {
-			Log.d(TAG, "onActivityResult: " + chosenPath);
+			Log.d(TAG, "onActivityResult: " + chosenPathString);
 		}
-		if (chosenPath == null) {
+
+		if (chosenPathString == null) {
 			super.onActivityResult(requestCode, resultCode, data);
 			return;
 		}
 
-		this.newLocation = chosenPath;
+		String s = chosenPathString;
+		OffThread.runOffUIThread(() -> setChosenPathExternal(s));
+	}
+
+	@WorkerThread
+	private void setChosenPathExternal(String path) {
+
+		newLocation = PathInfo.buildPathInfo(path);
 
 		if (newLocation.isReadOnly() && !FileUtils.canUseSAF(requireContext())) {
 			// TODO: Warn
 			return;
 		}
 
-		if (etLocation != null) {
-			etLocation.setText(newLocation.fullPath);
-		}
-
 		if (history != null && !history.contains(newLocation.fullPath)) {
-			history.add(history.size() > 0 ? 1 : 0, newLocation.fullPath);
+			synchronized (history) {
+				history.add(history.size() > 0 ? 1 : 0, newLocation.fullPath);
+			}
 			Session session = SessionManager.findOrCreateSession(this, null);
 			if (session != null) {
 				session.moveDataHistoryChanged(history);
 			}
 		}
 
-		if (adapter != null && listPathInfos != null) {
+		OffThread.runOnUIThread(this, false, activity -> {
+			if (etLocation != null) {
+				etLocation.setText(newLocation.fullPath);
+			}
+
+			if (adapter == null || listPathInfos == null) {
+				return;
+			}
+
 			boolean exists = false;
 			int[] checkedItemPositions = adapter.getCheckedItemPositions();
 			int checkedPos = checkedItemPositions.length == 0 ? -1
@@ -682,7 +704,7 @@ public abstract class DialogFragmentAbstractLocationPicker
 				adapter.setItemSelected(0);
 				updateItemSelected(newLocation, true);
 			}
-		}
+		});
 	}
 
 	private PathInfo getLocation() {
