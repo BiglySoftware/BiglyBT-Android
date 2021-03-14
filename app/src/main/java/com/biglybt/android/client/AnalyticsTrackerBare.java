@@ -174,6 +174,18 @@ public class AnalyticsTrackerBare
 		}
 	}
 
+	@Override
+	public void logCrash(Throwable e, Thread thread) {
+		try {
+			logCrash(true, toString(e), e == null ? "" : getCompressedStackTrace(e),
+					"*" + thread.getName());
+		} catch (Throwable t) {
+			if (AndroidUtils.DEBUG) {
+				Log.e(TAG, LOG_MSG_ERROR, t);
+			}
+		}
+	}
+
 	private static String getCompressedStackTrace(Throwable t) {
 		return AndroidUtils.getCompressedStackTrace(t, 12).replace(".java", "");
 	}
@@ -250,10 +262,7 @@ public class AnalyticsTrackerBare
 	@Override
 	public void registerExceptionReporter(Context applicationContext) {
 		try {
-			Thread.UncaughtExceptionHandler uncaughtExceptionHandler = (t,
-					e) -> logCrash(true, toString(e), getCompressedStackTrace(e),
-							"*" + t.getName());
-			Thread.setDefaultUncaughtExceptionHandler(uncaughtExceptionHandler);
+			Thread.setDefaultUncaughtExceptionHandler((t, e) -> logCrash(e, t));
 		} catch (Throwable t) {
 			if (AndroidUtils.DEBUG) {
 				Log.e(TAG, "registerExceptionReporter", t);
