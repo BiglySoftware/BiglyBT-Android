@@ -522,7 +522,7 @@
 	<style name="SidebarCircularProgress" parent="Widget.MaterialComponents.CircularProgressIndicator.Small">
 		<item name="materialThemeOverlay">@style/ThemeOverlay.App.CircularProgressIndicator</item>
 		<item name="indicatorSize">22dp</item>
-		<item name="showDelay">200</item>
+		<item name="showDelay">2000</item>
 		<item name="minHideDelay">0</item>
 	</style>
 
