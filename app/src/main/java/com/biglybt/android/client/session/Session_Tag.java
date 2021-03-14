@@ -17,6 +17,7 @@
 package com.biglybt.android.client.session;
 
 import androidx.annotation.IntDef;
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.collection.LongSparseArray;
 
@@ -224,17 +225,17 @@ public class Session_Tag
 	/**
 	 * Get list of Tags, sorted by {@link TagComparator}
 	 */
-	@Nullable
+	@NonNull
 	public List<Map<?, ?>> getTags() {
 		return getTags(false);
 	}
 
-	@Nullable
+	@NonNull
 	private List<Map<?, ?>> getTags(boolean onlyManuallyAddable) {
 		session.ensureNotDestroyed();
 
 		if (mapTags == null) {
-			return null;
+			return Collections.emptyList();
 		}
 
 		ArrayList<Map<?, ?>> list = new ArrayList<>();
@@ -277,6 +278,7 @@ public class Session_Tag
 	@Thunk
 	void placeTagListIntoMap(List<?> tagList, boolean replaceOldMap,
 			boolean updateStateIDs) {
+		List<Map<?, ?>> changedTags = new ArrayList<>();
 		// put new list of tags into mapTags.  Update the existing tag Map in case
 		// some other part of the app stored a reference to it.
 		synchronized (session.mLock) {
@@ -294,9 +296,13 @@ public class Session_Tag
 					if (replaceOldMap) {
 						if (mapOldTag == null) {
 							mapNewTags.put(uid, mapNewTag);
+							changedTags.add(mapNewTag);
 						} else {
 							//noinspection SynchronizationOnLocalVariableOrMethodParameter
 							synchronized (mapOldTag) {
+								if (!mapOldTag.equals(mapNewTag)) {
+									changedTags.add(mapOldTag);
+								}
 								mapOldTag.clear();
 								mapOldTag.putAll(mapNewTag);
 							}
@@ -309,7 +315,11 @@ public class Session_Tag
 						if (count >= 0 && mapOldTag != null) {
 							//noinspection SynchronizationOnLocalVariableOrMethodParameter
 							synchronized (mapOldTag) {
-								mapOldTag.put(FIELD_TAG_COUNT, count);
+								if (MapUtils.getMapLong(mapOldTag, FIELD_TAG_COUNT,
+										-1) != count) {
+									mapOldTag.put(FIELD_TAG_COUNT, count);
+									changedTags.add(mapOldTag);
+								}
 							}
 						}
 						mapNewTags.put(uid, mapOldTag);
@@ -335,15 +345,42 @@ public class Session_Tag
 						}
 					}
 				}
+
+				// Update torrent's FIELD_LAST_UPDATED when tag has changed
+				// TODO: Instead of using changedTags, use a list of tags that only
+				//       changed important files.  ie. 'count' change is irrelevant to
+				//       torrent since it's not displayed in any torrent view.
+				List<Long> changedTagUIDs = new ArrayList<>();
+				for (Map<?, ?> changedTag : changedTags) {
+					changedTagUIDs.add(MapUtils.getMapLong(changedTag,
+							TransmissionVars.FIELD_TAG_UID, -1));
+				}
+
+				LongSparseArray<Map<?, ?>> listTorrents = session.torrent.getListAsSparseArray();
+				for (int i = 0, count = listTorrents.size(); i < count; i++) {
+					Map mapTorrent = listTorrents.valueAt(i);
+					List<?> listTagUIDs = MapUtils.getMapList(mapTorrent,
+							TransmissionVars.FIELD_TORRENT_TAG_UIDS, null);
+					if (listTagUIDs != null && !listTagUIDs.isEmpty()) {
+						if (!Collections.disjoint(listTagUIDs, changedTagUIDs)) {
+							if (AndroidUtils.DEBUG_RPC) {
+								session.logd("tagListReceived: "
+										+ mapTorrent.get(TransmissionVars.FIELD_TORRENT_NAME)
+										+ " tag change");
+							}
+							mapTorrent.put(TransmissionVars.FIELD_LAST_UPDATED,
+									System.currentTimeMillis());
+						}
+					}
+				}
 			}
 
 			mapTags = mapNewTags;
 		}
 
-		if (tagListReceivedListeners.size() > 0) {
-			List<Map<?, ?>> tags = session.tag.getTags();
+		if (tagListReceivedListeners.size() > 0 && changedTags.size() > 0) {
 			for (TagListReceivedListener l : tagListReceivedListeners) {
-				l.tagListReceived(tags);
+				l.tagListReceived(changedTags);
 			}
 		}
 	}

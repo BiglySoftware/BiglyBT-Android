@@ -16,12 +16,10 @@
 
 package com.biglybt.android.client.spanbubbles;
 
-import android.annotation.TargetApi;
 import android.content.Context;
 import android.graphics.Paint;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.StateListDrawable;
-import android.os.Build;
 import android.text.*;
 import android.text.style.ClickableSpan;
 import android.text.style.DynamicDrawableSpan;
@@ -376,7 +374,7 @@ public class SpanTags
 				public void onLayoutChange(View v, int left, int top, int right,
 						int bottom, int oldLeft, int oldTop, int oldRight, int oldBottom) {
 					tvTags.removeOnLayoutChangeListener(this);
-					tvTags.post(() -> updateTags(true));
+					tvTags.post(() -> updateTags(forceSet));
 				}
 			});
 			return;
@@ -386,6 +384,12 @@ public class SpanTags
 		StringBuilder sb = buildSpannableString(outTags);
 		String string = sb.toString();
 
+		String existingTagText = tvTags.getText().toString();
+		if (!forceSet && existingTagText.length() - 1 == string.length()
+				&& existingTagText.startsWith(string)) {
+			return;
+		}
+
 		SpannableStringBuilder ss = setTagBubbles(sb, string, "~!~", outTags);
 
 		if (flipper != null) {
@@ -393,22 +397,8 @@ public class SpanTags
 			return;
 		}
 
-		if (!string.equals(tvTags.getText().toString()) || forceSet) {
-//			int start = tvTags.getSelectionStart();
-//			int end = tvTags.getSelectionEnd();
-//			Log.e(TAG, "Selection " + tvTags.getSelectionStart() + " to " +
-//					tvTags.getSelectionEnd());
-			tvTags.setTextKeepState(ss);
-			//CharSequence so = tvTags.getText();
-			//Selection.getSelectionStart(so);
-//			if (start >= 0 && end >= 0) {
-//				Selection.setSelection(ss, start, end);
-//			}
-//			tvTags.setText(ss);
-//			if (start >= 0 && end >= 0) {
-//				Selection.setSelection((Spannable) tvTags.getText(), start, end);
-//			}
-		}
+		tvTags.setTextKeepState(ss);
+		tvTags.postInvalidate();
 	}
 
 	public void setFlipper(TextViewFlipper flipper,

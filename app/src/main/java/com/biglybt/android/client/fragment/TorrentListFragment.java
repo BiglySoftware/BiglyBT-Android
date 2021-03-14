@@ -601,7 +601,7 @@ public class TorrentListFragment
 			}
 		} else {
 			List<Map<?, ?>> tags = session.tag.getTags();
-			if (tags != null && tags.size() > 0) {
+			if (tags.size() > 0) {
 				tagListReceived(tags);
 			}
 		}
@@ -1482,10 +1482,13 @@ public class TorrentListFragment
 	}
 
 	@Override
-	public void tagListReceived(List<Map<?, ?>> tags) {
-		if (sideTagAdapter == null || tags == null) {
+	public void tagListReceived(@NonNull List<Map<?, ?>> changedTags) {
+		if (sideTagAdapter == null) {
 			return;
 		}
+
+		final List<Map<?, ?>> tags = session.tag.getTags();
+
 		List<SideTagAdapter.SideTagInfo> list = new ArrayList<>(tags.size());
 		String lastGroup = null;
 		for (Map tag : tags) {
@@ -1506,41 +1509,12 @@ public class TorrentListFragment
 		}
 		sideTagAdapter.setItems(list, null, (oldItem, newItem) -> {
 
-			if (oldItem.id != newItem.id) {
+			if (oldItem.id != newItem.id || session == null
+					|| session.isDestroyed()) {
 				return false;
 			}
 
-			final Session session = getSession();
-			if (session == null) {
-				return false;
-			}
-			Map<?, ?> oldTag = session.tag.getTag(oldItem.id);
-			Map<?, ?> newTag = session.tag.getTag(newItem.id);
-			if (oldTag == null || newTag == null) {
-				return oldTag == newTag;
-			}
-			if (oldTag.size() != newTag.size()) {
-				return false;
-			}
-			Object[] tagKeys;
-			//noinspection SynchronizationOnLocalVariableOrMethodParameter
-			synchronized (oldTag) {
-				tagKeys = oldTag.keySet().toArray();
-			}
-			for (Object key : tagKeys) {
-				Object oldVal = oldTag.get(key);
-				Object newVal = newTag.get(key);
-				if (oldVal == newVal) {
-					continue;
-				}
-				if (oldVal == null || newVal == null) {
-					return false;
-				}
-				if (!oldVal.equals(newVal)) {
-					return false;
-				}
-			}
-			return true;
+			return !changedTags.contains(session.tag.getTag(newItem.id));
 		});
 
 		OffThread.runOnUIThread(this, false, activity -> {

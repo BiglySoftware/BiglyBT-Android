@@ -16,18 +16,15 @@
 
 package com.biglybt.android.client.rpc;
 
+import androidx.annotation.NonNull;
+
 import java.util.List;
 import java.util.Map;
-
-import androidx.annotation.Nullable;
 
 /**
  * Created by TuxPaper on 2/18/16.
  */
 public interface TagListReceivedListener
 {
-	/**
-	 * @param tags sorted by {@link com.biglybt.android.client.session.Session_Tag.TagComparator}
-	 */
-	void tagListReceived(@Nullable List<Map<?, ?>> tags);
+	void tagListReceived(@NonNull List<Map<?, ?>> changedTags);
 }

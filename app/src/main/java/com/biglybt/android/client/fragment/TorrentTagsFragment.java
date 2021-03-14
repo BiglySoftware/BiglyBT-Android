@@ -351,7 +351,7 @@ public class TorrentTagsFragment
 	}
 
 	@Override
-	public void tagListReceived(@Nullable List<Map<?, ?>> tags) {
+	public void tagListReceived(@NonNull List<Map<?, ?>> changedTags) {
 		updateTags();
 	}
 }
