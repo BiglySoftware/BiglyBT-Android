@@ -337,7 +337,8 @@ public class AnalyticsTrackerBare
 			String threadName) {
 		if (AndroidUtils.DEBUG) {
 			Log.println(isCrash ? Log.ERROR : Log.WARN, "CRASH",
-					"[" + threadName + "] " + exceptionName + ": " + stack);
+					"[" + threadName + "] " + exceptionName + ": "
+							+ stack.replaceAll(":([0-9])", ".java:$1"));
 		}
 		Map<String, Object> map = createBasicMap();
 
