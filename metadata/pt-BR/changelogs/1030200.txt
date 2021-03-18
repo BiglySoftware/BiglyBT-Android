@@ -1,7 +1,7 @@
 1.3.2
-★ Temporarily remember search results
-★ Tap & Hold on current DL/UL speed to set max speeds
-★ Cleaner small list mode
-★ Progress ring's center fills with green based on share ratio
-★ Fix crashes in Mainline DHT plugin
-★ Fix remote access while bound to VPN
+★ Lembre-se temporariamente dos resultados da pesquisa
+★ Toque & segure na velocidade DL/UL atual para definir as velocidades máximas
+★ Modo de lista pequena mais limpo
+★ O centro do anel de progresso é preenchido com verde com base na proporção de compartilhamento
+★ Corrigir falhas no plugin Mainline DHT
+★ Corrigido erro no acesso remoto enquanto estiver vinculado à VPN
