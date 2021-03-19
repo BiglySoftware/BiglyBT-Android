@@ -106,7 +106,7 @@ public class TorrentListAdapter
 		super(TAG, selector);
 		this.context = context;
 
-		torrentListRowFiller = new TorrentListRowFiller(context);
+		torrentListRowFiller = new TorrentListRowFiller(context, true);
 		this.sessionGetter = sessionGetter;
 		this.smallView = smallView;
 

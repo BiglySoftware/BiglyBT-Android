@@ -64,6 +64,8 @@ public class TorrentDetailsFragment
 {
 	private static final String TAG = "TorrentDetailsFragment";
 
+	private static final int TOPAREA_SHOWTAGS_AFTER_DP = 480;
+
 	@Thunk
 	long torrentID;
 
@@ -78,7 +80,10 @@ public class TorrentDetailsFragment
 
 		View viewTorrentRow = requireActivity().findViewById(
 				R.id.activity_torrent_detail_row);
-		torrentListRowFiller = new TorrentListRowFiller(requireContext(), viewTorrentRow);
+
+		Context context = requireContext();
+		torrentListRowFiller = new TorrentListRowFiller(context, viewTorrentRow,
+				AndroidUtilsUI.getScreenHeightDp(context) > TOPAREA_SHOWTAGS_AFTER_DP);
 		viewTorrentRow.setFocusable(false);
 	}
 

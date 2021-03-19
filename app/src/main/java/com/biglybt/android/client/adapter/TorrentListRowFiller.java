@@ -60,6 +60,8 @@ public class TorrentListRowFiller
 
 	private TorrentListHolderItem viewHolder;
 
+	private final boolean showTags;
+
 	private static final NumberFormat nfPct1 = NumberFormat.getPercentInstance();
 
 	static {
@@ -67,18 +69,19 @@ public class TorrentListRowFiller
 	}
 
 	public TorrentListRowFiller(@NonNull Context context,
-			@NonNull View parentView) {
-		this(context);
+			@NonNull View parentView, boolean showTags) {
+		this(context, showTags);
 		this.viewHolder = new TorrentListHolderItem(null, parentView, false);
 	}
 
-	TorrentListRowFiller(Context context) {
+	TorrentListRowFiller(Context context, boolean showTags) {
 		colorBGTagState = AndroidUtilsUI.getStyleColor(context,
 				R.attr.bg_tag_type_2);
 		colorFGTagState = AndroidUtilsUI.getStyleColor(context,
 				R.attr.fg_tag_type_2);
 
 		flipper = TextViewFlipper.create();
+		this.showTags = showTags;
 	}
 
 	public void fillHolder(Map<?, ?> item, @NonNull Session session) {
@@ -243,9 +246,10 @@ public class TorrentListRowFiller
 			}
 		}
 
+		List<?> mapTagUIDs = MapUtils.getMapList(item,
+				TransmissionVars.FIELD_TORRENT_TAG_UIDS, null);
+
 		if (holder.tvStatus != null) {
-			List<?> mapTagUIDs = MapUtils.getMapList(item,
-					TransmissionVars.FIELD_TORRENT_TAG_UIDS, null);
 			StringBuilder text = new StringBuilder();
 			int color = -1;
 
@@ -394,10 +398,8 @@ public class TorrentListRowFiller
 			flipper.changeText(holder.tvStatus, ss, holder.animateFlip, validator);
 		}
 
-		if (holder.tvTags != null) {
+		if (holder.tvTags != null && showTags) {
 			ArrayList<Map<?, ?>> listTags = new ArrayList<>();
-			List<?> mapTagUIDs = MapUtils.getMapList(item,
-					TransmissionVars.FIELD_TORRENT_TAG_UIDS, null);
 			if (mapTagUIDs != null) {
 				for (Object o : mapTagUIDs) {
 					int type;
