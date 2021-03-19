@@ -1,0 +1,5 @@
+<resources>
+    <color name="torrent_ring_second">#80008000</color>
+    <color name="torrent_ring_remaining">@color/white</color>
+    <color name="dark_torrent_ring_remaining">#121212</color>
+</resources>

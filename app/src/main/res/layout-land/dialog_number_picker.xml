@@ -59,7 +59,7 @@
 			android:id="@+id/number_picker"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
-			android:background="@drawable/list_selector_dark"
+			android:background="?singlelist_selector_attr"
 			android:focusable="true"
 			android:windowSoftInputMode="stateHidden"
 			tools:visibility="visible"

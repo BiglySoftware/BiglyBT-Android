@@ -19,6 +19,7 @@ package com.biglybt.android.client.fragment;
 import android.content.Context;
 import android.os.Bundle;
 import android.view.*;
+import android.widget.ProgressBar;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -62,6 +63,7 @@ public class TorrentDetailsFragment
 	implements ActionModeBeingReplacedListener, View.OnKeyListener,
 	TorrentListReceivedListener
 {
+
 	private static final String TAG = "TorrentDetailsFragment";
 
 	private static final int TOPAREA_SHOWTAGS_AFTER_DP = 480;
@@ -80,6 +82,14 @@ public class TorrentDetailsFragment
 
 		View viewTorrentRow = requireActivity().findViewById(
 				R.id.activity_torrent_detail_row);
+
+		// We have a selector for selected+activated+disabled for the ProgressBar
+		// so that the "incomplete" area of the ring is painted correctly
+		viewTorrentRow.setSelected(true);
+		viewTorrentRow.setActivated(true);
+		viewTorrentRow.setBackgroundDrawable(null);
+		ProgressBar pb = requireActivity().findViewById(R.id.torrentrow_progress);
+		pb.setEnabled(false);
 
 		Context context = requireContext();
 		torrentListRowFiller = new TorrentListRowFiller(context, viewTorrentRow,

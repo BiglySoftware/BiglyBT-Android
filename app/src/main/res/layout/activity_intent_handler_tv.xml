@@ -86,7 +86,7 @@
 				android:layout_height="0dp"
 				android:layout_marginTop="10dp"
 				android:layout_weight="1"
-				android:listSelector="@drawable/list_selector_dark"
+				android:listSelector="?singlelist_selector_attr"
 				android:nextFocusDown="@+id/button_profile_add"
 				tools:listitem="@layout/row_profile_selector"/>
 

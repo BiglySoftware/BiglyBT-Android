@@ -1417,10 +1417,18 @@ public class AndroidUtilsUI
 	 * it's ok on AndroidTV.
 	 */
 	public static void changePickersBackground(@NonNull ViewGroup vg) {
+		TypedValue typedValue = new TypedValue();
+		vg.getContext().getTheme().resolveAttribute(R.attr.singlelist_selector_attr,
+				typedValue, true);
+
+		if (typedValue.resourceId == 0) {
+			return;
+		}
+
 		ArrayList<View> list = findByClass(vg, NumberPicker.class,
 				new ArrayList<>());
 		for (View v : list) {
-			v.setBackgroundResource(R.drawable.list_selector_dark);
+			v.setBackgroundResource(typedValue.resourceId);
 		}
 	}
 

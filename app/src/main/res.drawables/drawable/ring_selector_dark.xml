@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:a="http://schemas.android.com/apk/res/android">
+  <!-- Pre-21, this must be first, because it's the only one it will use -->
+  <item a:state_focused="false" a:state_pressed="false" a:state_activated="false"
+      a:drawable="@color/dark_torrent_ring_remaining" a:color="@color/dark_torrent_ring_remaining" />
+
+  <!-- special state for details view since its background is colorPrimary -->
+  <item a:state_enabled="false" a:state_focused="false" a:state_activated="true" a:state_selected="true"
+    a:drawable="@color/dark_primaryColor" a:color="@color/dark_primaryColor" />
+
+  <item
+    a:state_focused="false" a:state_activated="true" a:state_selected="true"
+    a:drawable="@color/dark_list_bg__sc_" a:color="@color/dark_list_bg__sc_" />
+
+  <item
+    a:state_focused="true"  a:state_activated="true" a:state_selected="true"
+    a:drawable="@color/dark_list_bg_fsc_" a:color="@color/dark_list_bg_fsc_" />
+
+  <item
+    a:state_focused="true"                         a:state_pressed="true"
+    a:drawable="@color/dark_list_bg_f__p" a:color="@color/dark_list_bg_f__p" />
+  <item
+    a:state_focused="false"                        a:state_pressed="true"
+    a:drawable="@color/dark_list_bg____p" a:color="@color/dark_list_bg____p" />
+  <item
+    a:state_focused="true"  a:state_activated="true"
+    a:drawable="@color/dark_list_bg_f_c_" a:color="@color/dark_list_bg_f_c_" />
+  <item
+    a:state_focused="false" a:state_activated="true"
+    a:drawable="@color/dark_list_bg___c_" a:color="@color/dark_list_bg___c_" />
+  <item
+    a:state_focused="true"
+    a:state_selected="true"
+    a:drawable="@color/dark_list_bg_f___" a:color="@color/dark_list_bg_f___" />
+  <item
+    a:state_focused="true"
+    a:drawable="@color/dark_list_bg_f___" a:color="@color/dark_list_bg_f___" />
+</selector>

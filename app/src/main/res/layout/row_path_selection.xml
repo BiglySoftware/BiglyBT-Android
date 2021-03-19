@@ -5,7 +5,7 @@
 	xmlns:tools="http://schemas.android.com/tools"
 	android:layout_width="match_parent"
 	android:layout_height="wrap_content"
-	android:background="@drawable/list_selector_dark"
+	android:background="?singlelist_selector_attr"
 	android:focusable="true"
 	android:gravity="center_vertical"
 	android:padding="8dp">

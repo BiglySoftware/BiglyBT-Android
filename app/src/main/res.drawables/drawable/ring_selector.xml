@@ -1,6 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- drawable is for 21+, color is for pre-21 -->
 <selector xmlns:a="http://schemas.android.com/apk/res/android">
+  <!-- Pre-21, this must be first, because it's the only one it will use -->
+  <item a:state_focused="false" a:state_pressed="false" a:state_activated="false"
+    a:drawable="@color/torrent_ring_remaining" a:color="@color/torrent_ring_remaining" />
+
+  <!-- special state for details view since its background is colorPrimary -->
+  <item a:state_enabled="false" a:state_focused="false" a:state_activated="true" a:state_selected="true"
+    a:drawable="@color/light_primaryColor" a:color="@color/light_primaryColor" />
+
+  <!-- The rest of the items are a copy of list_selector.xml -->
   <item
     a:state_focused="false" a:state_activated="true" a:state_selected="true"
     a:drawable="@color/list_bg__sc_" a:color="@color/list_bg__sc_" />
@@ -28,6 +37,4 @@
   <item
     a:state_focused="true"
     a:drawable="@color/list_bg_f___" a:color="@color/list_bg_f___" />
-  
-  
 </selector>

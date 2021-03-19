@@ -6,19 +6,10 @@
 	<attr name="login_link_color" format="color|reference"/>
 	<attr name="login_text_color" format="color|reference"/>
 	<attr name="login_textbubble_color" format="color|reference"/>
-	<attr name="list_bg_fep" format="color|reference"/>
-	<attr name="list_bg_fe" format="color|reference"/>
-	<attr name="list_bg_fp" format="color|reference"/>
-	<!-- Pressed Row BG attr -->
-	<attr name="list_bg_p" format="color|reference"/>
-	<attr name="list_bg_f" format="color|reference"/>
-	<!-- Checked Row BG attr -->
-	<attr name="list_bg_c" format="color|reference"/>
-	<attr name="list_bg_fc" format="color|reference"/>
-	<!-- Selected: ex. Fire TV -->
-	<attr name="list_bg_s" format="color|reference"/>
-	<!-- Selected & Checked: ex. Fire TV -->
-	<attr name="list_bg_sc" format="color|reference"/>
+
+	<attr name="list_selector_attr" format="reference"/>
+	<attr name="singlelist_selector_attr" format="reference"/>
+
 	<attr name="bg_tag_type_0" format="color|reference"/>
 	<attr name="bg_tag_type_cat" format="color|reference"/>
 	<attr name="bg_tag_type_2" format="color|reference"/>
@@ -27,7 +18,6 @@
 	<attr name="fg_tag_type_cat" format="color|reference"/>
 	<attr name="fg_tag_type_2" format="color|reference"/>
 	<attr name="fg_tag_type_manualtag" format="color|reference"/>
-	<attr name="ringdots" format="color|reference"/>
 
 	<attr name="pager_bg" format="color|reference"/>
 	<attr name="pager_fg" format="color|reference"/>

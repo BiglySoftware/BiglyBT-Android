@@ -53,7 +53,7 @@
 				android:id="@+id/range0_picker_number"
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
-				android:background="@drawable/list_selector_dark"
+				android:background="?singlelist_selector_attr"
 				android:focusable="true"
 				android:windowSoftInputMode="stateHidden"
 				>
@@ -66,7 +66,7 @@
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
 				android:layout_marginLeft="8dp"
-				android:background="@drawable/list_selector_dark"
+				android:background="?singlelist_selector_attr"
 				android:focusable="true"
 				android:nextFocusRight="@id/range1_picker_switch"
 				android:layout_marginStart="8dp"/>
@@ -117,7 +117,7 @@
 				android:id="@+id/range1_picker_number"
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
-				android:background="@drawable/list_selector_dark"
+				android:background="?singlelist_selector_attr"
 				android:focusable="true"
 				android:nextFocusLeft="@id/range0_picker_unit"
 				/>
@@ -127,7 +127,7 @@
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
 				android:layout_marginLeft="8dp"
-				android:background="@drawable/list_selector_dark"
+				android:background="?singlelist_selector_attr"
 				android:focusable="true"
 				android:nextFocusForward="@+id/range_set"
 				android:nextFocusRight="@+id/range_set"

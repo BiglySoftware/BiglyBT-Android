@@ -20,7 +20,10 @@
 	<color name="dark_colorOnPrimary">#ffffff</color>
 	<color name="dark_primaryColorDark">#2b68a3</color>
 
-	<color name="dark_ringdots">#888888</color>
+	<color name="dark_torrent_ring_dots">#909090</color>
+	<color name="dark_torrent_ring_second_middle">#80325442</color>
+	<color name="dark_torrent_ring_complete">#A040A080</color>
+
 	<color name="dark_statusbar_bg2">#00000000</color>
 	<color name="dark_statusbar_bg1">#99000000</color>
 
@@ -30,9 +33,30 @@
 	<color name="dark_sidelist_content_bg">@color/background_material_dark</color> <!-- background_leanback_dark #ff324248 -->
 	<color name="dark_sidelist_shadow">#222222</color>
 
+	<color name="dark_list_bg_fep">#ff00ff80</color>
+
+	<!-- Focused and Pressed -->
+	<color name="dark_list_bg_f__p">#214F7D</color>
+	<!-- Pressed Row BG COlor -->
+	<color name="dark_list_bg____p">#293A49</color>
+	<!-- Focused (RecyclerView) -->
+	<color name="dark_list_bg_f___">#263F56</color>
+	<!-- Since all selected become checked, there shouldn't be a "only selected" state anymore.  So, use focus color -->
+	<!-- Selected: ex. Fire TV (before we used RecyclerView) -->
+	<color name="dark_list_bg__s__">#3F3F3F</color>
+	<!-- Checked Row BG Color -->
+	<color name="dark_list_bg___c_">#2E2F49</color>
+	<color name="dark_single_list_bg___c_">@color/dark_list_bg_f__p</color>
+	<!-- Selected & Checked: ex. Fire TV -->
+	<color name="dark_list_bg__sc_">#234463</color>
+	<!-- Focused, Selected, Checked -->
+	<color name="dark_list_bg_fsc_">#214F7D</color>
+	<!-- Focused and Checked (RecyclerView).  Should be the same as Focused, Selected, Checked -->
+	<color name="dark_list_bg_f_c_">#214F7D</color>
+
 	<!-- Note: Glitch on MiBox3 API 26 for #802b68a3. Widget with this solid color next
 	           to a widget with gradient background consisting of this startColor
-	           causes a noticable different when displayed.  7F fixes this
+	           causes a noticable difference when displayed.  7F fixes this
 	-->
 	<color name="tv_header_bg">#7f2b68a3</color>
 <!--	<color name="tv_header_bg">#2d4c69</color>-->

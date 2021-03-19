@@ -8,7 +8,7 @@
 	android:layout_height="wrap_content"
 	android:layout_marginTop="1dp"
 	android:layout_marginBottom="1dp"
-	android:background="@drawable/list_selector"
+	android:background="?list_selector_attr"
 	android:descendantFocusability="blocksDescendants"
 	android:focusable="true"
 	android:paddingStart="@dimen/torrentdetails_hpadding"

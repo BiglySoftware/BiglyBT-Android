@@ -1,22 +1,21 @@
-<!-- pre-23, we need to use inset instead of top/l/r/bottom on item -->
+<!-- API 23+, we need to use top/l/r/bottom on item instead of inset -->
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:id="@android:id/secondaryProgress">
+    <item
+        android:id="@android:id/secondaryProgress"
+        android:bottom="@dimen/torrentrow_ring_second_padding"
+        android:left="@dimen/torrentrow_ring_second_padding"
+        android:right="@dimen/torrentrow_ring_second_padding"
+        android:top="@dimen/torrentrow_ring_second_padding"
+        >
         <layer-list>
             <item>
                 <clip
                     android:clipOrientation="vertical"
                     android:gravity="bottom"
                     >
-                    <inset
-                        android:insetLeft="@dimen/torrentrow_ring_second_padding"
-                        android:insetTop="@dimen/torrentrow_ring_second_padding"
-                        android:insetRight="@dimen/torrentrow_ring_second_padding"
-                        android:insetBottom="@dimen/torrentrow_ring_second_padding"
-                        >
-                        <shape android:shape="oval">
-                            <solid android:color="@color/torrent_ring_second_middle" />
-                        </shape>
-                    </inset>
+                    <shape android:shape="oval">
+                        <solid android:color="@color/torrent_ring_second_middle" />
+                    </shape>
                 </clip>
             </item>
             <item>
