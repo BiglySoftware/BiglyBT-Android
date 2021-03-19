@@ -272,6 +272,23 @@ public class SessionManager
 		}
 	}
 
+	public static void clearSubscriptionCaches(boolean keepLastUsed) {
+		int numClears = 0;
+		for (String key : mapSessions.keySet()) {
+			if (keepLastUsed && key.equals(lastUsed)) {
+				continue;
+			}
+			Session session = mapSessions.get(key);
+			session.subscription.clearCache();
+			numClears++;
+		}
+		if (AndroidUtils.DEBUG) {
+			//noinspection DuplicateStringLiteralInspection
+			Log.d(TAG, "clearTorrentCache. " + numClears + " removed");
+		}
+	}
+
+
 	@Nullable
 	public static Session findOrCreateSession(@NonNull Fragment fragment,
 			@Nullable SessionChangedListener l) {

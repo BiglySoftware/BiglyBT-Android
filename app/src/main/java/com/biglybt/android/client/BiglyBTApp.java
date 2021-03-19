@@ -366,12 +366,14 @@ public class BiglyBTApp
 					Log.d(TAG, "onTrimMemory Complete");
 				}
 				// app next to be killed unless more mem found
+				SessionManager.clearSubscriptionCaches(false);
 				SessionManager.clearTorrentCaches(false); // clear all
 				break;
 			case TRIM_MEMORY_RUNNING_MODERATE:
 				if (AndroidUtils.DEBUG) {
 					Log.d(TAG, "onTrimMemory RunningModerate");
 				}
+				SessionManager.clearSubscriptionCaches(true);
 				SessionManager.clearTorrentCaches(true); // clear all except
 				// current
 				break;
@@ -379,8 +381,8 @@ public class BiglyBTApp
 				if (AndroidUtils.DEBUG) {
 					Log.d(TAG, "onTrimMemory RunningLow");
 				}
-				SessionManager.clearTorrentCaches(true); // clear all except
-				// current
+				SessionManager.clearSubscriptionCaches(true);
+				SessionManager.clearTorrentCaches(true); // clear all except current
 				SessionManager.clearTorrentFilesCaches(true); // clear all except last file
 				break;
 			case TRIM_MEMORY_RUNNING_CRITICAL:
@@ -390,6 +392,7 @@ public class BiglyBTApp
 				SessionManager.clearInactiveSessions();
 				SessionManager.clearTorrentCaches(true);
 				SessionManager.clearTorrentFilesCaches(true);
+				SessionManager.clearSubscriptionCaches(false);
 				break;
 			default:
 				if (AndroidUtils.DEBUG) {

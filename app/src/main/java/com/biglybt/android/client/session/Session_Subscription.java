@@ -428,4 +428,9 @@ public class Session_Subscription
 					});
 		});
 	}
+
+	public void clearCache() {
+		mapSubscriptions = null;
+		lastSubscriptionListReceivedOn = 0;
+	}
 }
