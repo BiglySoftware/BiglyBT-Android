@@ -115,7 +115,8 @@ public abstract class FlexibleRecyclerAdapter<ADAPTERTYPE extends RecyclerView.A
 
 	private View initialView;
 
-	private boolean neverSetItems = true;
+	@Thunk
+	boolean neverSetItems = true;
 
 	@Thunk
 	long lastSetItemsOn;
@@ -147,6 +148,8 @@ public abstract class FlexibleRecyclerAdapter<ADAPTERTYPE extends RecyclerView.A
 	private SetItemsCallBack<T> initialCallBack;
 
 	private OnSetItemsCompleteListener<ADAPTERTYPE> setItemsCompleteListener;
+
+	private Bundle stateToRestore;
 
 	public FlexibleRecyclerAdapter(@NonNull String TAG,
 			FlexibleRecyclerSelectionListener<ADAPTERTYPE, VH, T> rs) {
@@ -207,7 +210,6 @@ public abstract class FlexibleRecyclerAdapter<ADAPTERTYPE extends RecyclerView.A
 		}
 		notifyItemRangeChanged(0, count);
 		if (count == 0) {
-			neverSetItems = false;
 			checkEmpty();
 		}
 	}
@@ -234,18 +236,15 @@ public abstract class FlexibleRecyclerAdapter<ADAPTERTYPE extends RecyclerView.A
 	}
 
 	private void setCheckedPositions(@Nullable int[] positions) {
-		// TODO: notify before clearing
-		synchronized (mLock) {
-			checkedItems.clear();
-			if (positions == null || positions.length == 0) {
-				return;
-			}
-			for (int position : positions) {
-				T item = getItem(position);
-				if (item != null) {
-					checkedItems.add(item);
-				}
-			}
+		clearChecked();
+		if (positions == null || positions.length == 0) {
+			return;
+		}
+		if (positions.length > 1) {
+			setMultiCheckMode(true);
+		}
+		for (int position : positions) {
+			setItemChecked(position, true, true);
 		}
 	}
 
@@ -274,6 +273,10 @@ public abstract class FlexibleRecyclerAdapter<ADAPTERTYPE extends RecyclerView.A
 		if (recyclerView == null) {
 			return;
 		}
+		if (neverSetItems) {
+			stateToRestore = savedInstanceState;
+			return;
+		}
 
 		int[] checkedPositions = savedInstanceState.getIntArray(
 				TAG + KEY_SUFFIX_CHECKED);
@@ -284,14 +287,15 @@ public abstract class FlexibleRecyclerAdapter<ADAPTERTYPE extends RecyclerView.A
 				log(TAG, "onRestoreInstanceState: scroll to #" + selectedPosition);
 			}
 			selectedItem = getItem(selectedPosition);
-			recyclerView.scrollToPosition(selectedPosition);
-		} else {
-			int firstPosition = savedInstanceState.getInt(TAG + KEY_SUFFIX_FIRST_POS,
-					-1);
+		}
+
+		int scrollToPosition = savedInstanceState.getInt(TAG + KEY_SUFFIX_FIRST_POS,
+				selectedPosition);
+		if (scrollToPosition >= 0) {
 			if (AndroidUtils.DEBUG_ADAPTER) {
-				log(TAG, "onRestoreInstanceState: scroll to first, #" + firstPosition);
+				log(TAG, "onRestoreInstanceState: scroll #" + scrollToPosition);
 			}
-			recyclerView.scrollToPosition(firstPosition);
+			recyclerView.scrollToPosition(scrollToPosition);
 		}
 	}
 
@@ -676,6 +680,10 @@ public abstract class FlexibleRecyclerAdapter<ADAPTERTYPE extends RecyclerView.A
 		int count;
 		synchronized (mLock) {
 			count = mItems.size();
+			if (count == 0) {
+				// skip triggerOnSetItemsCompleteListeners which would incorrectly set neverSetItems
+				return;
+			}
 			mItems.clear();
 		}
 		if (selectedPosition >= 0) {
@@ -863,8 +871,8 @@ public abstract class FlexibleRecyclerAdapter<ADAPTERTYPE extends RecyclerView.A
 									toPosition);
 						} else {
 							last = 3;
-							sb.append("\n-->Move ").append(fromPosition).append(
-									"->").append(toPosition);
+							sb.append("\n-->Move ").append(fromPosition).append("->").append(
+									toPosition);
 						}
 					}
 
@@ -872,16 +880,16 @@ public abstract class FlexibleRecyclerAdapter<ADAPTERTYPE extends RecyclerView.A
 					public void onChanged(int position, int count, Object payload) {
 						T t = position < newItems.size() ? newItems.get(position) : null;
 						if (last == 4) {
-							sb.append(", ").append(count).append(" at ")
-								.append(position).append("; ").append(t);
+							sb.append(", ").append(count).append(" at ").append(
+									position).append("; ").append(t);
 						} else {
 							last = 4;
-							sb.append("\n-->Change ").append(count).append(" at ")
-								.append(position).append("; ").append(t);
+							sb.append("\n-->Change ").append(count).append(" at ").append(
+									position).append("; ").append(t);
 						}
 					}
 				});
-				
+
 				if (sb.length() > 1) {
 					log(TAG, sb.toString().substring(1));
 				}
@@ -904,6 +912,8 @@ public abstract class FlexibleRecyclerAdapter<ADAPTERTYPE extends RecyclerView.A
 			// we set mItems, causing and IndexOutOfBoundsException
 			synchronized (mLock) {
 				mItems = newItems;
+
+				neverSetItems = false;
 
 				if (selectedItem != null) {
 					// relink, since we may have a new object with the same stableId
@@ -982,7 +992,6 @@ public abstract class FlexibleRecyclerAdapter<ADAPTERTYPE extends RecyclerView.A
 		}
 
 		this.countsByViewType = countsByViewType;
-		neverSetItems = false;
 
 		if (skipDiffUtil) {
 			setItems_noDiffUtil(items);
@@ -1037,7 +1046,6 @@ public abstract class FlexibleRecyclerAdapter<ADAPTERTYPE extends RecyclerView.A
 
 	@Thunk
 	void setItems_noDiffUtil(@NonNull final List<T> items) {
-		neverSetItems = false;
 		if (!AndroidUtilsUI.isUIThread()) {
 			if (AndroidUtils.DEBUG_ADAPTER) {
 				log(TAG, "setItems: delay " + recyclerView);
@@ -1059,6 +1067,8 @@ public abstract class FlexibleRecyclerAdapter<ADAPTERTYPE extends RecyclerView.A
 			newCount = items.size();
 
 			mItems = items;
+
+			neverSetItems = false;
 
 			if (selectedItem != null) {
 				// relink, since we may have a new object with the same stableId
@@ -1121,6 +1131,10 @@ public abstract class FlexibleRecyclerAdapter<ADAPTERTYPE extends RecyclerView.A
 	}
 
 	protected void triggerOnSetItemsCompleteListeners() {
+		if (stateToRestore != null && !neverSetItems) {
+			onRestoreInstanceState(stateToRestore);
+			stateToRestore = null;
+		}
 		OnSetItemsCompleteListener[] listeners = listOnSetItemsCompleteListener.toArray(
 				new OnSetItemsCompleteListener[0]);
 		for (OnSetItemsCompleteListener listener : listeners) {
@@ -1181,7 +1195,7 @@ public abstract class FlexibleRecyclerAdapter<ADAPTERTYPE extends RecyclerView.A
 		setItemSelected(position, holder);
 
 		if (mIsMultiSelectMode || !alreadyChecked) {
-			toggleItemChecked(holder);
+			setItemChecked(position, null, true);
 		}
 
 		if (selector != null) {
@@ -1214,7 +1228,7 @@ public abstract class FlexibleRecyclerAdapter<ADAPTERTYPE extends RecyclerView.A
 		}
 
 		// Only toggle checked if selector didn't handle it
-		toggleItemChecked(holder, true);
+		setItemChecked(position, true, true);
 
 		return true;
 	}
@@ -1325,9 +1339,11 @@ public abstract class FlexibleRecyclerAdapter<ADAPTERTYPE extends RecyclerView.A
 		}
 	}
 
-	private void toggleItemChecked(@NonNull RecyclerView.ViewHolder holder) {
-		int position = holder.getLayoutPosition();
-		boolean nowChecked;
+	/**
+	 * @param on null to flip checked state
+	 */
+	private void setItemChecked(int position, @Nullable Boolean on,
+			boolean notifySelector) {
 		T item = getItem(position);
 		if (item == null) {
 			return;
@@ -1338,59 +1354,36 @@ public abstract class FlexibleRecyclerAdapter<ADAPTERTYPE extends RecyclerView.A
 			}
 			return;
 		}
-		synchronized (mLock) {
-			if (isItemChecked(item)) {
-				checkedItems.remove(item);
-				nowChecked = false;
-				if (checkedItems.size() == 0) {
-					setMultiCheckMode(false);
-				}
-			} else {
-				checkedItems.add(item);
-				nowChecked = true;
+		boolean alreadyChecked = isItemChecked(item);
+		if (on == null) {
+			on = !alreadyChecked;
+		}
+		if (on == alreadyChecked) {
+			if (AndroidUtils.DEBUG_ADAPTER) {
+				log(TAG, "Skip toggleItemChecked: " + position + " already " + on);
 			}
-		}
-		if (AndroidUtils.DEBUG_ADAPTER) {
-			log(TAG, "toggleItemChecked to " + nowChecked + " for " + position);
-		}
-		holder.itemView.setActivated(nowChecked);
-
-		safeNotifyItemChanged(position);
-		if (selector != null) {
-			selector.onItemCheckedChanged(thisAdapter, item, nowChecked);
+			return;
 		}
 
-	}
-
-	private void toggleItemChecked(@NonNull RecyclerView.ViewHolder holder,
-			@SuppressWarnings("SameParameterValue") boolean on) {
-		int position = holder.getLayoutPosition();
-		T item = getItem(position);
-		boolean alreadyChecked;
-		synchronized (mLock) {
-			alreadyChecked = checkedItems.contains(item);
-		}
 		if (AndroidUtils.DEBUG_ADAPTER) {
 			log(TAG, "toggleItemChecked to " + on + " for " + position + "; was "
 					+ alreadyChecked);
 		}
-		if (on != alreadyChecked) {
-			synchronized (mLock) {
-				if (on) {
-					checkedItems.add(item);
-				} else {
-					checkedItems.remove(item);
-					if (checkedItems.size() == 0) {
-						setMultiCheckMode(false);
-					}
+		synchronized (mLock) {
+			if (on) {
+				checkedItems.add(item);
+			} else {
+				checkedItems.remove(item);
+				if (checkedItems.size() == 0) {
+					setMultiCheckMode(false);
 				}
 			}
-			holder.itemView.setActivated(on);
-			safeNotifyItemChanged(position);
+		}
 
-			if (selector != null) {
-				selector.onItemCheckedChanged(thisAdapter, item, on);
-			}
+		safeNotifyItemChanged(position);
+
+		if (selector != null && notifySelector) {
+			selector.onItemCheckedChanged(thisAdapter, item, on);
 		}
 	}
 
@@ -1399,99 +1392,35 @@ public abstract class FlexibleRecyclerAdapter<ADAPTERTYPE extends RecyclerView.A
 	 *
 	 * @param position The position of the item to flip the state of
 	 */
-	// doesn't immediately update check state visually
 	@SuppressWarnings("unused")
 	public void toggleItemChecked(int position) {
-		toggleItemChecked(position, true);
-	}
-
-	private void toggleItemChecked(@NonNull Integer position,
-			boolean notifySelector) {
-		boolean checked;
-		T item = getItem(position);
-		synchronized (mLock) {
-			if (checkedItems.contains(item)) {
-				checkedItems.remove(item);
-				checked = false;
-				if (checkedItems.size() == 0) {
-					setMultiCheckMode(false);
-				}
-			} else {
-				checkedItems.add(item);
-				checked = true;
-			}
-		}
-
-		if (AndroidUtils.DEBUG_ADAPTER) {
-			log(TAG, "toggleItemChecked to " + checked + " for " + position + ";"
-					+ AndroidUtils.getCompressedStackTrace(8));
-		}
-		safeNotifyItemChanged(position);
-
-		if (selector != null && notifySelector) {
-			selector.onItemCheckedChanged(thisAdapter, item, checked);
-		}
+		setItemChecked(position, null, true);
 	}
 
 	public void setItemChecked(T item, boolean checked) {
-		if (item == null) {
-			return;
-		}
-		setItemChecked(item, getPositionForItem(item), checked);
+		setItemChecked(getPositionForItem(item), checked, true);
 	}
 
 	// doesn't immediately update check state visually
 	public void setItemChecked(int position, boolean checked) {
-		if (position < 0) {
-			return;
-		}
-		T item = getItem(position);
-		setItemChecked(item, position, checked);
-	}
-
-	private void setItemChecked(T item, int position, boolean checked) {
-		boolean alreadyChecked;
-		synchronized (mLock) {
-			alreadyChecked = checkedItems.contains(item);
-		}
-		if (checked != alreadyChecked) {
-			synchronized (mLock) {
-				if (checked) {
-					checkedItems.add(item);
-				} else {
-					checkedItems.remove(item);
-					if (checkedItems.size() == 0) {
-						setMultiCheckMode(false);
-					}
-				}
-			}
-			if (AndroidUtils.DEBUG_ADAPTER) {
-				log(TAG, "setItemChecked to " + checked + " for " + position + "; was "
-						+ alreadyChecked + ";" + AndroidUtils.getCompressedStackTrace(4));
-			}
-
-			safeNotifyItemChanged(position);
-			if (selector != null) {
-				selector.onItemCheckedChanged(thisAdapter, item, checked);
-			}
-		}
+		setItemChecked(position, checked, true);
 	}
 
 	/**
 	 * Unchecks all checked items
 	 */
 	public void clearChecked() {
+		clearChecked(true);
+	}
+
+	private void clearChecked(boolean notifySelector) {
 		if (AndroidUtils.DEBUG_ADAPTER) {
 			log(TAG, "Clear " + checkedItems.size() + " checked via "
 					+ AndroidUtils.getCompressedStackTrace(4));
 		}
 		ArrayList<T> checkedItemsCopy = new ArrayList<>(checkedItems);
 		for (T checkedItem : checkedItemsCopy) {
-			int position = getPositionForItem(checkedItem);
-			if (position >= 0) {
-				toggleItemChecked(position, false);
-				safeNotifyItemChanged(position);
-			}
+			setItemChecked(getPositionForItem(checkedItem), false, notifySelector);
 		}
 	}
 
@@ -1511,10 +1440,10 @@ public abstract class FlexibleRecyclerAdapter<ADAPTERTYPE extends RecyclerView.A
 			log(TAG, "setMultiCheckMode " + on + "; "
 					+ AndroidUtils.getCompressedStackTrace(4));
 		}
-		mIsMultiSelectMode = on;
 		if (!on && getCheckedItemCount() > 1) {
 			clearChecked();
 		}
+		mIsMultiSelectMode = on;
 	}
 
 	/**
