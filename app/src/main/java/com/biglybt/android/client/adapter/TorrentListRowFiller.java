@@ -135,6 +135,11 @@ public class TorrentListRowFiller
 			if (holder.pb.getProgress() != pctDoneInt) {
 				AndroidUtilsUI.setProgress(holder.pb, pctDoneInt, true);
 			}
+			float shareRatio = MapUtils.getMapFloat(item,
+					TransmissionVars.FIELD_TORRENT_UPLOAD_RATIO, -1);
+			int ratioPct = (int) (pctDoneInt == 10000 ? shareRatio * 10000
+					: (shareRatio * (10000 - 2400)) + 1200);
+			holder.pb.setSecondaryProgress(ratioPct);
 		}
 
 		long error = MapUtils.getMapLong(item, TransmissionVars.FIELD_TORRENT_ERROR,
