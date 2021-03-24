@@ -30,7 +30,6 @@ import android.view.*;
 import android.view.View.OnLayoutChangeListener;
 import android.view.animation.*;
 import android.widget.LinearLayout;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import androidx.annotation.*;
@@ -432,6 +431,15 @@ public class SideListHelper<ADAPTERITEM extends Comparable<ADAPTERITEM>>
 						textFilterHeader.setVisibility(
 								(getLetterFilter() != null && getLetterFilter().showLetterUI())
 										|| hasConstraint ? View.VISIBLE : View.GONE);
+					}
+				}
+
+				// Case: when onRestoreInstanceState sets constraint after setupSideTextFilter
+				if (tvSideFilterText != null && constraint != null
+						&& !tvSideFilterText.getText().toString().equals(constraint)) {
+					tvSideFilterText.setText(constraint);
+					if (constraint.length() > 0) {
+						tvSideFilterText.setVisibility(View.VISIBLE);
 					}
 				}
 			});
@@ -1664,7 +1672,8 @@ public class SideListHelper<ADAPTERITEM extends Comparable<ADAPTERITEM>>
 			return;
 		}
 
-		BaseProgressIndicator spinner = activity.findViewById(R.id.sideaction_spinner);
+		BaseProgressIndicator spinner = activity.findViewById(
+				R.id.sideaction_spinner);
 		if (spinner != null) {
 			if (((View) spinner.getParent()).getVisibility() == View.GONE) {
 				spinner = null;
@@ -1688,7 +1697,7 @@ public class SideListHelper<ADAPTERITEM extends Comparable<ADAPTERITEM>>
 				pulsateTextView(tvSortCurrent);
 				if (tvFilterCurrent != null) {
 					unpulsateTextView(tvFilterCurrent);
-					if (tvFilterCurrent.getText().equals(ourSideFilterText)) {
+					if (tvFilterCurrent.getText().toString().equals(ourSideFilterText)) {
 						tvFilterCurrent.setText("");
 					}
 				}
@@ -1700,7 +1709,7 @@ public class SideListHelper<ADAPTERITEM extends Comparable<ADAPTERITEM>>
 				}
 				if (tvFilterCurrent != null) {
 					unpulsateTextView(tvFilterCurrent);
-					if (tvFilterCurrent.getText().equals(ourSideFilterText)) {
+					if (tvFilterCurrent.getText().toString().equals(ourSideFilterText)) {
 						tvFilterCurrent.setText("");
 					}
 				}
@@ -1717,7 +1726,7 @@ public class SideListHelper<ADAPTERITEM extends Comparable<ADAPTERITEM>>
 				unpulsateTextView(tvSortCurrent);
 				if (tvFilterCurrent != null) {
 					unpulsateTextView(tvFilterCurrent);
-					if (tvFilterCurrent.getText().equals(ourSideFilterText)) {
+					if (tvFilterCurrent.getText().toString().equals(ourSideFilterText)) {
 						tvFilterCurrent.setText("");
 					}
 				}
