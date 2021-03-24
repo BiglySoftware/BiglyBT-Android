@@ -34,6 +34,8 @@
             android:layout_toRightOf="@+id/torrentrow_leftArea"
             android:background="#0000FF00"
             android:orientation="vertical"
+            android:paddingEnd="4dp"
+            android:paddingRight="4dp"
             >
 
             <TextView
@@ -141,8 +143,8 @@
                     android:id="@+id/torrentrow_progress_pct"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
-                    android:includeFontPadding="false"
                     android:gravity="center"
+                    android:includeFontPadding="false"
                     android:textAlignment="center"
                     android:textSize="@dimen/torrentrow_pct_size"
                     tools:text="80%"
@@ -153,8 +155,8 @@
                     android:id="@+id/torrentrow_eta"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
-                    android:includeFontPadding="false"
                     android:gravity="center"
+                    android:includeFontPadding="false"
                     android:textSize="@dimen/torrentrow_eta_size"
                     android:visibility="gone"
                     tools:text="@string/torrent_row_share_ratio_circle"

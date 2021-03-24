@@ -32,6 +32,8 @@
             android:layout_toEndOf="@+id/torrentrow_progress"
             android:layout_toRightOf="@+id/torrentrow_progress"
             android:orientation="vertical"
+            android:paddingEnd="4dp"
+            android:paddingRight="4dp"
             >
 
             <TextView
