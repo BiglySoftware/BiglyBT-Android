@@ -35,7 +35,7 @@ import com.biglybt.android.client.R;
 class TorrentListHolderItem
 	extends TorrentListHolder
 {
-	private static final boolean DEBUG = true;
+	private static final boolean DEBUG = false;
 
 	final boolean isSmall;
 

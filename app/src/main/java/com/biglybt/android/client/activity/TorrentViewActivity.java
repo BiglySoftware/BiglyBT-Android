@@ -86,7 +86,7 @@ public class TorrentViewActivity
 
 	public final static int FILECHOOSER_RESULTCODE = 1;
 
-	private static final boolean DEBUG = AndroidUtils.DEBUG;
+	private static final boolean DEBUG = AndroidUtils.DEBUG && false;
 
 	@SuppressWarnings("hiding")
 	private static final String TAG = "TorrentView";

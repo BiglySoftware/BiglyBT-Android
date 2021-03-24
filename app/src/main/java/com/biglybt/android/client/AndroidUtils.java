@@ -1394,7 +1394,7 @@ public class AndroidUtils
 			return true;
 		}
 		if (AndroidUtils.DEBUG) {
-			Log.d(TAG, "onSaveInstanceState: Bundle too large, skipping (src="
+			Log.w(TAG, "onSaveInstanceState: Bundle too large, skipping (src="
 					+ bytesSrc + "; dst=" + bytesDest + ")");
 		}
 		return false;
