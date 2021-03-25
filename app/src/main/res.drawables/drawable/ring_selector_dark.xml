@@ -4,9 +4,9 @@
   <item a:state_focused="false" a:state_pressed="false" a:state_activated="false"
       a:drawable="@color/dark_torrent_ring_remaining" a:color="@color/dark_torrent_ring_remaining" />
 
-  <!-- special state for details view since its background is colorPrimary -->
+  <!-- special state for details view since its background is special -->
   <item a:state_enabled="false" a:state_focused="false" a:state_activated="true" a:state_selected="true"
-    a:drawable="@color/dark_primaryColor" a:color="@color/dark_primaryColor" />
+    a:drawable="@color/dark_topdetails_bg" a:color="@color/dark_topdetails_bg" />
 
   <item
     a:state_focused="false" a:state_activated="true" a:state_selected="true"
