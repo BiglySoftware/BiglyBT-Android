@@ -844,7 +844,8 @@ public class TransmissionRPC
 			basicTorrentFieldIDs.add(TransmissionVars.FIELD_TORRENT_ID);
 			basicTorrentFieldIDs.add(TransmissionVars.FIELD_TORRENT_HASH_STRING);
 			basicTorrentFieldIDs.add(TransmissionVars.FIELD_TORRENT_NAME);
-			basicTorrentFieldIDs.add(TransmissionVars.FIELD_TORRENT_METADATA_PERCENT_DONE);
+			basicTorrentFieldIDs.add(
+					TransmissionVars.FIELD_TORRENT_METADATA_PERCENT_DONE);
 			basicTorrentFieldIDs.add(TransmissionVars.FIELD_TORRENT_PERCENT_DONE);
 			basicTorrentFieldIDs.add(TransmissionVars.FIELD_TORRENT_SIZE_WHEN_DONE);
 			basicTorrentFieldIDs.add(TransmissionVars.FIELD_TORRENT_RATE_UPLOAD);
@@ -1348,9 +1349,12 @@ public class TransmissionRPC
 
 	public interface MetaSearchResultsListener
 	{
-		boolean onMetaSearchGotEngines(Serializable searchID,
+		boolean onMetaSearchGotEngines(String searchString, Serializable searchID,
 				List<Map<String, Object>> engines);
 
+		/**
+		 * @return true - continue; false - abort;
+		 */
 		boolean onMetaSearchGotResults(Serializable searchID,
 				List<Map<String, Object>> engines, boolean complete);
 	}
@@ -1370,7 +1374,8 @@ public class TransmissionRPC
 						List<Map<String, Object>> listEngines = MapUtils.getMapList(
 								optionalMap, "engines", Collections.emptyList());
 
-						if (!l.onMetaSearchGotEngines(searchID, listEngines)) {
+						if (!l.onMetaSearchGotEngines(searchString, searchID,
+								listEngines)) {
 							return;
 						}
 
@@ -1382,7 +1387,7 @@ public class TransmissionRPC
 											Map<?, ?> optionalMap) {
 
 										boolean complete = MapUtils.getMapBoolean(optionalMap,
-												"complete", true);
+												TransmissionVars.FIELD_SEARCHRESULT_COMPLETE, true);
 										List<Map<String, Object>> listEngines = MapUtils.getMapList(
 												optionalMap, "engines", Collections.emptyList());
 

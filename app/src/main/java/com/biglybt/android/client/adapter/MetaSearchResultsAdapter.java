@@ -32,6 +32,7 @@ import androidx.recyclerview.widget.RecyclerView.ViewHolder;
 import com.biglybt.android.adapter.*;
 import com.biglybt.android.client.*;
 import com.biglybt.android.client.session.Session;
+import com.biglybt.android.client.session.Session_MetaSearch.MetaSearchEnginesInfo;
 import com.biglybt.android.client.spanbubbles.SpanTags;
 import com.biglybt.android.util.MapUtils;
 import com.biglybt.util.DisplayFormatters;

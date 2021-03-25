@@ -401,6 +401,17 @@ public class AndroidUtilsUI
 			@NonNull final OnTextBoxDialogClick onClickListener) {
 		AlertDialogBuilder adb = createAlertDialogBuilder(context,
 				R.layout.dialog_text_input);
+		return createTextBoxDialog(context, adb, title, hint,
+				helper, presetText, imeOptions, inputType, onClickListener);
+	}
+
+	// So many params, could use a builder
+	@NonNull
+	@UiThread
+	public static AlertDialog createTextBoxDialog(@NonNull final Context context,
+			AlertDialogBuilder adb, CharSequence title, String hint,
+			String helper, @Nullable String presetText, final int imeOptions,
+			int inputType, @NonNull final OnTextBoxDialogClick onClickListener) {
 
 		AlertDialog.Builder builder = adb.builder;
 

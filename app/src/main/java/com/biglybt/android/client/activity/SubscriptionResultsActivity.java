@@ -38,7 +38,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.biglybt.android.adapter.SortableRecyclerAdapter;
 import com.biglybt.android.client.*;
-import com.biglybt.android.client.adapter.MetaSearchEnginesInfo;
+import com.biglybt.android.client.session.Session_MetaSearch.MetaSearchEnginesInfo;
 import com.biglybt.android.client.adapter.MetaSearchResultsAdapter;
 import com.biglybt.android.client.adapter.MetaSearchResultsAdapterFilter;
 import com.biglybt.android.client.dialog.DialogFragmentDateRange;

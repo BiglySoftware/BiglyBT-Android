@@ -177,6 +177,11 @@ public class Session
 			this);
 
 	/**
+	 * Access to MetaSearch methods
+	 */
+	public final Session_MetaSearch metasearch = new Session_MetaSearch(this);
+
+	/**
 	 * Access to RCM (Swarm Discoveries) methods
 	 */
 	@NonNull
@@ -1150,6 +1155,7 @@ public class Session
 		subscription.destroy();
 		tag.destroy();
 		torrent.destroy();
+		metasearch.destroy();
 		currentActivityRef = new WeakReference<>(null);
 		BiglyBTApp.getNetworkState().removeListener(this);
 

@@ -26,13 +26,11 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
 import android.view.*;
-import android.view.inputmethod.EditorInfo;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.view.ActionMode;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.NavUtils;
@@ -167,12 +165,10 @@ public class TorrentViewActivity
 		if (tvUpSpeed != null) {
 			tvUpSpeed.setOnLongClickListener(v -> {
 				DialogFragmentNumberPicker.NumberPickerBuilder builder = new DialogFragmentNumberPicker.NumberPickerBuilder(
-						getSupportFragmentManager(),
-						KEY_SESSION_DOWNLOAD,
+						getSupportFragmentManager(), KEY_SESSION_DOWNLOAD,
 						(int) session.getSessionSettingsClone().getManualDlSpeed()).setTitleId(
-						R.string.rp_download_speed).setMin(0).setMax(99999).setSuffix(
-						R.string.kbps).setClearButtonText(
-						R.string.unlimited);
+								R.string.rp_download_speed).setMin(0).setMax(99999).setSuffix(
+										R.string.kbps).setClearButtonText(R.string.unlimited);
 				// Results handled in onNumberPickerChange
 				DialogFragmentNumberPicker.openDialog(builder);
 				return true;
@@ -182,12 +178,10 @@ public class TorrentViewActivity
 		if (tvDownSpeed != null) {
 			tvDownSpeed.setOnLongClickListener(v -> {
 				DialogFragmentNumberPicker.NumberPickerBuilder builder = new DialogFragmentNumberPicker.NumberPickerBuilder(
-						getSupportFragmentManager(),
-						KEY_SESSION_UPLOAD,
+						getSupportFragmentManager(), KEY_SESSION_UPLOAD,
 						(int) session.getSessionSettingsClone().getManualUlSpeed()).setTitleId(
-						R.string.rp_upload_speed).setMin(0).setMax(99999).setSuffix(
-						R.string.kbps).setClearButtonText(
-						R.string.unlimited);
+								R.string.rp_upload_speed).setMin(0).setMax(99999).setSuffix(
+										R.string.kbps).setClearButtonText(R.string.unlimited);
 				// Results handled in onNumberPickerChange
 				DialogFragmentNumberPicker.openDialog(builder);
 				return true;
@@ -644,18 +638,9 @@ public class TorrentViewActivity
 		return true;
 	}
 
-	private void showSearchDialog(String s) {
-		AlertDialog alertDialog = AndroidUtilsUI.createTextBoxDialog(this,
-				R.string.search, R.string.search_box_hint, View.NO_ID, s,
-				EditorInfo.IME_ACTION_SEARCH, (dialog, which, editText) -> {
-					final String newName = editText.getText().toString();
-					if (newName.isEmpty()) {
-						return;
-					}
-					AndroidUtils.executeSearch(newName, TorrentViewActivity.this,
-							session);
-				});
-		alertDialog.show();
+	private void showSearchDialog(String defaultTerm) {
+		DialogFragmentMetaSearch.openOpenTorrentDialog(getSupportFragmentManager(),
+				session.getRemoteProfile().getID(), defaultTerm);
 	}
 
 	@Override

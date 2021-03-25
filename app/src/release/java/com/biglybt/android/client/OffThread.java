@@ -18,6 +18,8 @@ package com.biglybt.android.client;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.os.Handler;
+import android.os.HandlerThread;
 import android.os.SystemClock;
 import android.util.Log;
 
@@ -30,6 +32,19 @@ import com.biglybt.util.RunnableWorkerThread;
 public class OffThread
 {
 	private static final String TAG = "OffThread";
+
+	private static HandlerThread workerThread = new HandlerThread("worker");
+
+	private static final Handler workerHandler;
+
+	static {
+		workerThread.start();
+		workerHandler = new Handler(workerThread.getLooper());
+	}
+
+	public static Handler getWorkerHandler() {
+		return workerHandler;
+	}
 
 	@SuppressLint("WrongThread")
 	@AnyThread

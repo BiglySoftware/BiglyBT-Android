@@ -21,14 +21,13 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.UiThread;
-import androidx.recyclerview.widget.RecyclerView;
 
 import com.biglybt.android.adapter.FlexibleRecyclerAdapter;
 import com.biglybt.android.adapter.FlexibleRecyclerSelectionListener;
 import com.biglybt.android.client.AndroidUtilsUI;
 import com.biglybt.android.client.BiglyBTApp;
 import com.biglybt.android.client.R;
+import com.biglybt.android.client.session.Session_MetaSearch;
 import com.biglybt.util.DisplayFormatters;
 import com.squareup.picasso.Picasso;
 
@@ -37,12 +36,12 @@ import com.squareup.picasso.Picasso;
  */
 public class MetaSearchEnginesAdapter
 	extends
-	FlexibleRecyclerAdapter<MetaSearchEnginesAdapter, MetaSearchEnginesHolder, MetaSearchEnginesInfo>
+	FlexibleRecyclerAdapter<MetaSearchEnginesAdapter, MetaSearchEnginesHolder, Session_MetaSearch.MetaSearchEnginesInfo>
 {
 	private static final String TAG = "MetaSearchEnginesAdapter";
 
 	public MetaSearchEnginesAdapter(
-			FlexibleRecyclerSelectionListener<MetaSearchEnginesAdapter, MetaSearchEnginesHolder, MetaSearchEnginesInfo> rs) {
+			FlexibleRecyclerSelectionListener<MetaSearchEnginesAdapter, MetaSearchEnginesHolder, Session_MetaSearch.MetaSearchEnginesInfo> rs) {
 		super(TAG, rs);
 		Picasso.with(BiglyBTApp.getContext()).setLoggingEnabled(true);
 		setHasStableIds(true);
@@ -50,7 +49,7 @@ public class MetaSearchEnginesAdapter
 
 	@Override
 	public long getItemId(int position) {
-		MetaSearchEnginesInfo item = getItem(position);
+		Session_MetaSearch.MetaSearchEnginesInfo item = getItem(position);
 		if (item == null) {
 			return -1;
 		}
@@ -60,7 +59,7 @@ public class MetaSearchEnginesAdapter
 	@Override
 	public void onBindFlexibleViewHolder(@NonNull MetaSearchEnginesHolder holder,
 			int position) {
-		MetaSearchEnginesInfo item = getItem(position);
+		Session_MetaSearch.MetaSearchEnginesInfo item = getItem(position);
 		if (item == null) {
 			return;
 		}
@@ -89,41 +88,5 @@ public class MetaSearchEnginesAdapter
 				R.layout.row_ms_engine_sidelist, parent, false);
 
 		return new MetaSearchEnginesHolder(this, rowView);
-	}
-
-	@UiThread
-	public void refreshItem(@NonNull String uid, boolean completed, int numAdded) {
-		MetaSearchEnginesInfo info = new MetaSearchEnginesInfo(uid);
-		if (info.completed == completed && numAdded == 0) {
-			return;
-		}
-		final int position = getPositionForItem(info);
-		if (position < 0) {
-			return;
-		}
-
-		info = getItem(position);
-		if (info == null) {
-			return;
-		}
-		boolean changed = false;
-		if (info.completed != completed) {
-			info.completed = completed;
-			changed = true;
-		}
-		int oldCount = info.count;
-		if (numAdded < 0) {
-			info.count = -1;
-		} else {
-			info.count += numAdded;
-		}
-		changed |= (info.count != oldCount);
-
-		if (changed) {
-			RecyclerView recyclerView = getRecyclerView();
-			if (recyclerView != null) {
-				recyclerView.post(() -> safeNotifyItemChanged(position));
-			}
-		}
 	}
 }

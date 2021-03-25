@@ -655,6 +655,7 @@ The data sent is as follows:</string>
 	<string name="menu_contribute">Contribute</string>
 	<string name="default_save_location">Default Save Location</string>
 	<string name="metasearch_engine_all">All</string>
+	<string name="metasearch_cached">Cached Searches</string>
 	<string name="action_full_settings">Full Settings</string>
 	<string name="loading">Loading…</string>
 	<string name="settings_no_value">&lt;Not Set&gt;</string>

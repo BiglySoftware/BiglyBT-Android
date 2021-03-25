@@ -44,16 +44,16 @@ import com.biglybt.android.client.*;
 import com.biglybt.android.client.adapter.*;
 import com.biglybt.android.client.dialog.DialogFragmentDateRange;
 import com.biglybt.android.client.dialog.DialogFragmentSizeRange;
-import com.biglybt.android.client.rpc.SuccessReplyMapRecievedListener;
-import com.biglybt.android.client.rpc.TransmissionRPC;
 import com.biglybt.android.client.session.RemoteProfile;
 import com.biglybt.android.client.session.Session;
+import com.biglybt.android.client.session.Session_MetaSearch.MetaSearchEnginesInfo;
+import com.biglybt.android.client.session.Session_MetaSearch.MetaSearchResultsListener;
+import com.biglybt.android.client.session.Session_MetaSearch.SearchResult;
 import com.biglybt.android.client.sidelist.SideActionSelectionListener;
 import com.biglybt.android.client.sidelist.SideListActivity;
 import com.biglybt.android.client.sidelist.SideListHelper;
 import com.biglybt.android.client.spanbubbles.DrawableTag;
 import com.biglybt.android.client.spanbubbles.SpanTags;
-import com.biglybt.android.util.JSONUtils;
 import com.biglybt.android.util.MapUtils;
 import com.biglybt.android.widget.CustomToast;
 import com.biglybt.android.widget.PreCachingLayoutManager;
@@ -63,17 +63,16 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.progressindicator.BaseProgressIndicator;
 import com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView;
 
-import java.io.Serializable;
 import java.util.*;
 
 /**
- * Search Results from Vuze's MetaSearch
+ * Search Results from MetaSearch
  * <p/>
  * Created by TuxPaper on 4/22/16.
  */
 public class MetaSearchActivity
 	extends SideListActivity
-	implements TransmissionRPC.MetaSearchResultsListener,
+	implements MetaSearchResultsListener,
 	DialogFragmentSizeRange.SizeRangeDialogListener,
 	DialogFragmentDateRange.DateRangeDialogListener
 {
@@ -87,12 +86,6 @@ public class MetaSearchActivity
 	@Thunk
 	static final int FILTER_INDEX_SIZE = 1;
 
-	private static final String SAVESTATE_LIST = "list";
-
-	private static final String SAVESTATE_ENGINES = "engines";
-
-	private static final String SAVESTATE_SEARCH_ID = "searchID";
-
 	@Thunk
 	String searchString;
 
@@ -103,15 +96,6 @@ public class MetaSearchActivity
 	@Thunk
 	MetaSearchResultsAdapter metaSearchResultsAdapter;
 
-	/**
-	 * <HashString, Map of Fields>
-	 */
-	@Thunk
-	final HashMap<String, Map<String, Object>> mapResults = new HashMap<>();
-
-	@Thunk
-	HashMap<String, MetaSearchEnginesInfo> mapEngines;
-
 	private TextView tvFilterAgeCurrent;
 
 	private TextView tvFilterSizeCurrent;
@@ -120,17 +104,13 @@ public class MetaSearchActivity
 
 	private TextView tvFilterTop;
 
-	private long maxSize;
-
 	@Thunk
 	TextView tvDrawerFilter;
-
-	private List<MetaSearchEnginesInfo> enginesList;
 
 	private SpanTags.SpanTagsListener listenerSpanTags;
 
 	@Thunk
-	Serializable searchID;
+	SearchResult searchResult;
 
 	@Thunk
 	TextView tvHeader;
@@ -250,17 +230,19 @@ public class MetaSearchActivity
 
 			@Override
 			public Map getSearchResultMap(String id) {
-				return mapResults.get(id);
+				return searchResult == null ? null : searchResult.mapResults.get(id);
 			}
 
 			@Override
 			public List<String> getSearchResultList() {
-				return new ArrayList<>(mapResults.keySet());
+				return searchResult == null ? new ArrayList<>()
+						: new ArrayList<>(searchResult.mapResults.keySet());
 			}
 
 			@Override
 			public MetaSearchEnginesInfo getSearchEngineMap(String engineID) {
-				return mapEngines.get(engineID);
+				return searchResult == null ? null
+						: searchResult.mapEngines.get(engineID);
 			}
 
 			@Override
@@ -278,7 +260,8 @@ public class MetaSearchActivity
 				String engineID = MapUtils.getMapString(map,
 						TransmissionVars.FIELD_SEARCHRESULT_ENGINE_ID, null);
 
-				MetaSearchEnginesInfo engineInfo = mapEngines.get(engineID);
+				MetaSearchEnginesInfo engineInfo = searchResult.mapEngines.get(
+						engineID);
 				String engineName = engineInfo == null ? "default" : engineInfo.name;
 
 				final List<String> listNames = new ArrayList<>();
@@ -321,7 +304,7 @@ public class MetaSearchActivity
 						engineID = MapUtils.getMapString(other,
 								TransmissionVars.FIELD_SEARCHRESULT_ENGINE_ID, null);
 
-						engineInfo = mapEngines.get(engineID);
+						engineInfo = searchResult.mapEngines.get(engineID);
 						engineName = engineInfo == null ? "default" : engineInfo.name;
 
 						url = MapUtils.getMapString(other,
@@ -393,72 +376,29 @@ public class MetaSearchActivity
 			lvResults.setVerticalFadingEdgeEnabled(true);
 			lvResults.setFadingEdgeLength(AndroidUtilsUI.dpToPx((int) (48 * 1.5)));
 		}
+	}
 
-		if (savedInstanceState != null) {
-			//noinspection unchecked
-			HashMap<String, MetaSearchEnginesInfo> savedEngines = (HashMap<String, MetaSearchEnginesInfo>) savedInstanceState.getSerializable(
-					SAVESTATE_ENGINES);
-			String list = savedInstanceState.getString(SAVESTATE_LIST);
-			searchID = savedInstanceState.getSerializable(SAVESTATE_SEARCH_ID);
-			if (list != null && savedEngines != null) {
-				Map<String, Object> map = JSONUtils.decodeJSONnoException(list);
+	@Override
+	protected void onPause() {
+		session.metasearch.removeListener(searchString, this);
 
-				if (map != null) {
-					for (String key : map.keySet()) {
-						Map<String, Object> val = MapUtils.getMapMap(map, key, null);
-						if (val != null) {
-							mapResults.put(key, val);
-						}
-					}
-				}
-
-				mapEngines = savedEngines;
-
-				updateEngineList();
-
-				// hackkkkk.. should call a function like TransmissionRPC.continueMetaSearch(searchID, listener)
-				final Map<String, Object> mapResultsRequest = new HashMap<>();
-				mapResultsRequest.put(TransmissionVars.FIELD_SEARCHRESULT_SEARCH_ID,
-						searchID);
-				session.executeRpc(rpc -> rpc.simpleRpcCall(
-						TransmissionVars.METHOD_VUZE_SEARCH_GET_RESULTS, mapResultsRequest,
-						new SuccessReplyMapRecievedListener() {
-
-							@Override
-							public void rpcSuccess(String requestID, Map<?, ?> optionalMap) {
-
-								boolean complete = MapUtils.getMapBoolean(optionalMap,
-										TransmissionVars.FIELD_SEARCHRESULT_COMPLETE, true);
-								if (!complete) {
-									try {
-										Thread.sleep(1500);
-									} catch (InterruptedException ignored) {
-									}
-									rpc.simpleRpcCall(
-											TransmissionVars.METHOD_VUZE_SEARCH_GET_RESULTS,
-											mapResultsRequest, this);
-								}
-
-								List<Map<String, Object>> listEngines = MapUtils.getMapList(
-										optionalMap, SAVESTATE_ENGINES, Collections.emptyList());
-
-								onMetaSearchGotResults(searchID, listEngines, complete);
-							}
-
-						}));
-			}
-			// What if the search was not done?
+		if (metaSearchResultsAdapter != null && metaSearchEnginesAdapter != null
+				&& searchResult != null) {
+			Bundle bundle = new Bundle();
+			metaSearchResultsAdapter.onSaveInstanceState(bundle);
+			metaSearchEnginesAdapter.onSaveInstanceState(bundle);
+			searchResult.mapExtras.put("InstanceState", bundle);
+			searchResult.touch();
 		}
+
+		super.onPause();
 	}
 
 	@Override
 	protected void onResume() {
 		super.onResume();
 
-		if (mapResults.size() == 0) {
-			session.executeRpc(
-					rpc -> rpc.startMetaSearch(searchString, MetaSearchActivity.this));
-		}
+		session.metasearch.search(searchString, this);
 	}
 
 	@Override
@@ -467,11 +407,9 @@ public class MetaSearchActivity
 		if (metaSearchResultsAdapter != null) {
 			metaSearchResultsAdapter.onSaveInstanceState(outState);
 		}
-		Bundle tmpBundle = new Bundle();
-		tmpBundle.putString(SAVESTATE_LIST, JSONUtils.encodeToJSON(mapResults));
-		tmpBundle.putSerializable(SAVESTATE_ENGINES, mapEngines);
-		tmpBundle.putSerializable(SAVESTATE_SEARCH_ID, searchID);
-		AndroidUtils.addToBundleIf(tmpBundle, outState, 1024 * 200L);
+		if (metaSearchEnginesAdapter != null) {
+			metaSearchEnginesAdapter.onSaveInstanceState(outState);
+		}
 	}
 
 	@Override
@@ -479,6 +417,9 @@ public class MetaSearchActivity
 		super.onRestoreInstanceState(savedInstanceState);
 		if (metaSearchResultsAdapter != null) {
 			metaSearchResultsAdapter.onRestoreInstanceState(savedInstanceState);
+		}
+		if (metaSearchEnginesAdapter != null) {
+			metaSearchEnginesAdapter.onRestoreInstanceState(savedInstanceState);
 		}
 		updateFilterTexts();
 	}
@@ -527,11 +468,10 @@ public class MetaSearchActivity
 	}
 
 	@Override
-	public boolean onMetaSearchGotResults(Serializable searchID,
-			List<Map<String, Object>> engines, final boolean complete) {
+	public void onMetaSearchGotResults(SearchResult searchResult) {
 		OffThread.runOnUIThread(this, false, (a) -> {
 			if (progressBar != null) {
-				if (complete) {
+				if (searchResult.complete) {
 					AndroidUtilsUI.hideProgressBar(progressBar);
 				} else {
 					progressBar.show();
@@ -539,135 +479,16 @@ public class MetaSearchActivity
 			}
 			ProgressBar enginesPB = findViewById(R.id.metasearch_engines_spinner);
 			if (enginesPB != null) {
-				enginesPB.setVisibility(complete ? View.GONE : View.VISIBLE);
+				enginesPB.setVisibility(
+						searchResult.complete ? View.GONE : View.VISIBLE);
 			}
 
-			for (Map<String, Object> mapEngine : engines) {
-				String engineID = MapUtils.getMapString(mapEngine, "id", null);
-				if (metaSearchEnginesAdapter != null) {
-					int numAdded;
-					if (MapUtils.getMapString(mapEngine, "error", null) == null) {
-						//noinspection RawTypeCanBeGeneric,rawtypes
-						List listResults = MapUtils.getMapList(mapEngine, "results", null);
-						numAdded = (listResults == null) ? 0 : listResults.size();
-					} else {
-						numAdded = -1;
-					}
-
-					metaSearchEnginesAdapter.refreshItem(engineID,
-							MapUtils.getMapBoolean(mapEngine,
-									TransmissionVars.FIELD_SEARCHRESULT_COMPLETE, false),
-							numAdded);
-				}
+			if (metaSearchEnginesAdapter != null) {
+				metaSearchEnginesAdapter.notifyDataSetInvalidated();
 			}
+
+			metaSearchResultsAdapter.getFilter().refilter(false);
 		});
-
-		for (Object oEngine : engines) {
-			if (!(oEngine instanceof Map)) {
-				continue;
-			}
-			//noinspection rawtypes
-			Map mapEngine = (Map) oEngine;
-			//noinspection RawTypeCanBeGeneric,rawtypes
-			List listResults = MapUtils.getMapList(mapEngine, "results", null);
-			if (listResults == null || listResults.isEmpty()) {
-				continue;
-			}
-
-			String engineID = MapUtils.getMapString(mapEngine, "id", null);
-
-			for (Object oResult : listResults) {
-				if (!(oResult instanceof Map)) {
-					if (AndroidUtils.DEBUG) {
-						Log.d(TAG, "onMetaSearchGotResults: NOT A MAP: " + oResult);
-					}
-					continue;
-				}
-
-				//noinspection unchecked
-				Map<String, Object> mapResult = fixupResultMap(
-						(Map<String, Object>) oResult);
-
-				long size = MapUtils.getMapLong(mapResult,
-						TransmissionVars.FIELD_SEARCHRESULT_SIZE, 0);
-				if (size > maxSize) {
-					maxSize = size;
-				}
-
-				String hash = MapUtils.getMapString(mapResult,
-						TransmissionVars.FIELD_SEARCHRESULT_HASH, null);
-				if (hash == null) {
-					hash = MapUtils.getMapString(mapResult,
-							TransmissionVars.FIELD_SEARCHRESULT_URL, null);
-				}
-				if (hash != null) {
-					mapResult.put(TransmissionVars.FIELD_SEARCHRESULT_ENGINE_ID,
-							engineID);
-					Map<String, Object> mapExisting = mapResults.get(hash);
-					if (mapExisting != null) {
-						List<Map<String, Object>> others = MapUtils.getMapList(mapExisting,
-								"others", null);
-						if (others == null) {
-							others = new ArrayList<>();
-							mapExisting.put("others", others);
-						}
-						others.add(mapResult);
-						mapExisting.put(TransmissionVars.FIELD_LAST_UPDATED,
-								System.currentTimeMillis());
-					} else {
-						mapResults.put(hash, mapResult);
-					}
-				} else {
-					if (AndroidUtils.DEBUG) {
-						Log.d(TAG, "onMetaSearchGotResults: No hash for " + mapResult);
-					}
-				}
-			}
-		}
-
-		runOnUiThread(() -> metaSearchResultsAdapter.getFilter().refilter(false));
-		return true;
-	}
-
-	/**
-	 * Unfortunately, the search results map returns just about everything in
-	 * Strings, including numbers.
-	 */
-	private static Map<String, Object> fixupResultMap(
-			Map<String, Object> mapResult) {
-		final String[] IDS_LONG = {
-			TransmissionVars.FIELD_SEARCHRESULT_PUBLISHDATE,
-			TransmissionVars.FIELD_SEARCHRESULT_PEERS,
-			TransmissionVars.FIELD_SEARCHRESULT_SIZE,
-			TransmissionVars.FIELD_SEARCHRESULT_SEEDS,
-		};
-		final String[] IDS_FLOAT = {
-			TransmissionVars.FIELD_SEARCHRESULT_RANK,
-		};
-
-		for (String id : IDS_LONG) {
-			Object o = mapResult.get(id);
-			if (o instanceof String) {
-				try {
-					Long l = Long.valueOf((String) o);
-					mapResult.put(id, l);
-				} catch (Throwable ignore) {
-				}
-			}
-		}
-
-		for (String id : IDS_FLOAT) {
-			Object o = mapResult.get(id);
-			if (o instanceof String) {
-				try {
-					Double d = Double.valueOf((String) o);
-					mapResult.put(id, d);
-				} catch (Throwable ignore) {
-				}
-			}
-		}
-
-		return mapResult;
 	}
 
 	@Thunk
@@ -680,7 +501,7 @@ public class MetaSearchActivity
 			ActionBar ab = getSupportActionBar();
 
 			int filteredCount = metaSearchResultsAdapter.getItemCount();
-			int count = mapResults.size();
+			int count = searchResult == null ? 0 : searchResult.mapResults.size();
 			String countString = DisplayFormatters.formatNumber(count);
 
 			String sResultsCount;
@@ -720,41 +541,37 @@ public class MetaSearchActivity
 	}
 
 	@Override
-	public boolean onMetaSearchGotEngines(Serializable searchID,
-			List<Map<String, Object>> engines) {
+	public void onMetaSearchGotEngines(SearchResult searchResult) {
 		if (isFinishing()) {
-			return false;
+			session.metasearch.removeListener(searchString, this);
 		}
-		this.searchID = searchID;
-		mapEngines = new HashMap<>();
-
-		mapEngines.put("", new MetaSearchEnginesInfo("",
-				getString(R.string.metasearch_engine_all), null, true));
-
-		for (Map<String, Object> mapEngine : engines) {
-			String name = MapUtils.getMapString(mapEngine, "name", null);
-			if (name != null) {
-				String uid = MapUtils.getMapString(mapEngine, "id", name);
-				String favicon = MapUtils.getMapString(mapEngine,
-						TransmissionVars.FIELD_SUBSCRIPTION_FAVICON, name);
-				MetaSearchEnginesInfo item = new MetaSearchEnginesInfo(uid, name,
-						favicon, false);
-				mapEngines.put(uid, item);
-			}
-		}
+		this.searchResult = searchResult;
 
 		updateEngineList();
-		return true;
+
+		if (metaSearchResultsAdapter != null && metaSearchEnginesAdapter != null) {
+			Object instanceState = searchResult.mapExtras.get("InstanceState");
+			if (instanceState instanceof Bundle) {
+				// TODO: Restore sort order
+				metaSearchResultsAdapter.onRestoreInstanceState((Bundle) instanceState);
+				metaSearchEnginesAdapter.onRestoreInstanceState((Bundle) instanceState);
+			}
+		}
 	}
 
 	private void updateEngineList() {
-		Collection<MetaSearchEnginesInfo> itemsCollection = mapEngines.values();
+		if (searchResult == null) {
+			if (metaSearchEnginesAdapter != null) {
+				metaSearchEnginesAdapter.removeAllItems();
+			}
+			return;
+		}
+
+		Collection<MetaSearchEnginesInfo> itemsCollection = searchResult.mapEngines.values();
 		MetaSearchEnginesInfo[] items = itemsCollection.toArray(
 				new MetaSearchEnginesInfo[0]);
-		List<MetaSearchEnginesInfo> list = Arrays.asList(items);
+		List<MetaSearchEnginesInfo> enginesList = Arrays.asList(items);
 		Arrays.sort(items, metaSearchEnginesInfoComparator);
-
-		enginesList = list;
 
 		if (metaSearchEnginesAdapter != null) {
 			metaSearchEnginesAdapter.setItems(enginesList, null,
@@ -855,14 +672,7 @@ public class MetaSearchActivity
 				FlexibleRecyclerAdapter.NO_CHECK_ON_SELECTED);
 		lvEngines.setAdapter(metaSearchEnginesAdapter);
 
-		if (enginesList != null) {
-			metaSearchEnginesAdapter.setItems(enginesList, null,
-					(oldItem, newItem) -> {
-						// MetaSearchEnginesAdapter.refreshItem handles notifyItemChanged
-						return false;
-					});
-
-		}
+		updateEngineList();
 
 		return true;
 	}
@@ -991,7 +801,7 @@ public class MetaSearchActivity
 		long[] sizeRange = filter.getFilterSizes();
 
 		DialogFragmentSizeRange.openDialog(getSupportFragmentManager(), null, null,
-				getRemoteProfileID(), maxSize, sizeRange[0], sizeRange[1]);
+				getRemoteProfileID(), searchResult.maxSize, sizeRange[0], sizeRange[1]);
 	}
 
 	@SuppressWarnings("UnusedParameters")
