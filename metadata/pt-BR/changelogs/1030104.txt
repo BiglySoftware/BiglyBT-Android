@@ -1,0 +1,2 @@
+1.3.1.4
+★ Corrigido crash na inicialização quando E/S da Armazenagem está lenta
