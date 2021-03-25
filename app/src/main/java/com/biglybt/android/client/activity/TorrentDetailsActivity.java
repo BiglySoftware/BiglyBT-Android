@@ -22,6 +22,7 @@ import android.util.Log;
 import android.view.*;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.UiThread;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.view.ActionMode;
 import androidx.appcompat.widget.Toolbar;
@@ -37,6 +38,7 @@ import com.biglybt.android.client.sidelist.SideActionSelectionListener;
 import com.biglybt.android.client.sidelist.SideListActivity;
 import com.biglybt.android.client.sidelist.SideListFragment;
 import com.biglybt.android.util.NetworkState.NetworkStateListener;
+import com.biglybt.util.RunnableUIThread;
 import com.biglybt.util.Thunk;
 import com.google.android.material.tabs.TabLayout;
 
@@ -61,6 +63,8 @@ public class TorrentDetailsActivity
 	long torrentID;
 
 	private boolean hasActionMode;
+
+	private boolean restoredFromBundle;
 
 	@Override
 	protected void onCreateWithSession(Bundle savedInstanceState) {
@@ -97,6 +101,7 @@ public class TorrentDetailsActivity
 					}
 				});
 
+		restoredFromBundle = savedInstanceState != null;
 	}
 
 	@Override
@@ -109,6 +114,34 @@ public class TorrentDetailsActivity
 	@Override
 	protected void onShowActivity() {
 		super.onShowActivity();
+
+		if (!restoredFromBundle && AndroidUtils.isTV(this)) {
+			// When the focus is null, pressing back doesn't close the activity,
+			// it puts something into focus, and the next 'back' closes it.
+			// Sometimes the Action menu gets the focus, but it isn't visible or goes
+			// invisible, and the focus gets set to null.  Hack fix: Keep trying to
+			// focus
+			OffThread.runOnUIThread(new RunnableUIThread() {
+				int triesRemaining = 3;
+
+				@UiThread
+				@Override
+				public void run() {
+					if (isFinishing()) {
+						return;
+					}
+					View currentFocus = getCurrentFocus();
+					if (currentFocus == null || (currentFocus instanceof TabLayout)) {
+						AndroidUtilsUI.getContentView(
+								TorrentDetailsActivity.this).requestFocus();
+						if (--triesRemaining > 0) {
+							OffThread.runOnUIThread(this);
+						}
+					}
+				}
+			});
+		}
+
 		BiglyBTApp.getNetworkState().addListener(this);
 		session.torrent.addListReceivedListener(TAG, this);
 	}
