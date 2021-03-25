@@ -60,4 +60,6 @@
 	-->
 	<color name="tv_header_bg">#7f2b68a3</color>
 <!--	<color name="tv_header_bg">#2d4c69</color>-->
+
+	<color name="dark_topdetails_bg">@color/dark_primaryColor</color>
 </resources>

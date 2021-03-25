@@ -31,6 +31,7 @@
   <dimen name="sidelist_filter_padding_x1">48dp</dimen>
   <dimen name="torrentlist_row_paddingLeft">40dp</dimen>
   <dimen name="torrentlist_row_paddingRight">48dp</dimen>
+	<dimen name="torrentlist_small_row_paddingLeft">16dp</dimen>
 
 	<dimen name="sidelist_search_width">320dp</dimen>
 	<dimen name="sidelist_subscription_width">300dp</dimen>
