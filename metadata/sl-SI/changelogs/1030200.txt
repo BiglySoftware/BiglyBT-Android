@@ -1,0 +1,7 @@
+1.3.2
+★ Temporarily remember search results
+★ Tap & Hold on current DL/UL speed to set max speeds
+★ Cleaner small list mode
+★ Progress ring's center fills with green based on share ratio
+★ Fix crashes in Mainline DHT plugin
+★ Fix remote access while bound to VPN
