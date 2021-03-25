@@ -69,6 +69,8 @@ public abstract class FlexibleRecyclerAdapter<ADAPTERTYPE extends RecyclerView.A
 
 	private static final String KEY_SUFFIX_FIRST_POS = ".firstPos";
 
+	private static final String KEY_SUFFIX_MULTI = ".multi";
+
 	@Thunk
 	static final long MAX_DIFFUTIL_NUM100MS = AndroidUtils.DEBUG ? 100 : 8;
 
@@ -255,6 +257,7 @@ public abstract class FlexibleRecyclerAdapter<ADAPTERTYPE extends RecyclerView.A
 	 */
 	public void onSaveInstanceState(@NonNull Bundle outState) {
 		outState.putIntArray(TAG + KEY_SUFFIX_CHECKED, getCheckedItemPositions());
+		outState.putBoolean(TAG + KEY_SUFFIX_MULTI, mIsMultiSelectMode);
 		outState.putInt(TAG + KEY_SUFFIX_SEL_POS, selectedPosition);
 		if (recyclerView instanceof FlexibleRecyclerView) {
 			int pos = ((FlexibleRecyclerView) recyclerView).findFirstVisibleItemPosition();
@@ -280,6 +283,8 @@ public abstract class FlexibleRecyclerAdapter<ADAPTERTYPE extends RecyclerView.A
 
 		int[] checkedPositions = savedInstanceState.getIntArray(
 				TAG + KEY_SUFFIX_CHECKED);
+		mIsMultiSelectMode = savedInstanceState.getBoolean(TAG + KEY_SUFFIX_MULTI,
+				checkedPositions != null && checkedPositions.length > 1);
 		setCheckedPositions(checkedPositions);
 		selectedPosition = savedInstanceState.getInt(TAG + KEY_SUFFIX_SEL_POS, -1);
 		if (selectedPosition >= 0) {
