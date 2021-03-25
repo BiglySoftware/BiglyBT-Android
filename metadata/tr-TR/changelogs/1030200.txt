@@ -1,0 +1,7 @@
+1.3.2
+★ Arama sonuçlarını geçici olarak hatırlar
+★ En fazla hızı ayarlamak için şu anki İND/GÖN hızına dokunun ve basılı tutun
+★ Temizleyici küçük liste kipi
+★ İlerleme halkasının merkezi, paylaşım oranına göre yeşil renkle dolar
+★ Mainline DHT eklentisindeki çökmeler düzeltildi
+★ VPN'e bağlıyken uzaktan erişim düzeltildi
