@@ -1,2 +1,2 @@
 1.3.0.8
-★ Corrigido erro ao fechar Configurações
+★ Corrigido o caso onde fechar Configurações causa um erro no app
