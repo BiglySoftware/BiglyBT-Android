@@ -576,6 +576,7 @@ Gönderilen veriler aşağıdaki gibidir:</string>
 	<string name="menu_contribute">Katkıda Bulun</string>
 	<string name="default_save_location">Varsayılan Kaydetme Konumu</string>
 	<string name="metasearch_engine_all">Tümü</string>
+	<string name="metasearch_cached">Önbelleklenmiş Aramalar</string>
 	<string name="action_full_settings">Tam Ayarlar</string>
 	<string name="loading">Yükleniyor…</string>
 	<string name="settings_no_value">&lt;Ayarlanmadı&gt;</string>
