@@ -1605,9 +1605,9 @@ public class AndroidUtilsUI
 	}
 
 	public static void hideProgressBar(BaseProgressIndicator pb) {
-		// Bug on older OS: hide() stops the animation, but leaves the widget 
-		// visible (probably only when showAnimation is running)
-		pb.hide();
+		// Bug on older (ICS, JB) OS: hide() stops the animation, but leaves the
+		// widget visible (probably only when showAnimation is running)
 		pb.setVisibility(View.GONE);
+		pb.hide();
 	}
 }
