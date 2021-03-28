@@ -339,6 +339,10 @@ public class Session_Tag
 					mapNewTags.put(uid, mapOldTag);
 				}
 
+				if (type == -1) {
+					type = MapUtils.getMapInt(mapNewTag, FIELD_TAG_TYPE, -1);
+				}
+
 				if (type >= 0) {
 					//category
 					if (type == 1) { // TagType.TT_DOWNLOAD_CATEGORY
