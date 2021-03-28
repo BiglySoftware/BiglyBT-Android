@@ -576,6 +576,7 @@ Os dados enviados são os seguintes:</string>
 	<string name="menu_contribute">Contribuir</string>
 	<string name="default_save_location">Local de Salvamento Padrão</string>
 	<string name="metasearch_engine_all">Todos</string>
+	<string name="metasearch_cached">Buscas em Cache</string>
 	<string name="action_full_settings">Todas Configurações</string>
 	<string name="loading">Carregando…</string>
 	<string name="settings_no_value">&lt;Não Definido&gt;</string>

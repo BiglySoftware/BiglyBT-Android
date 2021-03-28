@@ -527,6 +527,7 @@
 	<string name="menu_contribute">贡献</string>
 	<string name="default_save_location">默认保存位置</string>
 	<string name="metasearch_engine_all">全部</string>
+	<string name="metasearch_cached">缓存的搜索</string>
 	<string name="action_full_settings">完整设置</string>
 	<string name="loading">加载中…</string>
 	<string name="settings_no_value">&lt;未设置&gt;</string>
