@@ -309,14 +309,14 @@ public class Session_Tag
 
 				Map<String, Object> mapNewTag = (Map<String, Object>) tag;
 
-				int type = MapUtils.getMapInt(mapNewTag, "type", -1);
+				int type = MapUtils.getMapInt(mapNewTag, FIELD_TAG_TYPE, -1);
 				// Only Category, Download State, and Manual Tags
 				// We can't handle the others (Peer IP Set, DL Internal)
-				if (type != 1 && type != 2 && type != 3) {
+				if (type != -1 && type != 1 && type != 2 && type != 3) {
 					continue;
 				}
 
-				long uid = MapUtils.getMapLong(mapNewTag, "uid", 0);
+				long uid = MapUtils.getMapLong(mapNewTag, FIELD_TAG_UID, 0);
 				Map mapOldTag = mapTags == null ? null : mapTags.get(uid);
 				if (mapOldTag == null) {
 					if (updateCountOnly) {
