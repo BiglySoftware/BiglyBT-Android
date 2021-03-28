@@ -34,8 +34,8 @@
             android:layout_toRightOf="@+id/torrentrow_leftArea"
             android:background="#0000FF00"
             android:orientation="vertical"
-            android:paddingEnd="4dp"
-            android:paddingRight="4dp"
+            android:paddingLeft="4dp"
+            android:paddingStart="4dp"
             >
 
             <TextView
