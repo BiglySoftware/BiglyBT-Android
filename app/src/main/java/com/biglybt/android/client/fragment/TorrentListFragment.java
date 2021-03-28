@@ -1493,14 +1493,26 @@ public class TorrentListFragment
 		String lastGroup = null;
 		for (Map tag : tags) {
 			int tagType = MapUtils.getMapInt(tag, TransmissionVars.FIELD_TAG_TYPE, 0);
+
+			if (tagType == 1 && !session.tag.hasCategories()
+					&& !Objects.equals(
+							MapUtils.getMapLong(tag, TransmissionVars.FIELD_TAG_UID, -1),
+							session.tag.getTagAllUID())) {
+				// category, no categories, not "All", must be "Uncat".. hide
+				continue;
+			}
+
 			if (tagType == 3) {
 				String group = MapUtils.getMapString(tag,
 						TransmissionVars.FIELD_TAG_GROUP, null);
-				if ((lastGroup == null && group != null)
-						|| (group != null && !lastGroup.equals(group))) {
+				if (!Objects.equals(lastGroup, group)) {
 					lastGroup = group;
 
-					list.add(new SideTagAdapter.SideTagInfoHeader(lastGroup));
+					if (lastGroup != null) {
+						list.add(new SideTagAdapter.SideTagInfoHeader(lastGroup));
+					} else if (AndroidUtils.DEBUG) {
+						log(TAG, "switched to null group for " + tag);
+					}
 				}
 			}
 			if (MapUtils.getMapLong(tag, TransmissionVars.FIELD_TAG_COUNT, 0) > 0) {
@@ -1512,6 +1524,10 @@ public class TorrentListFragment
 			if (oldItem.id != newItem.id || session == null
 					|| session.isDestroyed()) {
 				return false;
+			}
+
+			if (newItem instanceof SideTagAdapter.SideTagInfoHeader) {
+				return true;
 			}
 
 			return !changedTags.contains(session.tag.getTag(newItem.id));

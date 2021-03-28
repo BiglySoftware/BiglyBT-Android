@@ -489,7 +489,7 @@ public class Session
 									return;
 								}
 
-								tag.placeTagListIntoMap(tagList, true, true);
+								tag.placeTagListIntoMap(tagList, false, true);
 
 								setReadyForUI();
 							}

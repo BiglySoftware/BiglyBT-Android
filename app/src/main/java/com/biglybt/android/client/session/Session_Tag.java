@@ -21,7 +21,9 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.collection.LongSparseArray;
 
-import com.biglybt.android.client.*;
+import com.biglybt.android.client.AndroidUtils;
+import com.biglybt.android.client.BiglyBTApp;
+import com.biglybt.android.client.R;
 import com.biglybt.android.client.rpc.RPCSupports;
 import com.biglybt.android.client.rpc.ReplyMapReceivedListener;
 import com.biglybt.android.client.rpc.TagListReceivedListener;
@@ -141,6 +143,8 @@ public class Session_Tag
 
 	private Long tagAllUID = null;
 
+	private boolean hasCategories;
+
 	Session_Tag(Session session) {
 		this.session = session;
 	}
@@ -189,6 +193,10 @@ public class Session_Tag
 		Map<?, ?> map = mapTags.get(uid);
 		if (map == null) {
 			needsTagRefresh = true;
+			if (AndroidUtils.DEBUG_RPC) {
+				session.logd("missing tag uid=" + uid + " via "
+						+ AndroidUtils.getCompressedStackTrace());
+			}
 		}
 		return map;
 	}
@@ -209,12 +217,16 @@ public class Session_Tag
 			@StateID int stateID) {
 		Long tagUID = getDownloadStateUID(stateID);
 		List<?> listTagUIDs = MapUtils.getMapList(mapTorrent,
-				TransmissionVars.FIELD_TORRENT_TAG_UIDS, null);
+				FIELD_TORRENT_TAG_UIDS, null);
 		if (listTagUIDs != null && tagUID != null) {
 			return listTagUIDs.contains(tagUID);
 		}
 
 		return null;
+	}
+
+	public boolean hasCategories() {
+		return hasCategories;
 	}
 
 	public Long getTagAllUID() {
@@ -276,9 +288,10 @@ public class Session_Tag
 
 	@SuppressWarnings("unchecked")
 	@Thunk
-	void placeTagListIntoMap(List<?> tagList, boolean replaceOldMap,
+	void placeTagListIntoMap(List<?> tagList, boolean updateCountOnly,
 			boolean updateStateIDs) {
 		List<Map<?, ?>> changedTags = new ArrayList<>();
+		List<Map<?, ?>> changedTorrentsTags = new ArrayList<>();
 		// put new list of tags into mapTags.  Update the existing tag Map in case
 		// some other part of the app stored a reference to it.
 		synchronized (session.mLock) {
@@ -288,89 +301,99 @@ public class Session_Tag
 			if (updateStateIDs) {
 				mapStateIdToTag.clear();
 			}
+
 			for (Object tag : tagList) {
-				if (tag instanceof Map) {
-					Map<?, ?> mapNewTag = (Map<?, ?>) tag;
-					long uid = MapUtils.getMapLong(mapNewTag, "uid", 0);
-					Map mapOldTag = mapTags == null ? null : mapTags.get(uid);
-					if (replaceOldMap) {
-						if (mapOldTag == null) {
-							mapNewTags.put(uid, mapNewTag);
-							changedTags.add(mapNewTag);
-						} else {
-							//noinspection SynchronizationOnLocalVariableOrMethodParameter
-							synchronized (mapOldTag) {
-								if (!mapOldTag.equals(mapNewTag)) {
-									changedTags.add(mapOldTag);
-								}
-								mapOldTag.clear();
-								mapOldTag.putAll(mapNewTag);
-							}
-							mapNewTags.put(uid, mapOldTag);
-						}
-					} else {
-						// XXX: Right now hardcoded to just update count
-						// TODO: merge new into old
-						long count = MapUtils.getMapLong(mapNewTag, FIELD_TAG_COUNT, -1);
-						if (count >= 0 && mapOldTag != null) {
-							//noinspection SynchronizationOnLocalVariableOrMethodParameter
-							synchronized (mapOldTag) {
-								if (MapUtils.getMapLong(mapOldTag, FIELD_TAG_COUNT,
-										-1) != count) {
-									mapOldTag.put(FIELD_TAG_COUNT, count);
-									changedTags.add(mapOldTag);
-								}
-							}
-						}
-						mapNewTags.put(uid, mapOldTag);
-					}
-
-					int type = MapUtils.getMapInt(mapNewTag, "type", -1);
-					if (type >= 0) {
-						//category
-						if (type == 1) { // TagType.TT_DOWNLOAD_CATEGORY
-							// USER=0,ALL=1,UNCAT=2
-							int catType = MapUtils.getMapInt(mapNewTag,
-									FIELD_TAG_CATEGORY_TYPE, -1);
-							if (catType == 0) {
-								numUserCategories++;
-							} else if (catType == 1) {
-								tagAllUID = uid;
-							} else if (catType == 2) {
-								uidUncat = uid;
-							}
-						} else if (updateStateIDs && type == 2) { // TagType.TT_DOWNLOAD_STATE
-							long tagID = MapUtils.getMapLong(mapNewTag, FIELD_TAG_ID, -1);
-							mapStateIdToTag.put(tagID, mapNewTag);
-						}
-					}
+				if (!(tag instanceof Map)) {
+					continue;
 				}
 
-				// Update torrent's FIELD_LAST_UPDATED when tag has changed
-				// TODO: Instead of using changedTags, use a list of tags that only
-				//       changed important files.  ie. 'count' change is irrelevant to
-				//       torrent since it's not displayed in any torrent view.
-				List<Long> changedTagUIDs = new ArrayList<>();
-				for (Map<?, ?> changedTag : changedTags) {
-					changedTagUIDs.add(MapUtils.getMapLong(changedTag,
-							TransmissionVars.FIELD_TAG_UID, -1));
+				Map<String, Object> mapNewTag = (Map<String, Object>) tag;
+
+				int type = MapUtils.getMapInt(mapNewTag, "type", -1);
+				// Only Category, Download State, and Manual Tags
+				// We can't handle the others (Peer IP Set, DL Internal)
+				if (type != 1 && type != 2 && type != 3) {
+					continue;
 				}
 
-				LongSparseArray<Map<?, ?>> listTorrents = session.torrent.getListAsSparseArray();
-				for (int i = 0, count = listTorrents.size(); i < count; i++) {
-					Map mapTorrent = listTorrents.valueAt(i);
-					List<?> listTagUIDs = MapUtils.getMapList(mapTorrent,
-							TransmissionVars.FIELD_TORRENT_TAG_UIDS, null);
-					if (listTagUIDs != null && !listTagUIDs.isEmpty()) {
-						if (!Collections.disjoint(listTagUIDs, changedTagUIDs)) {
-							if (AndroidUtils.DEBUG_RPC) {
-								session.logd("tagListReceived: "
-										+ mapTorrent.get(TransmissionVars.FIELD_TORRENT_NAME)
-										+ " tag change");
+				long uid = MapUtils.getMapLong(mapNewTag, "uid", 0);
+				Map mapOldTag = mapTags == null ? null : mapTags.get(uid);
+				if (mapOldTag == null) {
+					if (updateCountOnly) {
+						continue;
+					}
+					mapNewTags.put(uid, mapNewTag);
+					changedTags.add(mapNewTag);
+					changedTorrentsTags.add(mapNewTag);
+				} else {
+					//noinspection SynchronizationOnLocalVariableOrMethodParameter
+					synchronized (mapOldTag) {
+						if (mapChanged(mapOldTag, mapNewTag)) {
+							changedTags.add(mapOldTag);
+							if (!updateCountOnly) {
+								changedTorrentsTags.add(mapNewTag);
 							}
-							mapTorrent.put(TransmissionVars.FIELD_LAST_UPDATED,
-									System.currentTimeMillis());
 						}
+						mapOldTag.putAll(mapNewTag);
+					}
+					mapNewTags.put(uid, mapOldTag);
+				}
+
+				if (type >= 0) {
+					//category
+					if (type == 1) { // TagType.TT_DOWNLOAD_CATEGORY
+						// USER=0,ALL=1,UNCAT=2
+						int catType = MapUtils.getMapInt(mapNewTag, FIELD_TAG_CATEGORY_TYPE,
+								-1);
+						if (catType == 0) {
+							numUserCategories++;
+						} else if (catType == 1) {
+							tagAllUID = uid;
+						} else if (catType == 2) {
+							uidUncat = uid;
+						}
+					} else if (updateStateIDs && type == 2) { // TagType.TT_DOWNLOAD_STATE
+						long tagID = MapUtils.getMapLong(mapNewTag, FIELD_TAG_ID, -1);
+						mapStateIdToTag.put(tagID, mapNewTag);
+					}
+				}
+			}
+
+			hasCategories = numUserCategories > 0;
+
+			// Update torrent's FIELD_LAST_UPDATED when tag has changed
+			// TODO: Instead of using changedTags, use a list of tags that only
+			//       changed important files.  ie. 'count' change is irrelevant to
+			//       torrent since it's not displayed in any torrent view.
+			List<Long> changedTorrentTagUIDs = new ArrayList<>();
+			for (Map<?, ?> tag : changedTorrentsTags) {
+				changedTorrentTagUIDs.add(MapUtils.getMapLong(tag, FIELD_TAG_UID, -1));
+			}
+
+			if (AndroidUtils.DEBUG_RPC && changedTags.size() > 0) {
+				StringBuilder sb = new StringBuilder();
+				for (Map<?, ?> t : changedTags) {
+					sb.append(MapUtils.getMapLong(t, FIELD_TAG_UID, -1)).append(':');
+					sb.append(MapUtils.getMapString(t, FIELD_TAG_NAME, "?")).append(' ');
+				}
+				session.logd(changedTags.size() + " tags changed: " + sb.toString());
+			}
+
+			LongSparseArray<Map<?, ?>> listTorrents = session.torrent.getListAsSparseArray();
+			for (int i = 0, count = listTorrents.size(); i < count; i++) {
+				Map mapTorrent = listTorrents.valueAt(i);
+				List<?> listTagUIDs = MapUtils.getMapList(mapTorrent,
+						FIELD_TORRENT_TAG_UIDS, null);
+				if (listTagUIDs != null && !listTagUIDs.isEmpty()) {
+					if (!Collections.disjoint(listTagUIDs, changedTorrentTagUIDs)) {
+						if (AndroidUtils.DEBUG_RPC) {
+							List common = new ArrayList(listTagUIDs);
+							common.retainAll(changedTorrentTagUIDs);
+							session.logd(
+									"tagListReceived: '" + mapTorrent.get(FIELD_TORRENT_NAME)
+											+ "' tag change. common=" + common);
+						}
+						mapTorrent.put(FIELD_LAST_UPDATED, System.currentTimeMillis());
 					}
 				}
 			}
@@ -383,6 +406,23 @@ public class Session_Tag
 				l.tagListReceived(changedTags);
 			}
 		}
+	}
+
+	private static boolean mapChanged(Map mapOldTag,
+			Map<String, Object> mapNewTag) {
+		if (mapNewTag.size() > mapOldTag.size()) {
+			return true;
+		}
+		for (String key : mapNewTag.keySet()) {
+			if (mapOldTag.containsKey(key)) {
+				if (!Objects.equals(mapNewTag.get(key), mapOldTag.get(key))) {
+					return true;
+				}
+			} else {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	public void refreshTags(boolean onlyRefreshCount) {
@@ -425,7 +465,7 @@ public class Session_Tag
 							return;
 						}
 
-						placeTagListIntoMap(tagList, !finalOnlyRefreshCount,
+						placeTagListIntoMap(tagList, finalOnlyRefreshCount,
 								!finalOnlyRefreshCount);
 					}
 				});
