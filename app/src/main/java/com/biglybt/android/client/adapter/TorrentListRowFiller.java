@@ -443,7 +443,8 @@ public class TorrentListRowFiller
 					t.printStackTrace();
 				}
 			} else {
-				flipper.changeText(holder.tvTags, "", false, validator);
+				//flipper.changeText(holder.tvTags, "", false, validator);
+				holder.tvTags.setText("");
 			}
 		}
 	}
