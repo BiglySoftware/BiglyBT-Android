@@ -2,7 +2,7 @@ BiglyBT é um <b>ad-free</b>, cheio de recursos, código aberto, cliente de torr
 
 ★ Fusão de Multidões para <b>downloads mais velozes </b> e para <b>reparar torrents</b> sem sementes
 ★ Suporte a Torrents v2 (BEP 52)
-★ Tag e <b>organize</b> seus torrents
+★ Etiquete e <b>organize</b> seus torrents
 ★ Ordene e agrupe em <b>listas grandes</b> de torrents
 ★ Selecionar que arquivos você quer baixar antes de iniciar o torrent
 ★ Ordenar e filtrar arquivos no torrent
