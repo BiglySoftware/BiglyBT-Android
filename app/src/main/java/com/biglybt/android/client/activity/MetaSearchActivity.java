@@ -801,7 +801,8 @@ public class MetaSearchActivity
 		long[] sizeRange = filter.getFilterSizes();
 
 		DialogFragmentSizeRange.openDialog(getSupportFragmentManager(), null, null,
-				getRemoteProfileID(), searchResult.maxSize, sizeRange[0], sizeRange[1]);
+				getRemoteProfileID(), searchResult == null ? -1 : searchResult.maxSize,
+				sizeRange[0], sizeRange[1]);
 	}
 
 	@SuppressWarnings("UnusedParameters")
