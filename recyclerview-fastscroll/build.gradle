@@ -6,11 +6,10 @@ android {
 
     defaultConfig {
         minSdkVersion rootProject.ext.minSdkVersion
-        versionCode 18
-        versionName "2.0.0-masf"
     }
 
-    lintOptions {
+    namespace 'com.simplecityapps.recyclerview_fastscroll'
+    lint {
         abortOnError false
     }
 }

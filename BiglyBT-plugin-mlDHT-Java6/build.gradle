@@ -10,9 +10,6 @@ android {
         multiDexEnabled true
     }
 
-    lintOptions {
-        abortOnError false
-    }
 
     compileOptions {
         encoding = "UTF-8"
@@ -30,6 +27,10 @@ android {
                 ]
             }
         }
+    }
+    namespace 'lbms.plugin.mldht.java6'
+    lint {
+        abortOnError false
     }
 }
 

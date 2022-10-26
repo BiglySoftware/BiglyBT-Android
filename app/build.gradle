@@ -47,10 +47,9 @@ android {
         }
     }
     packagingOptions {
-        exclude 'META-INF/NOTICE.txt'
-        exclude 'META-INF/LICENSE.txt'
-        exclude 'org/json/simple/*.txt'
-        exclude 'com/aelitis/plugins/rcmplugin/skins'
+        resources {
+            excludes += ['META-INF/NOTICE.txt', 'META-INF/LICENSE.txt', 'org/json/simple/*.txt', 'com/aelitis/plugins/rcmplugin/skins']
+        }
     }
     flavorDimensions "coreD", "gaD"
     productFlavors {
@@ -96,6 +95,7 @@ android {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
+    namespace 'com.biglybt.android.client'
 }
 
 repositories {
