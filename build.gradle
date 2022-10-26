@@ -2,29 +2,33 @@
 apply plugin: 'com.github.ben-manes.versions'
 
 ext {
-    recyclerviewVersion = '1.2.0-rc01'
-    preferenceVersion = '1.1.1'
-    materialVersion = '1.3.0'
-    lifecycleVersion = '2.3.1'
-    leanbackVersion = '1.1.0-beta01'
-    appcompatVersion = '1.3.0-rc01'
-    annotationVersion = '1.2.0-rc01'
+    // https://developer.android.com/jetpack/androidx/releases/recyclerview
+    recyclerviewVersion = '1.3.0-rc01'
+    // https://developer.android.com/jetpack/androidx/releases/preference
+    preferenceVersion = '1.2.0'
+    // https://developer.android.com/jetpack/androidx/releases/compose-material
+    materialVersion = '1.3.0-rc01'
+    // https://developer.android.com/jetpack/androidx/releases/lifecycle
+    lifecycleVersion = '2.5.1'
+    // https://developer.android.com/jetpack/androidx/releases/leanback
+    leanbackVersion = '1.1.0-rc02'
+    // https://developer.android.com/jetpack/androidx/releases/appcompat
+    appcompatVersion = '1.6.0-rc01'
+    // https://developer.android.com/jetpack/androidx/releases/annotation
+    annotationVersion = '1.5.0'
 }
 
 buildscript {
-    ext.kotlin_version = '1.4.31'
+    ext.kotlin_version = '1.7.20'
     repositories {
-        maven {
-            url 'https://maven.google.com'
-        }
         google()
-        jcenter()
+        mavenCentral()
         gradlePluginPortal()
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:7.3.1'
         // https://github.com/KeepSafe/dexcount-gradle-plugin
-        classpath 'com.getkeepsafe.dexcount:dexcount-gradle-plugin:2.0.0'
+        classpath 'com.getkeepsafe.dexcount:dexcount-gradle-plugin:3.1.0'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
         // https://github.com/ben-manes/gradle-versions-plugin
         classpath "com.github.ben-manes:gradle-versions-plugin:0.38.0"
@@ -33,20 +37,16 @@ buildscript {
 
 allprojects {
     repositories {
-        maven {
-            url 'https://maven.google.com'
-        }
-        maven {
-            url 'https://jitpack.io'
-        }
-        jcenter()
         google()
+        mavenCentral()
+        jcenter() // for ico4a
+        maven { url 'https://jitpack.io' } // for AwesomeQRCode
     }
     project.ext {
         minSdkVersion = 15
-        targetSdkVersion = 29
-        compileSdkVersion = 29
-        buildToolsVersion = '29.0.3'
+        targetSdkVersion = 31
+        compileSdkVersion = 31
+        buildToolsVersion = '30.0.3'
     }
 }
 

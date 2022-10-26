@@ -46,7 +46,7 @@
 		android:icon="@mipmap/ic_launcher"
 		android:label="@string/app_name"
 		android:resizeableActivity="true"
-		android:requestLegacyExternalStorage="true"
+		android:requestLegacyExternalStorage="false"
 		android:supportsRtl="true"
 		android:theme="@style/ThemeBlack"
 		android:usesCleartextTraffic="true"
