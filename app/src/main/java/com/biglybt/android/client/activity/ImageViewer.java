@@ -56,12 +56,8 @@ public class ImageViewer
 		final UrlImageView imageView = findViewById(R.id.imageView1);
 
 		Uri data = getIntent().getData();
-		try {
-			if (imageView != null && data != null) {
-				imageView.setImageURL(new URL(data.toString()));
-			}
-		} catch (MalformedURLException e) {
-			e.printStackTrace();
+		if (imageView != null && data != null) {
+			imageView.setImageURI(data);
 		}
 
 		if (AndroidUtils.DEBUG) {

@@ -23,6 +23,7 @@ import java.net.URLConnection;
 
 import com.biglybt.util.Thunk;
 
+import android.content.ContentResolver;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -45,40 +46,47 @@ import android.widget.ImageView;
 public class UrlImageView
 	extends androidx.appcompat.widget.AppCompatImageView
 {
-	private static class UrlLoadingTask
-		extends AsyncTask<URL, Void, Bitmap>
+	private static class LoadingTask
+		extends AsyncTask<Object, Void, Bitmap>
 	{
+		private final ContentResolver resolver;
+
 		private final ImageView updateView;
 
 		private boolean isCancelled = false;
 
-		private InputStream urlInputStream;
+		private InputStream inputStream;
 
 		@Thunk
-		UrlLoadingTask(ImageView updateView) {
+		LoadingTask(ContentResolver resolver, ImageView updateView) {
+			this.resolver = resolver;
 			this.updateView = updateView;
 		}
 
 		@Override
-		protected Bitmap doInBackground(URL... params) {
+		protected Bitmap doInBackground(Object... params) {
 			try {
-				URLConnection con = params[0].openConnection();
-				// can use some more params, i.e. caching directory etc
-				con.setUseCaches(true);
-				this.urlInputStream = con.getInputStream();
-				return BitmapFactory.decodeStream(urlInputStream);
+				if (params[0] instanceof Uri) {
+					resolver.openInputStream((Uri) params[0]);
+				} else if (params[0] instanceof URL) {
+					URLConnection con = ((URL) params[0]).openConnection();
+					// can use some more params, i.e. caching directory etc
+					con.setUseCaches(true);
+					inputStream = con.getInputStream();
+				}
+				return BitmapFactory.decodeStream(inputStream);
 			} catch (IOException e) {
 				Log.w(UrlImageView.class.getName(),
 						"failed to load image from " + params[0], e);
 				return null;
 			} finally {
-				if (this.urlInputStream != null) {
+				if (this.inputStream != null) {
 					try {
-						this.urlInputStream.close();
+						this.inputStream.close();
 					} catch (IOException ignore) {
 						// swallow
 					} finally {
-						this.urlInputStream = null;
+						this.inputStream = null;
 					}
 				}
 			}
@@ -99,13 +107,13 @@ public class UrlImageView
 		protected void onCancelled() {
 			this.isCancelled = true;
 			try {
-				if (this.urlInputStream != null) {
+				if (this.inputStream != null) {
 					try {
-						this.urlInputStream.close();
+						this.inputStream.close();
 					} catch (IOException ignore) {
 						// swallow
 					} finally {
-						this.urlInputStream = null;
+						this.inputStream = null;
 					}
 				}
 			} finally {
@@ -117,7 +125,7 @@ public class UrlImageView
 	/*
 	 * track loading task to cancel it
 	 */
-	private AsyncTask<URL, Void, Bitmap> currentLoadingTask;
+	private AsyncTask<Object, Void, Bitmap> currentLoadingTask;
 
 	/*
 	 * just for sync
@@ -157,7 +165,10 @@ public class UrlImageView
 	@Override
 	public void setImageURI(Uri uri) {
 		cancelLoading();
-		super.setImageURI(uri);
+		synchronized (loadingMonitor) {
+			cancelLoading();
+			this.currentLoadingTask = new LoadingTask(getContext().getContentResolver(), this).execute(uri);
+		}
 	}
 
 	/**
@@ -166,7 +177,7 @@ public class UrlImageView
 	public void setImageURL(URL url) {
 		synchronized (loadingMonitor) {
 			cancelLoading();
-			this.currentLoadingTask = new UrlLoadingTask(this).execute(url);
+			this.currentLoadingTask = new LoadingTask(null, this).execute(url);
 		}
 	}
 
