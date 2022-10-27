@@ -313,7 +313,22 @@ public class AndroidFile
 
 	@Override
 	public boolean exists() {
-		boolean exists = getDocFile().exists();
+		boolean exists;
+		try {
+			// Found in wild:
+			// Crash | Google Intel Apollo Lake Chromebook  | Android 9 (SDK 28)
+			// signal 11 (SIGSEGV), code 1 (SEGV_MAPERR)
+			//  androidx.core.app.AppOpsManagerCompat.closeQuietly [DEDUPED]+48)
+			//  androidx.documentfile.provider.TreeDocumentFile.exists+448)
+			//  com.biglybt.android.core.az.AndroidFile.exists+152)
+			//  com.biglybt.android.core.az.AndroidFile.mkdirs+42)
+			//  com.biglybt.android.core.az.BiglyBTManager.<init>+10232)
+			//  com.biglybt.android.client.service.BiglyBTService.startCore+644)
+			//  com.biglybt.android.client.service.c.run+1036)
+			exists = getDocFile().exists();
+		} catch (Throwable t) {
+			return false;
+		}
 		if (exists && path.contains("/raw%3A")) {
 			// Not always valid. For example:
 			// content://com.android.providers.downloads.documents/tree/raw%3A%2Fstorage%2Femulated%2F0%2FDownload%2Ffoobar/document/raw%3A%2Fstorage%2Femulated%2F0%2FDownload%2Ffoobar%2Fsamples
