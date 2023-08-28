@@ -37,4 +37,14 @@
 	<string name="core_remote_access_summary_enabled_secure">Acceso remoto protegido por contraseña habilitado en %1$s</string>
 	<string name="pref_conn_trans_encryption_plain">Simple</string>
 	<string name="pref_conn_trans_encryption_none">Ninguno</string>
+	<string name="pref_conn_trans_encryption_RC4">RC4 (CPU Intensivo)</string>
+	<string name="fileaccess_saf">Acceso SAF</string>
+	<string name="fileaccess_direct">Acceso Directo</string>
+	<string name="saf_warning_title">Selector de carpeta</string>
+	<string name="saf_warning_text">Algunos fabricantes que utilizan Android TV como SO han desactivado los navegadores de carpetas.
+		\n\nSi tiene problemas utilizando el Selector de Carpetas del SO, puede utilizar el Selector de Carpetas Interno.
+		Utilizar el Selector de Carpetas Interno puede limitar las ubicaciones que pueda elegir, tales como el acceso a medios externos.</string>
+	<string name="saf_warning_useOS">Usar Selector de Carpetas del SO</string>
+	<string name="saf_warning_useInternal">Usar Selector de Carpetas interno</string>
+	<string name="no_saf_support">El acceso al almacenamiento externo (Tarjeta SD) a través del Storage Access Framework (SAF) de Android no está disponible en la versión &amp; del Sistema Operativo de este dispositivo.</string>
 </resources>
