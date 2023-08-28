@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+	<string name="context_subscription_title">Tilauksien toiminnot</string>
+	<string name="subscription_actions_for">Toiminnot tilaukselle %1$s</string>
+	<plurals name="subscription_actions_for_multiple">
+		<item quantity="one">Toiminnot %1$d tilausmerkinnälle</item>
+		<item quantity="other">Toiminnot %1$d tilausmerkinnälle</item>
+	</plurals>
+	<plurals name="subscriptionlist_results_count">
+		<item quantity="one">%1$s tilaus</item>
+		<item quantity="other">%1$s tilausta</item>
+	</plurals>
+	<plurals name="subscriptionlist_filtered_results_count">
+		<item quantity="one">%1$s/%2$s tilausta</item>
+		<item quantity="other">%1$s/%2$s tilausta</item>
+	</plurals>
+	<string name="title_activity_subscriptions">Tilaukset</string>
+	<string name="action_add_subscription">Uusi tilaus</string>
+	<string name="subscription_add_hint">RSS-syötteen URL</string>
+	<string name="title_activity_subscription">Tilaus</string>
+	<string name="subscription_remove_title">Poistetaanko tilaus?</string>
+	<string name="subscriptions_remove_title">Poistetaanko tilaukset?</string>
+</resources>
