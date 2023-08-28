@@ -1,0 +1,352 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+	<string name="settings">Asetukset</string>
+	<string name="btnLoginLabel">Yhdistä</string>
+	<string name="action_sortby">Lajittele</string>
+	<!-- Keep the number and comma as is -->
+	<string-array name="filterby_list">
+		<item>8,Kaikki</item>
+		<item>4,Aktiivinen</item>
+		<item>9,Valmistuneet</item>
+		<item>1,Keskeneräiset</item>
+		<item>2,Stopped</item>
+	</string-array>
+	<string-array name="sortby_list">
+		<item>Jono</item>
+		<item>Activity</item>
+		<item>Ikä</item>
+		<item>Edistyminen</item>
+		<item>Jakosuhde</item>
+		<item>Koko</item>
+		<item>Tila</item>
+		<item>ETA</item>
+		<item>Tiedostojen #</item>
+	</string-array>
+	<string-array name="sortby_ms_list">
+		<item>Sija</item>
+		<item>Nimi</item>
+		<item>Seeds</item>
+		<item>Koko</item>
+		<item>Julkaisupäivä</item>
+	</string-array>
+	<string-array name="sortby_rcm_list">
+		<item>Sija</item>
+		<item>Nimi</item>
+		<item>Seeds</item>
+		<item>Koko</item>
+		<item>Julkaisupäivä</item>
+		<item>Nähty viimeksi</item>
+	</string-array>
+	<string-array name="sortby_sl_list">
+		<item>Nimi</item>
+		<item>Viimeisin tarkistus</item>
+		<item>Uusien määrä</item>
+	</string-array>
+	<string-array name="sortby_file_list">
+		<item>File Tree</item>
+		<item>Nimi</item>
+		<item>Koko</item>
+		<item>% valmiina</item>
+	</string-array>
+	<string name="action_start_all">Käynnistä kaikki</string>
+	<string name="action_stop_all">Pysäytä kaikki</string>
+	<string name="action_add_torrent">Lisää</string>
+	<string name="action_sel_start">Käynnistä</string>
+	<string name="action_sel_launch">Avaa</string>
+	<string name="action_sel_stop">Pysäytä</string>
+	<string name="action_sel_remove">Poista</string>
+	<string name="search">Haku</string>
+	<string name="action_sel_relocate">Vaihda tallennuskansiota</string>
+	<string name="action_sel_forcestart">Pakotettu käynnistys</string>
+	<string name="action_sel_move_up">Siirrä ylemmäs</string>
+	<string name="action_sel_move_down">Siirrä alemmas</string>
+	<string name="action_sel_move_top">Siirrä ylimmäiseksi</string>
+	<string name="action_sel_move_bottom">Siirrä alimmaiseksi</string>
+	<string name="action_sel_move_position">Siirrä&#8230;</string>
+	<string name="access_code_hint">Etäohjauksen koodi</string>
+	<string name="title_activity_metasearch">Haku</string>
+	<string name="action_logout">Kirjaudu ulos</string>
+	<string name="wv_center_default">Yhdistetään etäohjaukseen</string>
+	<string name="state_connecting">Yhdistetään</string>
+	<string name="rp_download_speed">Latausnopeus</string>
+	<string name="kbps">Kb/s</string>
+	<string name="rp_upload_speed">Lähetysnopeus</string>
+	<string name="rp_update_interval">Päivitystiheys</string>
+	<string name="profile_nickname">Tuttavallinen nimi</string>
+	<string name="profile_host_explain">Isäntänimi tai isäntälaitteen IP-osoite</string>
+	<string name="profile_port">Portti</string>
+	<string name="profile_user_name">Käyttäjätunnus</string>
+	<string name="profile_password">Salasana</string>
+	<string name="profile_host_hint">Isäntänimi tai IP-osoite</string>
+	<string name="profile_nick_explain">Tuttavallinen nimi etälaitteelle</string>
+	<string name="profile_localnick_explain">Tuttavallinen nimi tässä laitteessa suoritettavalle torrent-päätteelle</string>
+	<string name="action_edit_pref">Muokkaa profiilia</string>
+	<string name="action_delete_pref">Poista profiili</string>
+	<string name="search_box_hint">Etsi torrenteja&#8230;</string>
+	<string name="button_browse">Selaa&#8230;</string>
+	<string name="error_connecting">Yhteysvirhe</string>
+	<string name="button_continue">Jatka</string>
+	<string name="action_about">Tietoja BiglyBT:stä</string>
+	<string name="dialog_delete_title">Poistetaanko torrent?</string>
+	<string name="dialog_delete_button_remove">Poista</string>
+	<string name="movedata_history">Historia</string>
+	<string name="biglybt_logo">BiglyBT-logo</string>
+	<string name="action_refresh">Päivitä</string>
+	<string name="last_used_ago">Viimeisin yhteys %s</string>
+	<string name="last_updated">Päivitetty viimeksi %s</string>
+	<plurals name="torrent_row_info">
+		<item quantity="one">%d tiedosto</item>
+		<item quantity="other">%d tiedostoa</item>
+	</plurals>
+	<string name="add_torrent">Lisää Torrentti</string>
+	<string name="torrent_status_checking">Tarkistetaan tiedostoja</string>
+	<string name="local_name">Paikallinen BiglyBT laitteella %s</string>
+	<string name="local_vuze_remote_name">Paikallinen Vuze Remote laitteella %s</string>
+	<string name="generic_x_of_y">%1$s/%2$s</string>
+	<string name="torrent_file_priority_high">Korkea painotus</string>
+	<string name="torrent_file_priority_low">Alhainen painotus</string>
+	<!-- Displayed when a file is marked as not wanted (or deleted), but shares a piece with a file that is wanted, and therefore is required to be partially downloaded -->
+	<string name="torrent_file_partial_dl">Osittainen lataus</string>
+	<string name="context_torrent_title">Torrentin toiminnot</string>
+	<string name="context_torrent_subtitle_selected" tools:ignore="PluralsCandidate">%1$d valittu</string>
+	<string name="action_sel_save">Tallenna laitteeseen</string>
+	<string name="action_sel_priority_up">Lisää painotusta</string>
+	<string name="action_sel_priority_down">Vähennä painotusta</string>
+	<string name="action_set_wanted">Aseta halutuksi</string>
+	<string name="action_set_unwanted">Aseta ei-halutuksi</string>
+	<string name="details_tab_files">Tiedostot</string>
+	<string name="details_tab_info">Tiedot</string>
+	<string name="details_tab_peers">Yhteydet</string>
+	<string name="yes">Kyllä</string>
+	<string name="no">Ei</string>
+	<string name="torrentInfo_title_timeline">Aikajana</string>
+	<string name="torrentInfo_row_startedOn">Aloitettu</string>
+	<string name="torrentInfo_row_completedOn">Valmistunut</string>
+	<string name="torrentInfo_title_content">Sisältö</string>
+	<string name="torrentInfo_row_position">Sijoitus jonossa</string>
+	<string name="torrentInfo_row_createdBy">Luonut</string>
+	<string name="torrentInfo_row_comment">Kommentti</string>
+	<string name="torrentInfo_row_userComment">Kommenttisi</string>
+	<string name="torrentInfo_row_saveLocation">Tallennussijainti</string>
+	<string name="torrentInfo_row_hash">Torrentin hajautusarvo</string>
+	<string name="torrentInfo_row_bytesUploaded">Lähetetty</string>
+	<string name="torrentInfo_row_shareRatio">Jakosuhde</string>
+	<string name="action_issues">Ilmoita ongelmasta</string>
+	<string name="action_giveback">Anna takaisin</string>
+	<string name="action_rate">Arvioi sovellus</string>
+	<string name="edit_profile">Muokkaa profiilia</string>
+	<string name="toast_adding_xxx">Lisätään %1$s</string>
+	<string name="drawer_open">Avaa valikko</string>
+	<string name="drawer_close">Sulje valikko</string>
+	<string name="accept">Hyväksy</string>
+	<string name="torrent_url_add_failed_openurl">Avaa URL</string>
+	<string name="button_add">Lisää</string>
+	<string name="check_dont_ask_again">Älä kysy uudelleen</string>
+	<string name="open_options_lbl_saveloc">Tallennussijainti</string>
+	<string name="openoptions_sw_position">Alkuperäinen tila</string>
+	<string name="openoptions_sw_state">Sijoitus jonossa</string>
+	<string name="openoptions_btn_editname">Muokkaa nimeä</string>
+	<string name="filerow_btn_dl">Kytke haluttu-tila</string>
+	<string name="openoptions_lbl_name">Torrentin nimi</string>
+	<string name="torrent_open_options_title">Avaa torrent</string>
+	<string name="x_space_free">%1$s vapaata</string>
+	<string name="no_thanks">Ei kiitos</string>
+	<string name="rate_now">Arvioi nyt</string>
+	<string name="later">Myöhemmin</string>
+	<string name="rp_update_interval_mobile">Päivitystiheys mobiiliverkossa</string>
+	<string name="manual_refresh">Manuaalinen päivitys</string>
+	<string name="menu_global_actions">Globaalit toiminnot</string>
+	<string name="openoptions_position_first">Ensimmäinen</string>
+	<string name="openoptions_position_last">Viimeisin</string>
+	<string name="openoptions_state_stopped">Pysäytetty</string>
+	<string name="rp_small_lists">Käytä pieniä listoja</string>
+	<!-- This fits in the completion progress ring.  Text must be short in order to fit nicely.  Up to 4 lines (where 1st and 4th have to be super short), but 2 - 3 lines recommended -->
+	<string name="torrent_row_share_ratio">%.01f jakosuhde</string>
+	<string name="connerror_hostconnect">Etälaitteeseesi ei voitu muodostaa yhteyttä</string>
+	<string name="details_tab_tags">Tunnisteet</string>
+	<string name="create_new_tag">Luo uusi tunniste</string>
+	<string name="newtag.name">Tunnisteen nimi</string>
+	<string name="tag_filter">Suodata tunnisteilla</string>
+	<string name="text_filter">Tekstisuodatus</string>
+	<string name="export_profiles">Vie profiilit</string>
+	<string name="import_profiles">Tuo profiilit</string>
+	<string name="action_add_profile">Lisää profiili</string>
+	<string name="toast_core_starting">Käynnistetään BiglyBT Core</string>
+	<string name="toast_core_restarting">Käynnistetään BiglyBT Core uudelleen</string>
+	<string name="action_shutdown_core">Sulje palvelu</string>
+	<plurals name="torrent_count">
+		<item quantity="one">%1$d torrent</item>
+		<item quantity="other">%1$d torrentia</item>
+	</plurals>
+	<string name="search_filter">Suodattimet</string>
+	<string name="filter_lastseen_none">Viimeksi nähty koskaan</string>
+	<string name="filter_time_none">Ei aikasuodatusta</string>
+	<string name="filter_size">%1$s - %2$s</string>
+	<string name="filter_size_atleast">Vähintään %1$s</string>
+	<string name="time_ago">%s sitten</string>
+	<string name="filter_date_starting">Alkaa %1$s</string>
+	<string name="filterby_header_filesize">Tiedostokoko</string>
+	<string name="filterby_header_age">Ikä</string>
+	<string name="filterby_header_lastseen">Nähty viimeksi</string>
+	<string name="filterby_header_minimum_rank">Vähimmäissijoitus</string>
+	<string name="button_clear">Tyhjennä</string>
+	<string name="download_source_item_from_url">URL lähteestä %1$s</string>
+	<string name="ms_result_row_age">%1$s - %2$s</string>
+	<string name="title_message_from_client">Viesti etäohjaimelta</string>
+	<string name="empty_list">Lista on tyhjä :(</string>
+	<string name="spoken_sorted_ascending">Järjestetty nousevasti</string>
+	<string name="spoken_sorted_descending">Järjestetty laskevasti</string>
+	<string name="spoken_download_torrent">Lataa torrent</string>
+	<string name="spoken_speak">Puhu</string>
+	<string name="rangepicker_start_date">Aloituspäivä</string>
+	<string name="rangepicker_minimum_size">Vähimmäiskoko</string>
+	<string name="rangepicker_maximum_size">Enimmäiskoko</string>
+	<string name="button_set">Aseta</string>
+	<string name="button_clear_filters">Tyhjennä suodattimet</string>
+	<string name="mark_all_seen">Merkitse kaikki nähdyiksi</string>
+	<string name="textbubble_new">Uusi</string>
+	<string name="search_templates">Hakupohjat</string>
+	<string name="last_seen_x">Nähty viimeksi %1$s</string>
+	<string name="published_x_ago">Julkaistu %1$s</string>
+	<string name="retrieving_items">Noudetaan listausta</string>
+	<string name="mark_seen">Merkitse nähdyksi</string>
+	<string name="action_download">Lataa</string>
+	<string name="profile_only_i2p">Yhdistä vain käyttäen I2P-verkkoa</string>
+	<string name="auto_download">Automaattilataus</string>
+	<string name="import_settings">Tuo asetukset</string>
+	<string name="export_settings">Vie asetukset</string>
+	<string name="open_file">Avaa tiedosto</string>
+	<string name="TorrentListSectionName_File_1">1 tiedosto</string>
+	<string name="TorrentListSectionName_File_many">Useita tiedostoja</string>
+	<string name="TorrentListSectionName_File_hundreds">Satoja tiedostoja</string>
+	<string name="TorrentListSectionName_ETA_complete">Valmis</string>
+	<string name="TorrentListSectionName_Activity_active">Aktiivinen</string>
+	<string name="TorrentListSectionName_Activity_inactive">Toimeton</string>
+	<string name="TorrentListSectionName_Activity_yesterday">Aktiivinen eilen</string>
+	<string name="TorrentListSectionName_Activity_lastactive">Aktiivinen viimeksi %1$s</string>
+	<string name="TorrentListSectionName_Progress_100" formatted="false">100% valmis</string>
+	<string name="day">päivä</string>
+	<string name="week">viikko</string>
+	<string name="month">kuukausi</string>
+	<string name="year">vuosi</string>
+	<string name="days">päivää</string>
+	<string name="weeks">viikkoa</string>
+	<string name="months">kuukautta</string>
+	<string name="years">vuotta</string>
+	<string name="giveback_title">Anna takaisin</string>
+	<string name="movedata_currentlocation"><![CDATA[Nykyinen sijainti on <b>%1$s</b>]]></string>
+	<string name="movedata_available_locations">Käytettävissä olevat sijainnit</string>
+	<string name="dialog_nobrowser_message"><![CDATA[Siirry manuaalisesti kohteeseen <b>%1$s</b>]]></string>
+	<string name="dialog_nobrowser_title">Verkkoselainta ei löytynyt</string>
+	<string name="permission_denied">Lupa evätty</string>
+	<string name="remove_subscription">Poista tilaus</string>
+	<string name="error_x">Virhe: %1$s</string>
+	<string name="button_clipboard_url">URL leikepöydältä</string>
+	<string name="login_remote_title">Yhdistä etäohjaimeen</string>
+	<string name="setting_speed_on_summary">Rajoitettu %1$s</string>
+	<string name="unlimited">Rajoittamaton</string>
+	<string name="header_openoptions">Lisää torrent %1$s</string>
+	<string name="private_internal_storage">BiglyBT:n kansio yksityisessä tallennustilassa</string>
+	<string name="private_internal_storage_warning">Varoitus: Laitteen sisäisen tallennustilan rajoitetulla alueella säilytetyt tiedostot poistetaan, jos poistat BiglyBT:n asennuksen</string>
+	<string name="dialog_remove_profile_title">Poistetaanko profiili?</string>
+	<string name="button_remove">Poista</string>
+	<string name="statetag_tracker_error">Trakkerin virhe</string>
+	<string name="statetag_force_started">Pakotettu</string>
+	<string name="refresh_every_x">Joka %1$s</string>
+	<string name="prefcat_social">Sosiaaliset</string>
+	<string name="prefcat_bandwidth">Kaistanleveys</string>
+	<string name="prefcat_interface">Käyttöliittymä</string>
+	<string name="prefcat_network">Verkko</string>
+	<string name="prefcat_advanced">Lisäasetukset</string>
+	<string name="preftitle_max_ul_speed">Lähetysnopeuden rajoitus</string>
+	<string name="preftitle_refresh_interval">Päivitystiheys</string>
+	<string name="preftitle_show_open_options">Näytä avausvalinnat</string>
+	<string name="prefsummary_show_open_options">Kun uusi torrent lisätään, näytetään valintaruutu avausvaihtoehdoilla</string>
+	<string name="preftitle_ui_theme">Käyttöliittymän ulkoasu</string>
+	<string name="prefsummary_theme_light">Nyt on käytössä vaalea teema</string>
+	<string name="prefsummary_theme_dark">Nyt on käytössä tumma teema</string>
+	<string name="prefswitch_theme_dark">Tumma</string>
+	<string name="prefswitch_theme_light">Vaalea</string>
+	<string name="preftitle_remote_settings">Etäohjauksen asetukset</string>
+	<string name="prefcat_power_management">Virranhallinta</string>
+	<plurals name="x_items">
+		<item quantity="one">%1$s kohde</item>
+		<item quantity="other">%1$s kohdetta</item>
+	</plurals>
+	<plurals name="x_new">
+		<item quantity="one">%1$s uusi</item>
+		<item quantity="other">%1$s uutta</item>
+	</plurals>
+	<plurals name="seconds">
+		<item quantity="one">%d sekunti</item>
+		<item quantity="other">%d sekuntia</item>
+	</plurals>
+	<plurals name="minutes">
+		<item quantity="one">%d minuutti</item>
+		<item quantity="other">%d minuuttia</item>
+	</plurals>
+	<plurals name="hours">
+		<item quantity="one">%d tunti</item>
+		<item quantity="other">%d tuntia</item>
+	</plurals>
+	<plurals name="days">
+		<item quantity="one">%d päivä</item>
+		<item quantity="other">%d päivää</item>
+	</plurals>
+	<plurals name="weeks">
+		<item quantity="one">%d viikko</item>
+		<item quantity="other">%d viikkoa</item>
+	</plurals>
+	<plurals name="years">
+		<item quantity="one">%d vuosi</item>
+		<item quantity="other">%d vuotta</item>
+	</plurals>
+	<!-- Short form for seconds.  ex "59s" -->
+	<!-- Short form for minutes.  ex "39m" -->
+	<!-- Short form for hours.  ex "23h" -->
+	<!-- Short form for days.  ex "29d" -->
+	<!-- Short form for years.  ex "10y" -->
+	<string-array name="proxy_type_entries">
+		<item>SOCKS4</item>
+		<item>SOCKS4a</item>
+		<item>SOCKS5</item>
+		<item>HTTP</item>
+	</string-array>
+	<string name="proxy_host">Välityspalvelimen osoite</string>
+	<string name="proxy_user">Välityspalvelimen käyttäjätunnus</string>
+	<string name="proxy_pw">Välityspalvelimen salasana</string>
+	<string name="proxy_port">Välityspalvelimen portti</string>
+	<string name="pref_proxy_disabled">Välityspalvelin ei ole käytössä</string>
+	<string name="pref_peerport_random">Määritetään satunnaisesti</string>
+	<string name="pref_peerport_random_button">Määritä satunnaisesti</string>
+	<string name="gdpr_dialog_title">GDPR-ilmoitus</string>
+	<string name="gdpr_code_creation">Kun etäyhteys sallitaan pääsykoodilla, pidetään kirjaa siitä ja tämän laitteen viimeisestä tunnetusta IP-osoitteesta.</string>
+	<string name="preftitle_port_settings">Porttiasetukset</string>
+	<string name="title_username">Käyttäjätunnus</string>
+	<string name="title_password">Salasana</string>
+	<string name="no_password_set">Salasanaa ei ole asetettu</string>
+	<string name="password_is_set">Salasata on asetettu</string>
+	<string name="action_remote_access_qr"><![CDATA[Tallenna ja näytä QR-koodi]]></string>
+	<string name="dialog_title_remote_access_qr">Etäohjauksen QR-koodi</string>
+	<string name="dialog_remote_access_webui_qr_info">Skannaa tämä QR-koodi käyttääksesi verkkokäyttöliittymää nykyaikaisilla selaimilla.</string>
+	<string name="dialog_remote_access_webui_qr_button">Web-käyttöliittymän QR-koodi</string>
+	<string name="dialog_remote_access_biglybt_qr_button">BiglyBT:n QR-koodi</string>
+	<string name="prefsummary_proxy_port">Portti %1$d</string>
+	<string name="backspace">Askelpalautin</string>
+	<string name="action_sel_verify">Tarkista tiedot</string>
+	<string name="sideactions_torrent_header">Torrentin toiminnot</string>
+	<string name="sideactions_tag_header">Tunnistetoiminnot</string>
+	<string name="filter_only_complete">Vain valmistuneet</string>
+	<string name="filter_only_wanted">Vain halutut</string>
+	<string name="show_only_chosen">Näytä vain valitut</string>
+	<string name="read_only">Vain luku</string>
+	<string name="menu_donate">Lahjoita</string>
+	<string name="menu_vote">Äänestä ominaisuuksista</string>
+	<string name="menu_contribute">Osallistu</string>
+	<string name="default_save_location">Oletustallennussijainti</string>
+	<string name="metasearch_engine_all">Kaikki</string>
+	<string name="metasearch_cached">Puskuroidut haut</string>
+	<string name="action_full_settings">Kaikki asetukset</string>
+	<string name="loading">Ladataan…</string>
+	<string name="settings_no_value">&lt;Ei asetettu&gt;</string>
+</resources>
