@@ -427,7 +427,7 @@ public class PrefFragmentHandler
 							// x refresh on non-mobile, manual on mobile
 							String secs = formatTime(resources,
 									ds.getInt(KEY_REFRESH_INTERVAL, 0));
-							s = resources.getString(R.string.refresh_every_x_on_mobile, secs);
+							s = resources.getString(R.string.refresh_every_x_on_nonmobile, secs);
 							s += "\n";
 							s += resources.getString(R.string.refresh_manual_mobile);
 						}
