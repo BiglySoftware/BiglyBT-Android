@@ -38,4 +38,10 @@
 	<string name="pref_conn_trans_encryption_plain">Brut</string>
 	<string name="pref_conn_trans_encryption_none">Aucun</string>
 	<string name="pref_conn_trans_encryption_RC4">RC4 (lourde charge processeur)</string>
+	<string name="saf_warning_text">Certains fabricants d\'Android TV ont des navigateurs de dossiers cassés ou désactivés.
+		\n\nSi vous avez des problèmes avec le sélecteur de dossier de l\'OS, vous pouvez utiliser le sélecteur interne.
+		L\'utilisation du sélecteur interne peut limiter les emplacements que vous pouvez choisir, tels que les médias externes.</string>
+	<string name="saf_warning_useOS">Utiliser le sélecteur de dossier OS</string>
+	<string name="saf_warning_useInternal">Utiliser le sélecteur interne</string>
+	<string name="no_saf_support">L\'accès au stockage externe (carte SD) via le Framework d\'accès au stockage (SAF) d\'Android n\'est pas disponible sur cet appareil &amp; version d\'OS.</string>
 </resources>

@@ -250,10 +250,10 @@
 	<string name="connerror_pairing">Não foi possível recuperar a localização do seu controle remoto. Certifique-se de ter acesso à Internet e tente novamente.</string>
 	<string name="connerror_hostconnect">Não foi possível conectar-se à sua máquina remota</string>
 	<string name="about_version">Versão %1$s (compilação %2$s). GPLv2 +</string>
-	<string name="details_tab_tags">Tags</string>
-	<string name="create_new_tag">Criar uma Nova Tag</string>
-	<string name="newtag.name">Nome da Tag</string>
-	<string name="tag_filter">Filtro de Tag</string>
+	<string name="details_tab_tags">Etiquetas</string>
+	<string name="create_new_tag">Criar uma Nova Etiqueta</string>
+	<string name="newtag.name">Nome da Etiqueta</string>
+	<string name="tag_filter">Filtro de Etiqueta</string>
 	<string name="text_filter">Filtro de Texto</string>
 	<string name="select_multiple_items">Selecionar Múltiplos Itens</string>
 	<string name="torrent_actions_for">Ações de Torrent para %1$s</string>
@@ -558,7 +558,7 @@ Os dados enviados são os seguintes:</string>
 	<string name="sideactions_all_file_header">Ações para todos %1$s Arquivos</string>
 	<string name="sideactions_torrent_header">Ações para Torrent</string>
 	<string name="sideactions_peers_header">Ações para Pares</string>
-	<string name="sideactions_tag_header">Ações para Tag</string>
+	<string name="sideactions_tag_header">Ações para Etiqueta</string>
 	<string name="filter_only_complete">Só Completos</string>
 	<string name="filter_only_wanted">Só Desejados</string>
 	<plurals name="folder_summary_simple">

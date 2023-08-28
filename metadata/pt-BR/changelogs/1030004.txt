@@ -1,6 +1,6 @@
 1.3.0.4
 ★ Corrigido Checar/Forçar IP ligações não lembradas entre os reinícios
 ★Corrigido (novamente) erro na porta proxy em Android TV
-★ Adicionado tag de estado quando mover dados do torrent
+★ Adicionado etiqueta de estado quando mover dados do torrent
 ★ Atualizado o núcleo para v2.5.0.1_B17
 ★ Corrigidos vários erros relatados pelo Console do Google Play

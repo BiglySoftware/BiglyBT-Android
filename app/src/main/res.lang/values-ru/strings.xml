@@ -49,7 +49,7 @@
 		<item>Каталог файлов</item>
 		<item>Название</item>
 		<item>Размер</item>
-		<item>% Complete</item>
+		<item>% завершено</item>
 	</string-array>
 	<string name="action_start_all">Запустить всё</string>
 	<string name="action_stop_all">Остановить всё</string>
@@ -86,6 +86,7 @@
 	<string name="profile_host_hint">Имя хоста или IP-адрес</string>
 	<string name="profile_nick_explain">Понятное имя для удаленного хоста</string>
 	<string name="profile_localnick_explain">Приемлемое имя для раздачи, работающей на этом Android устройстве</string>
+	<string name="profile_rpc_path">Путь RPC</string>
 	<string name="action_edit_pref">Редактировать профиль</string>
 	<string name="action_delete_pref">Удалить профиль</string>
 	<string name="search_box_hint">Найти торренты&#8230;</string>
@@ -99,6 +100,7 @@
 	<string name="button_continue">Продолжить</string>
 	<string name="action_about">О BiglyBT</string>
 	<string name="about_thanks_header">Части этого приложения благодаря:</string>
+	<string name="about_translator">%1$s перевод от adem</string>
 	<string name="login_guide">Перейдите в|Инструменты|&amp; gt;|Удалённое Сопряжение|в настольном клиенте BiglyBT или Vuze, чтобы найти свой код удалённого доступа.</string>
 	<string name="login_guide2">Чтобы настроить управление вручную, попробуйте в &lt;а href=\"biglybt://управление/cmd=advlogin\"&gt;расширенный логин&lt;/а&gt;.  См. @@а&lt;а href=\"http://wiki.biglybt.com/w/Android_Remote_Guide\"и gt;Руководство&lt;/а&gt; для получения дополнительной помощи.</string>
 	<string name="dialog_delete_title">Удалить торрент?</string>
@@ -129,17 +131,21 @@
 	<string name="torrent_status_checking">Проверка файлов</string>
 	<string name="local_name">Локальный BiglyBT в %s</string>
 	<string name="local_vuze_name">Локальное Vuze приложение на %s</string>
+	<string name="dialog_delete_datatoo">Также удалить загруженные файлы</string>
 	<string name="multi_select_tip">Нажмите &amp; Удерживайте для мульти-выбора</string>
 	<string name="generic_x_of_y">%1$s из %2$s</string>
 	<string name="torrent_file_priority_high">Высокий приоритет</string>
 	<string name="torrent_file_priority_low">Низкий приоритет</string>
 	<!-- Displayed when a file is marked as not wanted (or deleted), but shares a piece with a file that is wanted, and therefore is required to be partially downloaded -->
+	<string name="torrent_file_partial_dl">Частичная загрузка</string>
 	<string name="context_torrent_title">Действия над торрентами</string>
 	<string name="context_file_title">Действия над файлом</string>
 	<string name="context_torrent_subtitle_selected" tools:ignore="PluralsCandidate">Выбрано: %1$d</string>
 	<string name="action_sel_save">Сохранить на устройство</string>
 	<string name="action_sel_priority_up">Повысить приоритет</string>
 	<string name="action_sel_priority_down">Понизить приоритет</string>
+	<string name="action_set_wanted">Сделать желаемым</string>
+	<string name="action_set_unwanted">Убрать из желаемого</string>
 	<string name="details_tab_files">Файлов</string>
 	<string name="details_tab_info">Инфо</string>
 	<string name="details_tab_general">Основные</string>
@@ -172,6 +178,8 @@
 	<string name="torrentInfo_title_sharing">Share-торренты (свои ресурсы)</string>
 	<string name="torrentInfo_row_bytesUploaded">Роздано</string>
 	<string name="torrentInfo_row_shareRatio">Рейтинг Обмена</string>
+	<string name="torrentInfo_row_activePeerCount">Активные пиры</string>
+	<string name="torrentInfo_row_connectedPeers">Подключённые пиры</string>
 	<string name="action_issues">Сообщить об ошибке</string>
 	<string name="action_giveback">Вернуть</string>
 	<string name="action_rate">Оценить приложение</string>
@@ -184,13 +192,20 @@
 	<string name="drawer_open">Открыть ящик</string>
 	<string name="drawer_close">Закрыть ящик</string>
 	<string name="title_activity_rcm">Торренты у других пиров</string>
+	<string name="accept">Принять</string>
+	<string name="decline">Отклонить</string>
+	<string name="change_name_title">Изменить имя торрента</string>
 	<string name="torrent_url_add_failed_openurl">Перейти по ссылке</string>
 	<string name="button_add">Добавить</string>
 	<string name="check_dont_ask_again">Не спрашивать снова</string>
 	<string name="open_options_lbl_saveloc">Сохранить местоположение</string>
+	<string name="one_click_edit_mode">Режим редактирования одним щелчком</string>
 	<string name="openoptions_sw_position">Начальное состояние</string>
 	<string name="openoptions_sw_state">Позиция в очереди</string>
 	<string name="openoptions_btn_editname">Редактировать имя</string>
+	<string name="openoptions_btn_editdir">Изменить место сохранения</string>
+	<string name="filerow_btn_dl">Переключить состояние желания</string>
+	<string name="filerow_expando">Развернуть/свернуть папку</string>
 	<string name="openoptions_lbl_name">Имя торрента</string>
 	<string name="torrent_open_options_title">Открыть торрент</string>
 	<string name="x_space_free">%1$s свободно</string>
@@ -198,6 +213,7 @@
 	<string name="no_thanks">Нет, спасибо</string>
 	<string name="rate_now">Оценить сейчас</string>
 	<string name="later">Позже</string>
+	<string name="rp_update_interval_mobile">Интервал обновления мобильных устройств</string>
 	<string name="manual_refresh">Обновление вручную</string>
 	<string name="menu_global_actions">Глобальные действия</string>
 	<string name="menu_actions">Действия</string>
@@ -208,20 +224,45 @@
 	<string name="profile_use_https">Использовать https</string>
 	<string name="rp_small_lists">Краткий список</string>
 	<!-- This fits in the completion progress ring.  Text must be short in order to fit nicely.  Up to 4 lines (where 1st and 4th have to be super short), but 2 - 3 lines recommended -->
+	<string name="torrent_row_share_ratio_circle">%.01f\nрейтинг</string>
+	<string name="torrent_row_share_ratio">%.01f рейтинг</string>
+	<string name="connerror_hostconnect">Не удалось подключиться к вашему удалённой машине</string>
+	<string name="about_version">Версия %1$s (сборка %2$s). GPLv2+</string>
 	<string name="details_tab_tags">Теги</string>
 	<string name="create_new_tag">Создать новый тег</string>
 	<string name="newtag.name">Имя тега</string>
 	<string name="tag_filter">Фильтр тегов</string>
 	<string name="text_filter">Текстовый фильтр</string>
+	<string name="select_multiple_items">Выбрать несколько элементов</string>
+	<string name="torrent_actions_for">Действия над торрентом %1$s</string>
+	<string name="file_actions_for">Действия с файлами для %1$s</string>
+	<string name="folder_actions_for">Действия с папкой для %1$s</string>
 	<string name="export_profiles">Экспорт профилей</string>
 	<string name="import_profiles">Импорт профилей</string>
 	<string name="action_add_profile">Добавить профиль</string>
+	<string name="toast_core_starting">Запуск ядра BiglyBT</string>
+	<string name="toast_core_restarting">Перезапуск ядра BiglyBT</string>
 	<string name="action_shutdown_core">Служба выключения</string>
+	<plurals name="torrent_actions_for_multiple">
+		<item quantity="one">Действия для %1$d торрента</item>
+		<item quantity="few">Действия для торрентов %1$d</item>
+		<item quantity="many">Действия для торрентов %1$d</item>
+		<item quantity="other">Действия для торрентов %1$d</item>
+	</plurals>
+	<plurals name="torrent_count">
+		<item quantity="one">%1$d торрент</item>
+		<item quantity="few">%1$d торрента</item>
+		<item quantity="many">%1$d торрентов</item>
+		<item quantity="other">%1$d торрентов</item>
+	</plurals>
+	<string name="ms_results_info">%1$s сиды • %2$s пиры</string>
 	<string name="ms_engines">Движки</string>
 	<string name="search_filter">Фильтры</string>
+	<string name="filter_lastseen_none">Последний раз замечен</string>
 	<string name="filter_age_none">Любая дата</string>
 	<string name="filter_time_none">Без фильтра времени</string>
 	<string name="filter_size_none">Любой размер</string>
+	<string name="filter_size">%1$s до %2$s</string>
 	<string name="filter_size_atleast">Как минимум %1$s</string>
 	<string name="filter_size_upto">До %1$s</string>
 	<string name="filter_rank_none">Любой рейтинг</string>
@@ -233,6 +274,12 @@
 		<item quantity="many">Минимум %1$d сидов</item>
 		<item quantity="other">Минимум %1$d сидов</item>
 	</plurals>
+	<plurals name="rcm_results_count">
+		<item quantity="one">%1$s находка в рое</item>
+		<item quantity="few">%1$s находки в рое</item>
+		<item quantity="many">%1$s находкок в рое</item>
+		<item quantity="other">%1$s находкок в рое</item>
+	</plurals>
 	<string name="time_ago">%s назад</string>
 	<string name="filter_date_starting">Начиная с %1$s</string>
 	<string name="filter_date_until">До %1$s</string>
@@ -243,22 +290,44 @@
 	<string name="filterby_header_minimum_seeds">Минимальное число сидов</string>
 	<string name="button_clear">Очистить</string>
 	<string name="select_download_source">Выберите источник загрузки</string>
+	<string name="download_source_item_from_url">Адрес из %1$s</string>
+	<string name="download_source_item_from_hash">Магнет-ссылка с использованием DHT</string>
+	<string name="ms_result_row_age">%1$s из %2$s</string>
+	<string name="ms_result_unknown_age">&lt;Нет даты публикации&gt;</string>
 	<string name="ms_result_unknown_size">&lt;Неизвестный размер&gt;</string>
 	<string name="title_message_from_client">Сообщение от удаленного клиента</string>
 	<string name="list_filtered_empty">Никакие результаты не соответствуют вашим текущим фильтрам.</string>
 	<string name="empty_list">Список пуст :(</string>
+	<string name="torrent_list_empty">Нет торрентов для отображения.\n\nВы можете найти торренты с помощью «Метапоиска», обнаружить торренты с помощью «Находок в рое», подписаться на существующие RSS-каналы или вручную добавить торренты.</string>
+	<string name="rcm_list_empty">Нет находок в рое. Чем больше торрентов вы загружает, тем больше находок будет сделано.</string>
+	<string name="spoken_sorted_ascending">Сортировано по возрастанию</string>
+	<string name="spoken_sorted_descending">Сортировано по убыванию</string>
 	<string name="spoken_download_torrent">Скачать торрент</string>
 	<string name="spoken_selected">Выбрано</string>
+	<string name="spoken_speak">Озвучить</string>
 	<string name="rangepicker_start_date">Дата начала</string>
 	<string name="rangepicker_end_date">Дата окончания</string>
 	<string name="rangepicker_minimum_size">Минимальный размер</string>
 	<string name="rangepicker_maximum_size">Максимальный размер</string>
+	<string name="button_set">Указать</string>
 	<string name="button_clear_filters">Сбросить фильтры</string>
 	<string name="mark_all_seen">Отметить всё как просмотренное</string>
 	<string name="textbubble_new">Непросмотрено</string>
+	<string name="only_unseen">Только непросмотренные</string>
+	<string name="search_templates">Шаблоны поиска</string>
+	<string name="last_seen_x">Последнее посещение %1$s</string>
+	<string name="published_x_ago">Опубликовано %1$s</string>
+	<string name="x_seeds">%1$s сидов</string>
+	<string name="x_peers">%1$s пиров</string>
+	<string name="retrieving_items">Получение списка</string>
+	<string name="checking_rcm">Проверка состояния «Находок в рое»</string>
+	<string name="first_load_error">Не удалось получить список:\n%1$s</string>
 	<string name="mark_seen">Отметить как просмотренное</string>
 	<string name="mark_unseen">Отметить как непросмотренное</string>
 	<string name="action_download">Загрузка</string>
+	<string name="rpcexception.HTMLnotJSON">Не удалось получить сведения о местоположении удалённого клиента. Наиболее частой причиной является наличие гостевого Wi-Fi, который требует авторизации перед использованием интернета.</string>
+	<string name="profile_only_i2p">Подключиться только с помощью I2P</string>
+	<string name="auto_download">Автозагрузка</string>
 	<string name="import_settings">Импортировать настройки</string>
 	<string name="export_settings">Экспортировать настройки</string>
 	<string name="open_file">Открыть файл</string>
@@ -270,11 +339,18 @@
 	<string name="TorrentListSectionName_File_hundreds">Сотни файлов</string>
 	<string name="TorrentListSectionName_File_thousands">Тысячи файлов</string>
 	<string name="TorrentListSectionName_ETA_complete">Завершено</string>
+	<string name="TorrentListSectionName_ETA_none">Нет времени окончания</string>
+	<string name="TorrentListSectionName_ETA_available">Есть время окончания</string>
 	<string name="TorrentListSectionName_Activity_active">В работе</string>
 	<string name="TorrentListSectionName_Activity_inactive">Неактивнен</string>
 	<string name="TorrentListSectionName_Activity_today">Активен сегодня</string>
 	<string name="TorrentListSectionName_Activity_yesterday">Активен вчера</string>
+	<string name="TorrentListSectionName_Activity_lastactive">Последняя активность %1$s</string>
+	<string name="TorrentListSectionName_Queue_incomplete">Незавершено #%1$s - #%2$s</string>
+	<string name="TorrentListSectionName_Queue_complete">Завершено #%1$s - #%2$s</string>
+	<string name="TorrentListSectionName_Progress_under10" formatted="false">Меньше 10% завершено</string>
 	<string name="TorrentListSectionName_Progress_100" formatted="false">100% завершено</string>
+	<string name="TorrentListSectionName_Progress">%1$d%% в %2$d%% выполнено</string>
 	<string name="action_collapse">Свернуть</string>
 	<string name="day">день</string>
 	<string name="week">неделя</string>
@@ -287,27 +363,58 @@
 	<string name="giveback_title">Вернуть</string>
 	<string name="movedata_currentlocation"><![CDATA[Текущее местоположение <b>%1$s</b>]]></string>
 	<string name="movedata_available_locations">Доступные местоположения</string>
+	<string name="biglybt_tagline">Битторрент-клиент с открытым исходным кодом</string>
+	<string name="dialog_nobrowser_message"><![CDATA[Пожалуйста, перейдите вручную на <b>%1$s</b>]]></string>
 	<string name="dialog_nobrowser_title">Веб-браузер не найден</string>
+	<string name="error_client_requires_permissions">Невозможно создать торрент-клиент на устройстве без запрошенных разрешений</string>
 	<string name="permission_denied">Доступ запрещен</string>
 	<string name="remove_subscription">Удалить подписку</string>
 	<string name="error_x">Ошибка: %1$s</string>
 	<string name="failure">Ошибка</string>
 	<string name="dialog_title_error_loading_config">Ошибка при загрузки конфигурации</string>
+	<string name="button_clipboard_url">Адрес буфера обмена</string>
+	<string name="login_server_title">Торрент с использованием этого устройства</string>
+	<string name="login_server_subtitle">Запустите полноценный торрент-клиент на вашем устройстве</string>
 	<string name="login_remote_title">Подключиться к удаленному клиенту</string>
+	<string name="login_remote_subtitle">Управляйте удалённо запущенными клиентами BiglyBT, Transmission или Vuze</string>
+	<string name="setting_speed_on_summary">Включено в %1$s</string>
 	<string name="unlimited">Неограниченно</string>
+	<string name="header_openoptions">Добавить торрент %1$s</string>
+	<string name="rp_update_interval_mobile_same">Такой же, что и немобильный</string>
+	<string name="private_external_storage">Личное внешнее хранилище BiglyBT</string>
+	<string name="private_internal_storage">Личное внутреннее хранилище BiglyBT</string>
 	<string name="dialog_remove_profile_title">Удалить профиль?</string>
+	<string name="dialog_remove_profile_text">Настройки конфигурации профиля «%1$s» будут удалены.</string>
 	<string name="button_remove">Убрать</string>
 	<string name="statetag_tracker_error">Ошибка трекера</string>
+	<string name="statetag_force_started">Принудительно</string>
 	<string name="statetag_queued">В очереди</string>
+	<string name="seeding_position_x">Позиция сидирования #%1$s</string>
+	<string name="downloading_position_x">Загрузка позиции #%1$s</string>
+	<string name="i2p_could_not_connect">Не удалось найти адрес назначения I2P. Возможно, ваш удалённый компьютер не запущен или потерял соединение с I2P</string>
+	<string name="i2p_no_tunnels">I2P запущен, но пока нет активных туннелей</string>
+	<string name="i2p_not_running">Приложение I2P не запущено</string>
+	<string name="i2p_not_installed">Приложение I2P не установлено</string>
 	<string name="refresh_every_x">Каждые %1$s</string>
+	<string name="refresh_every_x_on_mobile">Каждые %1$s на мобильном</string>
+	<string name="refresh_every_x_on_nonmobile">Каждые %1$s на немобильном</string>
+	<string name="refresh_manual_mobile">Ручное обновление на мобильном</string>
+	<string name="refresh_manual_nonmobile">Ручное обновление на немобильном устройстве</string>
 	<string name="prefcat_social">Социальное</string>
 	<string name="prefcat_bandwidth">Пропускная способность</string>
 	<string name="prefcat_interface">Интерфейс (язык, вид, окна)</string>
 	<string name="prefcat_network">Сеть</string>
+	<string name="prefcat_advanced">Расширенные</string>
 	<string name="preftitle_max_dl_speed">Макс. скорость загрузки</string>
 	<string name="preftitle_max_ul_speed">Макс. скорость раздачи</string>
 	<string name="preftitle_refresh_interval">Интервал обновления</string>
+	<string name="preftitle_show_open_options">Показать параметры открытия</string>
+	<string name="prefsummary_show_open_options">Показать окно параметров при добавлении нового торрента</string>
 	<string name="preftitle_ui_theme">Тема пользовательского интерфейса</string>
+	<string name="prefsummary_theme_light">Текущий светлый интерфейс</string>
+	<string name="prefsummary_theme_dark">Текущий тёмный интерфейс</string>
+	<string name="prefswitch_theme_dark">Тёмная</string>
+	<string name="prefswitch_theme_light">Светлая</string>
 	<string name="preftitle_remote_settings">Настройки удалённого доступа</string>
 	<string name="prefcat_power_management">Управление энергопотреблением</string>
 	<plurals name="x_items">
@@ -359,10 +466,40 @@
 		<item quantity="other">%d лет</item>
 	</plurals>
 	<!-- Short form for seconds.  ex "59s" -->
+	<plurals name="seconds_short">
+		<item quantity="one"><xliff:g example="1" id="seconds">%d</xliff:g>с</item>
+		<item quantity="few"><xliff:g example="59" id="seconds">%d</xliff:g>с</item>
+		<item quantity="many"><xliff:g example="59" id="seconds">%d</xliff:g>с</item>
+		<item quantity="other"><xliff:g example="59" id="seconds">%d</xliff:g>с</item>
+	</plurals>
 	<!-- Short form for minutes.  ex "39m" -->
+	<plurals name="minutes_short">
+		<item quantity="one"><xliff:g example="1" id="minutes">%d</xliff:g>м</item>
+		<item quantity="few"><xliff:g example="59" id="minutes">%d</xliff:g>м</item>
+		<item quantity="many"><xliff:g example="59" id="minutes">%d</xliff:g>м</item>
+		<item quantity="other"><xliff:g example="59" id="minutes">%d</xliff:g>м</item>
+	</plurals>
 	<!-- Short form for hours.  ex "23h" -->
+	<plurals name="hours_short">
+		<item quantity="one"><xliff:g example="1" id="hours">%d</xliff:g>ч</item>
+		<item quantity="few"><xliff:g example="23" id="hours">%d</xliff:g>ч</item>
+		<item quantity="many"><xliff:g example="23" id="hours">%d</xliff:g>ч</item>
+		<item quantity="other"><xliff:g example="23" id="hours">%d</xliff:g>ч</item>
+	</plurals>
 	<!-- Short form for days.  ex "29d" -->
+	<plurals name="days_short">
+		<item quantity="one"><xliff:g example="1" id="days">%d</xliff:g>д</item>
+		<item quantity="few"><xliff:g example="29" id="days">%d</xliff:g>д</item>
+		<item quantity="many"><xliff:g example="29" id="days">%d</xliff:g>д</item>
+		<item quantity="other"><xliff:g example="29" id="days">%d</xliff:g>д</item>
+	</plurals>
 	<!-- Short form for years.  ex "10y" -->
+	<plurals name="years_short">
+		<item quantity="one"><xliff:g example="1" id="years">%d</xliff:g>г</item>
+		<item quantity="few"><xliff:g example="10" id="years">%d</xliff:g>г</item>
+		<item quantity="many"><xliff:g example="10" id="years">%d</xliff:g>л</item>
+		<item quantity="other"><xliff:g example="10" id="years">%d</xliff:g>л</item>
+	</plurals>
 	<string-array name="proxy_type_entries">
 		<item>SOCKS4</item>
 		<item>SOCKS4a</item>
@@ -378,9 +515,40 @@
 	<string name="pref_peerport_current">Текущий порт: %d</string>
 	<string name="pref_peerport_random">Выбрано случайно</string>
 	<string name="pref_peerport_random_button">Выбрать случайно</string>
+	<string name="gdpr_dialog_title">Уведомление GDPR</string>
+	<string name="gdpr_one_time">Если вы согласны продолжить, мы не будем показывать это уведомление снова.</string>
 	<string name="preftitle_port_settings">Настройки порта</string>
 	<string name="title_username">Имя пользователя</string>
 	<string name="title_password">Пароль</string>
+	<string name="no_password_set">Пароль не установлен</string>
+	<string name="password_is_set">Пароль установлен</string>
+	<string name="action_remote_access_qr"><![CDATA[Сохранить и показать QR-код]]></string>
+	<string name="dialog_title_remote_access_qr">QR-код удалённого доступа</string>
+	<string name="dialog_remote_access_webui_qr_button">QR-код веб-интерфейса</string>
+	<string name="dialog_remote_access_biglybt_qr_button">QR-код BiglyBT</string>
+	<string name="password_is_required">Требуется пароль</string>
 	<string name="prefsummary_proxy_port">Порт: %1$d</string>
+	<string name="backspace">Backspace</string>
+	<string name="action_sel_verify">Проверить данные</string>
+	<string name="sideactions_filtered_file_header">Действия для %1$s отфильтрованных файлов</string>
+	<string name="sideactions_all_file_header">Действия для всех %1$s файлов</string>
 	<string name="sideactions_torrent_header">Действия над торрентами</string>
+	<string name="sideactions_peers_header">Активность пиров</string>
+	<string name="sideactions_tag_header">Действия меток</string>
+	<string name="filter_only_complete">Только завершённые</string>
+	<string name="filter_only_wanted">Только желаемые</string>
+	<string name="folder_summary_filtered_all_wanted">Отфильтровано по <xliff:g example="217" id="numFiles_filtered">%1$s</xliff:g> желаемых (<xliff:g example="1.17MB" id="size_filtered_want">%2$s</xliff:g>).</string>
+	<string name="show_only_chosen">Показать только выбранные</string>
+	<string name="read_only">Только для чтения</string>
+	<string name="menu_donate">Пожертвовать</string>
+	<string name="menu_vote">Голосовать за функционал</string>
+	<string name="menu_contribute">Участвовать</string>
+	<string name="default_save_location">Место сохранения по умолчанию</string>
+	<string name="metasearch_engine_all">Все</string>
+	<string name="metasearch_cached">Кэшированные запросы</string>
+	<string name="action_full_settings">Полные настройки</string>
+	<string name="loading">Загрузка…</string>
+	<string name="settings_no_value">&lt;Не задано&gt;</string>
+	<string name="AskResetToDefault">Сбросить к значению по умолчанию?</string>
+	<string name="AlreadyDefault">Параметр уже имеет значение по умолчанию</string>
 </resources>

@@ -1,5 +1,5 @@
 1.2.6.2
-★ Fix inability to set proxy settings
+★ Исправлена невозможность установки параметров прокси
 ★ Fix pre-lollipop "TV" boxes crashing on settings
-★ Updated BiglyBT core to v2.4.0.0
-★ Fixes many bugs and UI stalls
+★ Обновлено ядро BiglyBT до версии 2.4.0.0
+★ Исправлено множество зависаний интерфейса и ошибок
