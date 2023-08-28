@@ -42,4 +42,11 @@
 	<string name="pref_conn_trans_encryption_RC4">Шифрование RC4</string>
 	<string name="fileaccess_saf">Доступ к SAF</string>
 	<string name="fileaccess_direct">Прямой доступ</string>
+	<string name="saf_warning_title">Выбор папок</string>
+	<string name="saf_warning_text">Некоторые производители Android TV поломали или отключили просмотр папок.
+		\n\nЕсли у вас возникли проблемы с выбором папок ОС, вы можете использовать встроенный просмотр.
+		Использование встроенного просмотра может ограничить выбор расположений, например, на внешних носителях.</string>
+	<string name="saf_warning_useOS">Использовать выбор папок ОС</string>
+	<string name="saf_warning_useInternal">Использовать внутренний выбор</string>
+	<string name="no_saf_support">Доступ к внешнему хранилищу (SD-карте) через фреймворк для хранения данных Android (SAF) не возможен для этого устройств и версии ОС.</string>
 </resources>
