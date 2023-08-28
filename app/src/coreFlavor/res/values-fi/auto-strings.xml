@@ -8,5 +8,7 @@ eivät tue salausta (ellet määrittele salauksenohitusasetuksia käyttöön ale
 	<string name="pref_conn_encryption_min_level">Salauksen vähimmäistaso</string>
 	<string name="pref_conn_encryption_fallback_outgoing">Salli salaamattomat ulospäin luotavat yhteydet, jos salattu liikenne ei ole käytettävissä</string>
 	<string name="pref_conn_encryption_fallback_incoming">Salli salaamattomat sisääntulevat yhteydet</string>
-	<string name="pref_conn_encryption_use_cryptoport">Käytä cryptoport-seurantapalvelinlaajennusta estämään Plain-salatut yhteyden sisäänpäin</string>
+	<string name="pref_conn_encryption_use_cryptoport">Käytä cryptoport-trakkerilaajennusta estääksesi tavalliset sisääntulevat yhteydet.
+Jotkin trakkerit eivät hyväksy tätä ja epäonnistuvat mm.
+virheillä \"Virheellinen portti\" ja \"Laiton argumentti\".</string>
 </resources>

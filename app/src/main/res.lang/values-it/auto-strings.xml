@@ -98,5 +98,5 @@ Sono d\'\'accordo che è mia responsabilità garantire di scaricare solo contenu
 	<string name="torrent_status_stopped">Fermato</string>
 	<string name="torrent_status_stopping">Sto fermando</string>
 	<!-- No entry for menu.config.reset.to.default -->
-	<!-- No entry for OpenTorrentWindow.mb.notTorrent.retry -->
+	<string name="magnet_lookup">Ricerca Magnet</string>
 </resources>

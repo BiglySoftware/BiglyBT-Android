@@ -39,6 +39,6 @@
 	<string name="torrent_status_download">下载中</string>
 	<string name="torrent_status_stopped">已停止</string>
 	<string name="torrent_status_stopping">正在停止</string>
-	<!-- No entry for menu.config.reset.to.default -->
+	<string name="reset_to_default">重置为默认值</string>
 	<string name="magnet_lookup">磁力链接查找</string>
 </resources>

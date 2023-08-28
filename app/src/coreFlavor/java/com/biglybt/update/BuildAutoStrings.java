@@ -237,8 +237,7 @@ public class BuildAutoStrings
 			}
 			fileOutXML.getParentFile().mkdirs();
 
-			System.setProperty("line.separator", "\n");
-			BufferedWriter bwXML = new BufferedWriter(new FileWriter(fileOutXML));
+			BufferedWriter bwXML = new UnixBufferWriter(new FileWriter(fileOutXML));
 			bwXML.write("<?xml version=\"1.0\" encoding=\"utf-8\"?>");
 			bwXML.newLine();
 			bwXML.write("<!-- " + locale.getDisplayName() + " / "
@@ -384,4 +383,16 @@ public class BuildAutoStrings
 		System.out.println("done");
 	}
 
+	private static class UnixBufferWriter extends BufferedWriter {
+
+		UnixBufferWriter(Writer out) {
+			super(out);
+		}
+
+		@Override
+		public void newLine()
+				throws IOException {
+			write('\n');
+		}
+	}
 }
