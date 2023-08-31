@@ -301,6 +301,8 @@ public class TorrentViewActivity
 				}
 			}
 
+			log(TAG, "sessionReadyForUI: isOnline: " + BiglyBTApp.getNetworkState().isOnline());
+
 			if (tvCenter != null && BiglyBTApp.getNetworkState().isOnline()) {
 				tvCenter.setText("");
 			}
@@ -780,13 +782,16 @@ public class TorrentViewActivity
 	@Override
 	public void onlineStateChanged(final boolean isOnline,
 			boolean isOnlineMobile) {
+		log(TAG, "onlineStateChanged: isOnline: " + isOnline);
 		OffThread.runOnUIThread(this, false, activity -> {
 			if (isFinishing()) {
+				log(TAG, "onlineStateChanged: isOnline: " + isOnline + " but isFinishing. exiting");
 				return;
 			}
 			supportInvalidateOptionsMenu();
 			if (isOnline) {
 				boolean uiReady = session.isReadyForUI();
+				log(TAG, "onlineStateChanged: isOnline, uiReady=" + uiReady);
 				if (uiReady && tvCenter != null) {
 					tvCenter.setText("");
 				}

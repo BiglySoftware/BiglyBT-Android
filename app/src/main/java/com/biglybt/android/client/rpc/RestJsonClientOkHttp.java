@@ -231,7 +231,7 @@ public class RestJsonClientOkHttp
 						} else {
 							Log.d(TAG, requestID + "] " + s);
 						}
-						if (bytesRead == -1) {
+						if (bytesRead == 0) {
 							bytesRead = s.length();
 						}
 					}

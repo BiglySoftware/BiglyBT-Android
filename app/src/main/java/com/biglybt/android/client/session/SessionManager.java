@@ -284,7 +284,7 @@ public class SessionManager
 		}
 		if (AndroidUtils.DEBUG) {
 			//noinspection DuplicateStringLiteralInspection
-			Log.d(TAG, "clearTorrentCache. " + numClears + " removed");
+			Log.d(TAG, "clearSubscriptionCaches. " + numClears + " removed");
 		}
 	}
 
