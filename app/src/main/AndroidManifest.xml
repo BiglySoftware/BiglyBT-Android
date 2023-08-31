@@ -111,6 +111,7 @@
 			android:name="com.biglybt.android.client.activity.MetaSearchActivity"
 			android:configChanges="keyboardHidden"
 			android:label="@string/title_activity_metasearch"
+			android:exported="false"
 			android:parentActivityName="com.biglybt.android.client.activity.TorrentViewActivity">
 			<intent-filter>
 				<action android:name="android.intent.action.SEARCH"/>
@@ -168,6 +169,7 @@
 			android:configChanges="keyboardHidden|orientation|screenSize"
 			android:label="@string/app_name"
 			android:launchMode="singleTask"
+			android:exported="true"
 			android:theme="@style/ThemeSplash">
 			<intent-filter>
 				<action android:name="android.intent.action.MAIN"/>
