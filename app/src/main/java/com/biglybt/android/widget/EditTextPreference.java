@@ -20,6 +20,7 @@ import android.content.Context;
 import android.util.AttributeSet;
 import android.view.View;
 
+import androidx.annotation.NonNull;
 import androidx.preference.PreferenceViewHolder;
 
 public class EditTextPreference
@@ -49,7 +50,7 @@ public class EditTextPreference
 	}
 
 	@Override
-	public void onBindViewHolder(PreferenceViewHolder holder) {
+	public void onBindViewHolder(@NonNull PreferenceViewHolder holder) {
 		super.onBindViewHolder(holder);
 		View iv = holder.itemView;
 		iv.setOnLongClickListener(v -> {

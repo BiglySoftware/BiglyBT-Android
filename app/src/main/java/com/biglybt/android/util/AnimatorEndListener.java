@@ -17,8 +17,8 @@
 package com.biglybt.android.util;
 
 import android.animation.Animator;
-import android.annotation.TargetApi;
-import android.os.Build;
+
+import androidx.annotation.NonNull;
 
 /**
  * Created by TuxPaper on 6/13/16.
@@ -27,22 +27,22 @@ public class AnimatorEndListener
 	implements Animator.AnimatorListener
 {
 	@Override
-	public final void onAnimationStart(Animator animation) {
+	public final void onAnimationStart(@NonNull Animator animation) {
 
 	}
 
 	@Override
-	public void onAnimationEnd(Animator animation) {
+	public void onAnimationEnd(@NonNull Animator animation) {
 
 	}
 
 	@Override
-	public final void onAnimationCancel(Animator animation) {
+	public final void onAnimationCancel(@NonNull Animator animation) {
 
 	}
 
 	@Override
-	public final void onAnimationRepeat(Animator animation) {
+	public final void onAnimationRepeat(@NonNull Animator animation) {
 
 	}
 }

@@ -3,7 +3,7 @@
 					xmlns:tools="http://schemas.android.com/tools"
 					android:installLocation="auto">
 
-	<uses-sdk tools:overrideLibrary="androidx.leanback,androidx.leanback.preference,mldht"/>
+	<uses-sdk tools:overrideLibrary="androidx.leanback,androidx.leanback.preference,androidx.leanback.widget,mldht"/>
 
 	<uses-permission android:name="android.permission.INTERNET"/>
 	<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>

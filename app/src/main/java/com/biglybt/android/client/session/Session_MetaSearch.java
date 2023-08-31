@@ -41,7 +41,8 @@ public class Session_MetaSearch
 
 	public static final String TAG = "Session_MetaSearch";
 
-	private static final long CACHE_FOR_MS =
+	@Thunk
+	static final long CACHE_FOR_MS =
 			AndroidUtils.DEBUG ? DateUtils.MINUTE_IN_MILLIS * 2 : DateUtils.DAY_IN_MILLIS;
 
 	public interface MetaSearchResultsListener {

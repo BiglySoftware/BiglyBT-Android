@@ -54,8 +54,8 @@ public class SettingsFragmentLB
 	}
 
 	@Override
-	public boolean onPreferenceStartFragment(PreferenceFragmentCompat caller,
-			Preference preference) {
+	public boolean onPreferenceStartFragment(
+			@NonNull PreferenceFragmentCompat caller, Preference preference) {
 		// Copied from LeanbackSettingsFragmentCompat JavaDoc (https://developer.android.com/reference/androidx/leanback/preference/LeanbackSettingsFragmentCompat)
 		final Bundle args = preference.getExtras();
 		final Fragment f = getChildFragmentManager().getFragmentFactory().instantiate(
@@ -72,7 +72,8 @@ public class SettingsFragmentLB
 	}
 
 	@Override
-	public boolean onPreferenceStartScreen(PreferenceFragmentCompat caller,
+	public boolean onPreferenceStartScreen(
+			@NonNull PreferenceFragmentCompat caller,
 			PreferenceScreen preferenceScreen) {
 		int prefID = PrefFragmentHandlerCreator.getPrefID(
 				(SessionActivity) requireActivity());

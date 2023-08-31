@@ -43,7 +43,8 @@ public abstract class SessionFragment
 {
 	private static final String TAG = "SessionFragment";
 
-	/** Never null after onCreateView() */
+	/** Never null after onCreateView()
+	 * @noinspection NotNullFieldNotInitialized*/
 	@SuppressWarnings("NullableProblems")
 	protected @NonNull Session session;
 

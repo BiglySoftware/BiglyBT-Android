@@ -769,7 +769,6 @@ public class SideListHelper<ADAPTERITEM extends Comparable<ADAPTERITEM>>
 						Animator.AnimatorListener l = new AnimatorEndListener() {
 							final ViewGroup old = activeEntry.body;
 
-							@TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
 							@Override
 							public void onAnimationEnd(Animator animation) {
 								if (activity.isFinishing()) {

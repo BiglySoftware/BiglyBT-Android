@@ -109,7 +109,7 @@ public class RadioRowPreference
 	}
 
 	@Override
-	public void onBindViewHolder(PreferenceViewHolder holder) {
+	public void onBindViewHolder(@NonNull PreferenceViewHolder holder) {
 		super.onBindViewHolder(holder);
 		View iv = holder.itemView;
 		iv.setClickable(false);

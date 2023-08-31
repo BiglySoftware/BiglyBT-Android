@@ -73,7 +73,7 @@ public class LabelPreference
 	}
 
 	@Override
-	public void onBindViewHolder(PreferenceViewHolder holder) {
+	public void onBindViewHolder(@NonNull PreferenceViewHolder holder) {
 		super.onBindViewHolder(holder);
 		View iv = holder.itemView;
 		boolean needsFocusable = false;

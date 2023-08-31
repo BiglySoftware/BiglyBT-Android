@@ -28,6 +28,8 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.LinearLayout;
 
+import androidx.annotation.NonNull;
+
 /**
  * Created by TuxPaper on 6/20/16.
  */
@@ -113,7 +115,7 @@ public class FlingLinearLayout
 	{
 
 		@Override
-		public boolean onDown(MotionEvent e) {
+		public boolean onDown(@NonNull MotionEvent e) {
 			return false;
 		}
 

@@ -1324,6 +1324,7 @@ public class AndroidUtils
 		}
 
 		String text;
+		@SuppressLint("DiscouragedApi")
 		int textId = system.getIdentifier(key, "string", "android"); //NON-NLS
 		try {
 			text = textId == 0 ? context.getString(fallbackTextId)

@@ -36,7 +36,8 @@ public abstract class SessionActivity
 {
 	String remoteProfileID;
 
-	/** Never null after onCreate() */
+	/** Never null after onCreate()
+	 * @noinspection NotNullFieldNotInitialized*/
 	@SuppressWarnings("NullableProblems")
 	protected @NonNull Session session;
 

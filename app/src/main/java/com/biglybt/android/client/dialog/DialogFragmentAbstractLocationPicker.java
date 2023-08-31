@@ -16,6 +16,7 @@
 
 package com.biglybt.android.client.dialog;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.*;
@@ -606,6 +607,7 @@ public abstract class DialogFragmentAbstractLocationPicker
 		list.add(pathInfo);
 	}
 
+	@SuppressLint("WrongConstant")
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		String chosenPathString = null;

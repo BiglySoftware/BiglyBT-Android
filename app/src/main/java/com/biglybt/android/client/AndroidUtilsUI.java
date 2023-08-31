@@ -1386,6 +1386,7 @@ public class AndroidUtilsUI
 		try {
 			Resources resources = activity.getResources();
 
+			@SuppressLint("DiscouragedApi")
 			int statusBarHeight = resources.getDimensionPixelSize(
 					resources.getIdentifier("status_bar_height", "dimen", "android"));
 			screenHeight -= statusBarHeight;

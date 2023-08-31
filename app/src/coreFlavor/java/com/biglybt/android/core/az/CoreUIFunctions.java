@@ -26,6 +26,7 @@ import com.biglybt.ui.common.updater.UIUpdater;
 import com.biglybt.ui.mdi.MultipleDocumentInterface;
 
 import java.io.File;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -121,8 +122,8 @@ class CoreUIFunctions
 	@Override
 	public UIFunctionsUserPrompter getUserPrompter(String title, String text,
 			String[] buttons, int defaultOption) {
-		loge("getUserPrompter '" + title + "', '" + text + "', " + buttons + " "
-				+ defaultOption);
+		loge("getUserPrompter '" + title + "', '" + text + "', "
+				+ Arrays.toString(buttons) + " " + defaultOption);
 
 		return null;
 	}
@@ -132,9 +133,10 @@ class CoreUIFunctions
 			int defaultOption, String rememberID, String rememberText,
 			boolean bRememberByDefault, int autoCloseInMS,
 			UserPrompterResultListener l) {
-		loge("promptUser '" + title + "', '" + text + "', " + buttons + ", "
-				+ defaultOption + ", " + rememberID + ", '" + rememberText + "', "
-				+ bRememberByDefault + ", " + autoCloseInMS);
+		loge("promptUser '" + title + "', '" + text + "', "
+				+ Arrays.toString(buttons) + ", " + defaultOption + ", " + rememberID
+				+ ", '" + rememberText + "', " + bRememberByDefault + ", "
+				+ autoCloseInMS);
 
 	}
 
@@ -182,7 +184,8 @@ class CoreUIFunctions
 	public void forceNotify(int iconID, String title, String text, String details,
 			Object[] relatedObjects, int timeoutSecs) {
 		loge("forceNotify '" + iconID + "', '" + title + "', '" + text + "', '"
-				+ details + "', " + relatedObjects + ", " + timeoutSecs);
+				+ details + "', " + Arrays.toString(relatedObjects) + ", "
+				+ timeoutSecs);
 
 	}
 
@@ -244,7 +247,7 @@ class CoreUIFunctions
 	public void showErrorMessage(String keyPrefix, String details,
 			String[] textParams) {
 		loge("showErrorMessage '" + keyPrefix + "', '" + details + "', "
-				+ textParams);
+				+ Arrays.toString(textParams));
 
 	}
 

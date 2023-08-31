@@ -60,6 +60,7 @@ public class SideTextFilterAdapter
 			this.count = count;
 		}
 
+		@NonNull
 		@Override
 		public String toString() {
 			return super.toString() + ";" + letters + ";" + count;

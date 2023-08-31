@@ -67,7 +67,7 @@ public class UrlImageView
 		protected Bitmap doInBackground(Object... params) {
 			try {
 				if (params[0] instanceof Uri) {
-					resolver.openInputStream((Uri) params[0]);
+					inputStream = resolver.openInputStream((Uri) params[0]);
 				} else if (params[0] instanceof URL) {
 					URLConnection con = ((URL) params[0]).openConnection();
 					// can use some more params, i.e. caching directory etc

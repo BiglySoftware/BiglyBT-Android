@@ -4,8 +4,8 @@ def final String VERSION_NAME = "0.12.3-SNAPSHOT"
 def final int VERSION_CODE = 14
 
 android {
-    compileSdkVersion rootProject.ext.compileSdkVersion
-    buildToolsVersion rootProject.ext.buildToolsVersion
+    namespace 'net.grandcentrix.tray'
+    compileSdk rootProject.ext.compileSdkVersion
 
     defaultConfig {
         minSdkVersion 15

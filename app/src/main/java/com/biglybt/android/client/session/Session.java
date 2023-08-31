@@ -59,6 +59,7 @@ public class Session
 
 	public interface RpcExecuter
 	{
+		@WorkerThread
 		void executeRpc(TransmissionRPC rpc);
 	}
 

@@ -1,8 +1,7 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion rootProject.ext.compileSdkVersion
-    buildToolsVersion rootProject.ext.buildToolsVersion
+    compileSdk rootProject.ext.compileSdkVersion
 
     defaultConfig {
         applicationId "com.biglybt.android.client"
@@ -47,7 +46,8 @@ android {
             excludes += ['META-INF/NOTICE.txt', 'META-INF/LICENSE.txt', 'org/json/simple/*.txt', 'com/aelitis/plugins/rcmplugin/skins']
         }
     }
-    flavorDimensions "coreD", "gaD"
+    flavorDimensions += "coreD"
+    flavorDimensions += "gaD"
     productFlavors {
         coreFlavor {
             dimension "coreD"
@@ -92,6 +92,18 @@ android {
         targetCompatibility JavaVersion.VERSION_1_8
     }
     namespace 'com.biglybt.android.client'
+    buildFeatures {
+        aidl true
+    }
+    bundle {
+        language {
+            // Specifies that the app bundle should not support
+            // configuration APKs for language resources. These
+            // resources are instead packaged with each base and
+            // dynamic feature APK.
+            enableSplit = false
+        }
+    }
 }
 
 repositories {

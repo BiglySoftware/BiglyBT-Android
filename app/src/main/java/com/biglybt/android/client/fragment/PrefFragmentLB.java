@@ -93,7 +93,7 @@ public class PrefFragmentLB
 
 	@Override
 	@UiThread
-	public boolean onPreferenceTreeClick(Preference preference) {
+	public boolean onPreferenceTreeClick(@NonNull Preference preference) {
 		if (prefFragmentHandler != null
 				&& prefFragmentHandler.onPreferenceTreeClick(preference)) {
 			return true;
