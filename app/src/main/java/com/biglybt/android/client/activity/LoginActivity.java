@@ -159,6 +159,7 @@ public class LoginActivity
 		Editable s = textAccessCode.getText();
 		loginButton.setEnabled(s.length() > 0);
 		loginButton.setAlpha(s.length() == 0 ? 0.2f : 1.0f);
+		loginButton.setOnClickListener(this::loginButtonClicked);
 
 		textAccessCode.setOnEditorActionListener((v, actionId, event) -> {
 			loginButtonClicked(v);
@@ -376,7 +377,7 @@ public class LoginActivity
 	}
 
 	@SuppressWarnings("UnusedParameters")
-	public void loginButtonClicked(View v) {
+	private void loginButtonClicked(View v) {
 		final String ac = textAccessCode.getText().toString().replaceAll(
 				"[^a-zA-Z0-9]", "");
 		appPreferences.setLastRemote(null);

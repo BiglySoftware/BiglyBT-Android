@@ -187,6 +187,16 @@ public class MetaSearchActivity
 		tvDrawerFilter = findViewById(R.id.sidelist_topinfo);
 		tvHeader = findViewById(R.id.ms_header);
 
+		View viewFileSizeRow = findViewById(R.id.sidefilter_filesize);
+		if (viewFileSizeRow != null) {
+			viewFileSizeRow.setOnClickListener(this::fileSizeRow_clicked);
+		}
+
+		View viewAgeRow = findViewById(R.id.sidefilter_age_row);
+		if (viewAgeRow != null) {
+			viewAgeRow.setOnClickListener(this::ageRow_clicked);
+		}
+
 		MetaSearchResultsAdapter.MetaSearchSelectionListener metaSearchSelectionListener = new MetaSearchResultsAdapter.MetaSearchSelectionListener() {
 
 			@Override
@@ -792,7 +802,8 @@ public class MetaSearchActivity
 	}
 
 	@SuppressWarnings("UnusedParameters")
-	public void fileSizeRow_clicked(@Nullable View view) {
+	@Thunk
+	void fileSizeRow_clicked(@Nullable View view) {
 		if (metaSearchResultsAdapter == null) {
 			return;
 		}
@@ -806,7 +817,8 @@ public class MetaSearchActivity
 	}
 
 	@SuppressWarnings("UnusedParameters")
-	public void ageRow_clicked(@Nullable View view) {
+	@Thunk
+	void ageRow_clicked(@Nullable View view) {
 		if (metaSearchResultsAdapter == null) {
 			return;
 		}

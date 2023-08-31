@@ -81,7 +81,6 @@
 			android:layout_marginStart="8dp"
 			android:background="@drawable/button_blue"
 			android:minHeight="35dp"
-			android:onClick="loginButtonClicked"
 			android:text="@string/btnLoginLabel"
 			android:textColor="@color/login_text_color"/>
 	</RelativeLayout>

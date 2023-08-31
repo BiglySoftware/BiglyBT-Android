@@ -245,26 +245,40 @@ public class RcmActivity
 
 		View viewFileSizeRow = findViewById(R.id.sidefilter_filesize);
 		if (viewFileSizeRow != null) {
+			viewFileSizeRow.setOnClickListener(this::fileSizeRow_clicked);
 			viewFileSizeRow.setOnKeyListener(
 					(v, keyCode, event) -> handleFileSizeRowKeyListener(keyCode, event));
 		}
 
 		View viewAgeRow = findViewById(R.id.sidefilter_age_row);
 		if (viewAgeRow != null) {
+			viewAgeRow.setOnClickListener(this::ageRow_clicked);
 			viewAgeRow.setOnKeyListener(
 					(v, keyCode, event) -> handleAgeRowKeyListener(keyCode, event));
 		}
 
 		View viewLastSeenRow = findViewById(R.id.sidefilter_lastseen_row);
 		if (viewLastSeenRow != null) {
+			viewLastSeenRow.setOnClickListener(this::lastSeenRow_clicked);
 			viewLastSeenRow.setOnKeyListener(
 					(v, keyCode, event) -> handleLastSeenRowKeyListener(keyCode, event));
 		}
 
+		View viewMinRankRow = findViewById(R.id.sidefilter_minrank_row);
+		if (viewMinRankRow != null) {
+			viewMinRankRow.setOnClickListener(this::minRankRow_clicked);
+		}
+
 		View viewMinSeedsRow = findViewById(R.id.sidefilter_minseeds_row);
 		if (viewMinSeedsRow != null) {
+			viewMinSeedsRow.setOnClickListener(this::minSeedsRow_clicked);
 			viewMinSeedsRow.setOnKeyListener(
 					(v, keyCode, event) -> handleMinSeedRowKeyListener(keyCode, event));
+		}
+
+		View viewClear = findViewById(R.id.sidefilter_clear);
+		if (viewClear != null) {
+			viewClear.setOnClickListener(this::clearFilters_clicked);
 		}
 	}
 
@@ -812,7 +826,8 @@ public class RcmActivity
 	}
 
 	@SuppressWarnings("UnusedParameters")
-	public void ageRow_clicked(@Nullable View view) {
+	@Thunk
+	void ageRow_clicked(@Nullable View view) {
 		if (adapter == null) {
 			return;
 		}
@@ -823,7 +838,8 @@ public class RcmActivity
 	}
 
 	@SuppressWarnings("UnusedParameters")
-	public void lastSeenRow_clicked(@Nullable View view) {
+	@Thunk
+	void lastSeenRow_clicked(@Nullable View view) {
 		if (adapter == null) {
 			return;
 		}
@@ -835,7 +851,8 @@ public class RcmActivity
 	}
 
 	@SuppressWarnings("UnusedParameters")
-	public void minRankRow_clicked(@Nullable View view) {
+	@Thunk
+	void minRankRow_clicked(@Nullable View view) {
 		if (adapter == null) {
 			return;
 		}
@@ -847,7 +864,8 @@ public class RcmActivity
 	}
 
 	@SuppressWarnings("UnusedParameters")
-	public void minSeedsRow_clicked(@Nullable View view) {
+	@Thunk
+	void minSeedsRow_clicked(@Nullable View view) {
 		if (adapter == null) {
 			return;
 		}
@@ -898,7 +916,7 @@ public class RcmActivity
 		updateFilterTexts();
 	}
 
-	public void clearFilters_clicked(View view) {
+	private void clearFilters_clicked(View view) {
 
 		RcmAdapterFilter filter = adapter.getFilter();
 

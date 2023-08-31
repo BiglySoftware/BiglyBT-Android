@@ -86,8 +86,8 @@
 		tools:visibility="visible">
 
 		<LinearLayout
+			android:id="@+id/sidefilter_filesize"
 			style="@style/sidelist_rcm_item_layout"
-			android:onClick="fileSizeRow_clicked"
 			tools:visibility="visible">
 
 			<TextView
@@ -105,8 +105,8 @@
 		</LinearLayout>
 
 		<LinearLayout
-			style="@style/sidelist_rcm_item_layout"
-			android:onClick="ageRow_clicked">
+			android:id="@+id/sidefilter_age_row"
+			style="@style/sidelist_rcm_item_layout">
 
 			<TextView
 				android:layout_width="wrap_content"

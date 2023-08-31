@@ -344,6 +344,15 @@ public class SubscriptionResultsActivity
 					}));
 		}
 
+		Button btnShowOnlyUnseen = findViewById(R.id.sidefilter_showonlyunseen);
+		btnShowOnlyUnseen.setOnClickListener(this::showOnlyUnseen_clicked);
+
+		View viewFileSizeRow = findViewById(R.id.sidefilter_filesize);
+		viewFileSizeRow.setOnClickListener(this::fileSizeRow_clicked);
+
+		View viewAgeRow = findViewById(R.id.sidefilter_age_row);
+		viewAgeRow.setOnClickListener(this::ageRow_clicked);
+
 		if (savedInstanceState != null) {
 			String list = savedInstanceState.getString(SAVESTATE_LIST);
 			if (list != null) {
@@ -535,7 +544,8 @@ public class SubscriptionResultsActivity
 	}
 
 	@SuppressWarnings("UnusedParameters")
-	public void ageRow_clicked(@Nullable View view) {
+	@Thunk
+	void ageRow_clicked(@Nullable View view) {
 		if (subscriptionResultsAdapter == null) {
 			return;
 		}
@@ -620,7 +630,8 @@ public class SubscriptionResultsActivity
 	}
 
 	@SuppressWarnings("UnusedParameters")
-	public void fileSizeRow_clicked(@Nullable View view) {
+	@Thunk
+	void fileSizeRow_clicked(@Nullable View view) {
 		if (subscriptionResultsAdapter == null) {
 			return;
 		}
@@ -1078,7 +1089,7 @@ public class SubscriptionResultsActivity
 		return true;
 	}
 
-	public void showOnlyUnseen_clicked(View view) {
+	private void showOnlyUnseen_clicked(View view) {
 		boolean checked = ((Checkable) view).isChecked();
 		subscriptionResultsAdapter.getFilter().setFilterOnlyUnseen(checked);
 		subscriptionResultsAdapter.getFilter().refilter(false);

@@ -47,7 +47,6 @@
 			<LinearLayout
 				android:id="@+id/sidefilter_filesize"
 				style="@style/sidelist_rcm_item_layout"
-				android:onClick="fileSizeRow_clicked"
 				tools:visibility="visible">
 
 				<TextView
@@ -66,8 +65,7 @@
 
 			<LinearLayout
 				android:id="@+id/sidefilter_age_row"
-				style="@style/sidelist_rcm_item_layout"
-				android:onClick="ageRow_clicked">
+				style="@style/sidelist_rcm_item_layout">
 
 				<TextView
 					android:layout_width="wrap_content"
@@ -85,8 +83,7 @@
 
 			<LinearLayout
 				android:id="@+id/sidefilter_lastseen_row"
-				style="@style/sidelist_rcm_item_layout"
-				android:onClick="lastSeenRow_clicked">
+				style="@style/sidelist_rcm_item_layout">
 
 				<TextView
 					android:layout_width="wrap_content"
@@ -103,8 +100,8 @@
 			</LinearLayout>
 
 			<LinearLayout
-				style="@style/sidelist_rcm_item_layout"
-				android:onClick="minRankRow_clicked">
+				android:id="@+id/sidefilter_minrank_row"
+				style="@style/sidelist_rcm_item_layout">
 
 				<TextView
 					android:layout_width="wrap_content"
@@ -122,8 +119,7 @@
 
 			<LinearLayout
 				android:id="@+id/sidefilter_minseeds_row"
-				style="@style/sidelist_rcm_item_layout"
-				android:onClick="minSeedsRow_clicked">
+				style="@style/sidelist_rcm_item_layout">
 
 				<TextView
 					android:layout_width="wrap_content"
@@ -140,13 +136,13 @@
 			</LinearLayout>
 
 			<Button
+				android:id="@+id/sidefilter_clear"
 				android:layout_width="match_parent"
 				android:layout_height="wrap_content"
 				android:layout_marginStart="16dp"
 				android:layout_marginLeft="16dp"
 				android:layout_marginEnd="16dp"
 				android:layout_marginRight="16dp"
-				android:onClick="clearFilters_clicked"
 				android:text="@string/button_clear_filters"
 				android:theme="@style/AppThemeDark"/>
 

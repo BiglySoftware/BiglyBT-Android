@@ -25,6 +25,7 @@ import android.os.PersistableBundle;
 import android.text.format.DateUtils;
 import android.util.Log;
 import android.view.*;
+import android.widget.Button;
 import android.widget.Checkable;
 import android.widget.TextView;
 
@@ -183,6 +184,12 @@ public class SubscriptionListActivity
 		progressBar = findViewById(R.id.progress_spinner);
 
 		tvHeader = findViewById(R.id.subscriptions_header);
+
+		Button btnShowSearchTemplates = findViewById(R.id.sidefilter_showsearchtemplates);
+		btnShowSearchTemplates.setOnClickListener(this::showSearchTemplates_clicked);
+
+		Button btnShowOnlyUnseen = findViewById(R.id.sidefilter_showonlyunseen);
+		btnShowOnlyUnseen.setOnClickListener(this::showOnlyUnseen_clicked);
 
 		subscriptionListAdapter = new SubscriptionListAdapter(this,
 				new SubscriptionListAdapter.SubscriptionSelectionListener() {
@@ -552,7 +559,8 @@ public class SubscriptionListActivity
 		}
 	}
 
-	private List<String> getCheckedIDs() {
+	@Thunk
+	List<String> getCheckedIDs() {
 		List<String> checkedItems = subscriptionListAdapter.getCheckedItems();
 		if (checkedItems.size() == 0) {
 			String selectedItem = subscriptionListAdapter.getSelectedItem();
@@ -793,13 +801,13 @@ public class SubscriptionListActivity
 		return true;
 	}
 
-	public void showSearchTemplates_clicked(View view) {
+	private void showSearchTemplates_clicked(View view) {
 		boolean checked = ((Checkable) view).isChecked();
 		SubscriptionListAdapterFilter filter = subscriptionListAdapter.getFilter();
 		filter.setFilterShowSearchTemplates(checked);
 	}
 
-	public void showOnlyUnseen_clicked(View view) {
+	private void showOnlyUnseen_clicked(View view) {
 		boolean checked = ((Checkable) view).isChecked();
 		SubscriptionListAdapterFilter filter = subscriptionListAdapter.getFilter();
 		filter.setFilterOnlyUnseen(checked);
