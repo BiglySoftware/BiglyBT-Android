@@ -112,6 +112,12 @@ class BiglyBTServiceConnection
 					try {
 						new Thread(() -> {
 							try {
+								// This is not the correct way of doing it
+								// Shutdown of BiglyBTServiceInit may take several seconds
+								// better to wait for binderDied, and possibly
+								// onServiceDisconnected as well
+								// not sure if binderDied is triggered after onServiceDisconnected,
+								// but binderDied can trigger without a onServiceDisconnected
 								Thread.sleep(1200);
 							} catch (InterruptedException e) {
 								e.printStackTrace();

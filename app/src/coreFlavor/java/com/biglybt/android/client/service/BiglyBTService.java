@@ -1496,6 +1496,7 @@ public class BiglyBTService
 				logd("onDestroy: system.exit");
 			}
 			System.exit(0);
+			// no more code runs (no logd)
 		}
 
 		// System.exit will be called after core is done
@@ -1520,6 +1521,10 @@ public class BiglyBTService
 		AlarmManager alarmManager = (AlarmManager) getSystemService(
 				Context.ALARM_SERVICE);
 		if (alarmManager != null) {
+			// System.exit might take several seconds
+			// we need a better way besides waiting 500ms
+			// BiglyBTServiceConnection#binderDied seems to be called after system.exit
+			// beginCoreShutdown seems to end with system.exit as well
 			alarmManager.set(AlarmManager.RTC_WAKEUP,
 					SystemClock.elapsedRealtime() + 500, pendingIntent);
 		}
