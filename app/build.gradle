@@ -110,7 +110,7 @@ dependencies {
     coreFlavorImplementation 'dnsjava:dnsjava:2.1.9'
 
     // For Tips $
-    googleFlavorImplementation 'com.android.billingclient:billing:3.0.3'
+    googleFlavorImplementation 'com.android.billingclient:billing:6.0.1'
 
     // See versions constant in /build.gradle
 

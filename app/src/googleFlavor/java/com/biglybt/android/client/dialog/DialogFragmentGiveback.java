@@ -37,9 +37,14 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.android.billingclient.api.*;
 import com.android.billingclient.api.BillingClient.BillingResponseCode;
-import com.android.billingclient.api.BillingClient.SkuType;
+import com.android.billingclient.api.BillingClient.FeatureType;
+import com.android.billingclient.api.BillingClient.ProductType;
+import com.android.billingclient.api.BillingFlowParams.ProductDetailsParams;
+import com.android.billingclient.api.ProductDetails.PricingPhase;
+import com.android.billingclient.api.ProductDetails.PricingPhases;
+import com.android.billingclient.api.ProductDetails.SubscriptionOfferDetails;
 import com.android.billingclient.api.Purchase.PurchaseState;
-import com.android.billingclient.api.Purchase.PurchasesResult;
+import com.android.billingclient.api.QueryProductDetailsParams.Product;
 import com.biglybt.android.client.*;
 import com.biglybt.util.Thunk;
 
@@ -63,7 +68,7 @@ public class DialogFragmentGiveback
 	private static final String SKU_PREFIX = "biglybt_2020_";
 
 	@Thunk
-	static List<SkuDetails> listSkuDetails = new ArrayList<>();
+	static List<GiveBackEntry> listGiveBackEntries = new ArrayList<>();
 
 	@Thunk
 	static BillingClient billingClient = null;
@@ -82,19 +87,26 @@ public class DialogFragmentGiveback
 							if (AndroidUtils.DEBUG) {
 								Log.d(TAG,
 										"onPurchasesUpdated: " + billingResult.getResponseCode()
-												+ ": " + billingResult.getDebugMessage());
+												+ ": " + billingResult.getDebugMessage()
+												+ ", purchases=" + purchases);
 							}
 							try {
 								if (billingResult.getResponseCode() == BillingResponseCode.OK
 										&& purchases != null) {
 									verifyPurchases(purchases);
 
-									String sku = "";
-									if (purchases.size() == 1) {
-										sku = purchases.get(0).getSku();
+									StringBuilder pids = new StringBuilder();
+									for (Purchase purchase : purchases) {
+										List<String> products = purchase.getProducts();
+										for (String product : products) {
+											if (pids.length() > 0) {
+												pids.append(";");
+											}
+											pids.append(product);
+										}
 									}
 									AnalyticsTracker.getInstance(activity).sendEvent("Purchase",
-											sku, source, null);
+											pids.toString(), source, null);
 								} else {
 									AnalyticsTracker.getInstance(activity).logError(
 											"Purchase Error " + billingResult.getResponseCode() + ": "
@@ -117,7 +129,8 @@ public class DialogFragmentGiveback
 							R.string.giveback_no_google);
 				} else {
 					// ANR in the wild, in the "Main" thread (MiBox S, Android 9, API 28)
-					OffThread.runOffUIThread(() -> billingReady(activity, fm, userInvoked, source));
+					OffThread.runOffUIThread(
+							() -> billingReady(activity, fm, userInvoked, source));
 				}
 			}
 
@@ -183,7 +196,7 @@ public class DialogFragmentGiveback
 		}
 
 		GiveBackArrayAdapter adapter = new GiveBackArrayAdapter(getContext(),
-				listSkuDetails);
+				listGiveBackEntries);
 
 		listview.setLayoutManager(new LinearLayoutManager(getContext()));
 		listview.setAdapter(adapter);
@@ -214,9 +227,18 @@ public class DialogFragmentGiveback
 		if (responseCode != BillingResponseCode.OK) {
 			Log.w(TAG,
 					"areSubscriptionsSupported() got an error response: " + responseCode);
+			return false;
 		}
 
-		return responseCode == BillingResponseCode.OK;
+		responseCode = billingClient.isFeatureSupported(
+				FeatureType.PRODUCT_DETAILS).getResponseCode();
+		if (responseCode != BillingResponseCode.OK) {
+			Log.w(TAG,
+					"PRODUCT_DETAILS supported got an error response: " + responseCode);
+			return false;
+		}
+
+		return true;
 	}
 
 	@Thunk
@@ -230,69 +252,107 @@ public class DialogFragmentGiveback
 			return;
 		}
 
-		PurchasesResult purchasesResult = billingClient.queryPurchases(
-				SkuType.SUBS);
-		List<Purchase> purchasesList = purchasesResult.getPurchasesList();
-		boolean anyPurchased = purchasesResult.getResponseCode() == BillingResponseCode.OK
-				&& purchasesList != null && purchasesList.size() > 0;
-		if (anyPurchased) {
-			verifyPurchases(purchasesList);
+		PurchasesResponseListener purchasesResponseListener = (purchasesResult,
+				purchasesList) -> {
+			boolean anyPurchased = purchasesResult.getResponseCode() == BillingResponseCode.OK
+					&& purchasesList.size() > 0;
 
-			for (Purchase purchase : purchasesList) {
-				if (!purchase.isAutoRenewing()) {
-					anyPurchased = false;
-					break;
+			if (anyPurchased) {
+				verifyPurchases(purchasesList);
+
+				for (Purchase purchase : purchasesList) {
+					if (!purchase.isAutoRenewing()) {
+						anyPurchased = false;
+						break;
+					}
+				}
+
+				if (AndroidUtils.DEBUG) {
+					Log.d(TAG, "iabReady: anyPurchased?" + anyPurchased + " for "
+							+ purchasesList);
 				}
 			}
 
-			if (AndroidUtils.DEBUG) {
-				Log.d(TAG, "iabReady: anyPurchased?" + anyPurchased + " for "
-						+ purchasesList.size());
+			listGiveBackEntries.clear();
+
+			if (anyPurchased) {
+				openDialog(fm, userInvoked, source, true);
+				return;
 			}
-		}
-		final boolean anyPurchasedF = anyPurchased;
 
-		final List<String> additionalSkuList = new ArrayList<>();
-		for (int i = 1; i < 10; i++) {
-			additionalSkuList.add(SKU_PREFIX + i);
-		}
-		try {
-			SkuDetailsParams.Builder params = SkuDetailsParams.newBuilder();
-			params.setSkusList(additionalSkuList).setType(SkuType.SUBS);
-			listSkuDetails.clear();
-			billingClient.querySkuDetailsAsync(params.build(),
-					(billingResult, skuDetailsList) -> {
+			final List<Product> productList = new ArrayList<>();
+			for (int i = 1; i < 10; i++) {
+				productList.add(
+						Product.newBuilder().setProductId(SKU_PREFIX + i).setProductType(
+								ProductType.SUBS).build());
+			}
 
+			billingClient.queryProductDetailsAsync(
+					QueryProductDetailsParams.newBuilder().setProductList(
+							productList).build(),
+					(billingResult, productDetailsList) -> {
 						if (billingResult.getResponseCode() != BillingResponseCode.OK
-								|| skuDetailsList == null) {
+								|| productDetailsList.isEmpty()) {
 							Log.d(TAG,
-									"onSkuDetailsResponse: " + billingResult.getResponseCode()
-											+ ": " + billingResult.getDebugMessage() + ", sku="
-											+ skuDetailsList);
+									"onProductDetailsResponse: " + billingResult.getResponseCode()
+											+ ": " + billingResult.getDebugMessage() + ", products="
+											+ productDetailsList);
 							return;
 						}
 
-						if (!anyPurchasedF) {
-							for (SkuDetails skuDetails : skuDetailsList) {
-								if (!skuDetails.getTitle().startsWith("*")) {
-									listSkuDetails.add(skuDetails);
+						for (ProductDetails productDetails : productDetailsList) {
+							String title = productDetails.getTitle();
+							// Could use tags in SubscriptionOfferDetails to hide entries 
+							if (!title.startsWith("*")) {
+								Log.d(TAG,
+										productDetails.toString().replaceFirst("', parsedJson=.*$",
+												"'").replace(",\"", ",\"\n"));
+								List<SubscriptionOfferDetails> subDetails = productDetails.getSubscriptionOfferDetails();
+								if (subDetails == null) {
+									continue;
+								}
+
+								for (SubscriptionOfferDetails subDetail : subDetails) {
+									GiveBackEntry entry = new GiveBackEntry();
+
+									PricingPhases pricingPhases = subDetail.getPricingPhases();
+									List<PricingPhase> pricingPhaseList = pricingPhases.getPricingPhaseList();
+									for (PricingPhase pricingPhase : pricingPhaseList) {
+										entry.formattedPrice = pricingPhase.getFormattedPrice();
+										entry.priceCurrencyCode = pricingPhase.getPriceCurrencyCode();
+										entry.billingPeriod = pricingPhase.getBillingPeriod();
+										entry.offerToken = subDetail.getOfferToken();
+										entry.productDetails = productDetails;
+
+										listGiveBackEntries.add(entry);
+									}
+
 								}
 							}
 						}
 
-						if (!anyPurchasedF || userInvoked) {
-							DialogFragmentGiveback dlg = new DialogFragmentGiveback();
-							Bundle bundle = new Bundle();
-							bundle.putBoolean(ID_USERINVOKED, userInvoked);
-							bundle.putBoolean(ID_ANYPURCHASED, anyPurchasedF);
-							bundle.putString(ID_SOURCE, source);
-							dlg.setArguments(bundle);
-							AndroidUtilsUI.showDialog(dlg, fm, TAG);
-						}
+						openDialog(fm, userInvoked, source, false);
 					});
-		} catch (Exception e) {
-			e.printStackTrace();
+		};
+
+		billingClient.queryPurchasesAsync(
+				QueryPurchasesParams.newBuilder().setProductType(
+						ProductType.SUBS).build(),
+				purchasesResponseListener);
+	}
+
+	private static void openDialog(FragmentManager fm, boolean userInvoked,
+			String source, boolean anyPurchased) {
+		if (anyPurchased && !userInvoked) {
+			return;
 		}
+		DialogFragmentGiveback dlg = new DialogFragmentGiveback();
+		Bundle bundle = new Bundle();
+		bundle.putBoolean(ID_USERINVOKED, userInvoked);
+		bundle.putBoolean(ID_ANYPURCHASED, anyPurchased);
+		bundle.putString(ID_SOURCE, source);
+		dlg.setArguments(bundle);
+		AndroidUtilsUI.showDialog(dlg, fm, TAG);
 	}
 
 	@Override
@@ -305,10 +365,34 @@ public class DialogFragmentGiveback
 		super.onDestroy();
 	}
 
+	public static class GiveBackEntry
+	{
+
+		String formattedPrice;
+
+		String priceCurrencyCode;
+
+		String billingPeriod;
+
+		ProductDetails productDetails;
+
+		String offerToken;
+
+		@NonNull
+		@Override
+		public String toString() {
+			return "GiveBackEntry{" + "pid='" + productDetails.getProductId() + '\''
+					+ ", formattedPrice='" + formattedPrice + '\''
+					+ ", priceCurrencyCode='" + priceCurrencyCode + '\''
+					+ ", billingPeriod='" + billingPeriod + '\'' + ", productDetails="
+					+ productDetails + ", offerToken='" + offerToken + '\'' + '}';
+		}
+	}
+
 	public class GiveBackArrayAdapter
 		extends RecyclerView.Adapter<GiveBackArrayAdapter.ViewHolder>
 	{
-		final List<SkuDetails> list;
+		final List<GiveBackEntry> list;
 
 		private final Context context;
 
@@ -321,17 +405,21 @@ public class DialogFragmentGiveback
 
 				itemView.setOnClickListener(v -> {
 
-					SkuDetails skuDetails = list.get(getBindingAdapterPosition());
+					GiveBackEntry giveBackEntry = list.get(getBindingAdapterPosition());
+					List<ProductDetailsParams> paramList = new ArrayList<>();
+					paramList.add(ProductDetailsParams.newBuilder().setProductDetails(
+							giveBackEntry.productDetails).setOfferToken(
+									giveBackEntry.offerToken).build());
 
-					BillingFlowParams params = BillingFlowParams.newBuilder().setSkuDetails(
-							skuDetails).build();
+					BillingFlowParams params = BillingFlowParams.newBuilder().setProductDetailsParamsList(
+							paramList).build();
 					billingClient.launchBillingFlow(requireActivity(), params);
 				});
 
 			}
 		}
 
-		GiveBackArrayAdapter(Context context, List<SkuDetails> list) {
+		GiveBackArrayAdapter(Context context, List<GiveBackEntry> list) {
 			super();
 			this.context = context;
 			this.list = list;
@@ -359,9 +447,9 @@ public class DialogFragmentGiveback
 			TextView tvSubtitle = rowView.findViewById(R.id.giveback_subtitle);
 			TextView tvPrice = rowView.findViewById(R.id.giveback_price);
 
-			SkuDetails item = list.get(position);
+			GiveBackEntry item = list.get(position);
 
-			String title = item.getTitle();
+			String title = item.productDetails.getTitle();
 			// title in format "Title (Full App Name)"
 			int idxChop = title.indexOf('(', 1);
 			if (idxChop > 0) {
@@ -369,11 +457,11 @@ public class DialogFragmentGiveback
 			}
 
 			tvTitle.setText(title);
-			tvSubtitle.setText(item.getDescription());
+			tvSubtitle.setText(item.productDetails.getDescription());
 
-			String price = item.getPrice() + "\n" + item.getPriceCurrencyCode();
+			String price = item.formattedPrice + "\n" + item.priceCurrencyCode;
 
-			String subscriptionPeriod = item.getSubscriptionPeriod();
+			String subscriptionPeriod = item.billingPeriod;
 			// 	java.time.Period not avail until API 26!
 			// fake it for ones we might use, assume 1 unit only
 			int[] periodYMWD = getPeriodYMWD(subscriptionPeriod);
