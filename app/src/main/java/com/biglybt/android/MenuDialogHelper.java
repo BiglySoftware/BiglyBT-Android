@@ -17,8 +17,6 @@
 
 package com.biglybt.android;
 
-import com.biglybt.android.client.R;
-
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.os.IBinder;
@@ -60,7 +58,7 @@ class MenuDialogHelper implements DialogInterface.OnKeyListener,
         final AlertDialog.Builder builder = new AlertDialog.Builder(menu.getContext());
 
         mPresenter = new ListMenuPresenter(builder.getContext(),
-                R.layout.abc_list_menu_item_layout);
+                androidx.appcompat.R.layout.abc_list_menu_item_layout);
 
         mPresenter.setCallback(this);
         mMenu.addMenuPresenter(mPresenter);

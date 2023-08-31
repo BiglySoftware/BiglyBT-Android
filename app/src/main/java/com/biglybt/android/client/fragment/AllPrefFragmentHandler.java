@@ -968,7 +968,7 @@ public class AllPrefFragmentHandler
 					spanText.setSpan(new StrikethroughSpan(), 0, s.length(),
 							Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
 					int styleColor = AndroidUtilsUI.getStyleColor(context,
-							R.attr.colorOnPrimary);
+							com.google.android.material.R.attr.colorOnPrimary);
 					styleColor = (styleColor & 0x00FFFFFF) | 0x40000000;
 					spanText.setSpan(new ForegroundColorSpan(styleColor), 0, s.length(),
 							Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);

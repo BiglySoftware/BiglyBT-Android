@@ -18,7 +18,6 @@ package com.biglybt.android.client.dialog;
 
 import com.biglybt.android.client.AndroidUtils;
 import com.biglybt.android.client.AndroidUtilsUI;
-import com.biglybt.android.client.R;
 
 import android.app.Dialog;
 import android.content.Context;
@@ -58,15 +57,15 @@ public abstract class DialogFragmentResized
 	private int dialogHeightRes = View.NO_ID;
 
 	private static final int[] IDS_TO_COUNT_HEIGHT = new int[] {
-		R.id.topPanel,
-		R.id.contentPanel,
-		R.id.buttonPanel
+		androidx.leanback.R.id.topPanel,
+		androidx.leanback.R.id.contentPanel,
+		androidx.leanback.R.id.buttonPanel
 	};
 
 	private static final int[] IDS_TO_SET_MATCH_PARENT = new int[] {
-		R.id.parentPanel,
-		R.id.customPanel,
-		R.id.custom
+		androidx.leanback.R.id.parentPanel,
+		androidx.leanback.R.id.customPanel,
+		androidx.leanback.R.id.custom
 	};
 
 	@SuppressWarnings("WeakerAccess")

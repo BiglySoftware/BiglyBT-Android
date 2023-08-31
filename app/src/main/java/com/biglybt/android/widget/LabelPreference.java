@@ -62,8 +62,10 @@ public class LabelPreference
 	}
 
 	public LabelPreference(@NonNull Context context, AttributeSet attrs) {
-		this(context, attrs, AndroidUtilsUI.getAttr(context, R.attr.preferenceStyle,
-				android.R.attr.preferenceStyle));
+		this(context, attrs,
+				AndroidUtilsUI.getAttr(context,
+						androidx.preference.R.attr.preferenceStyle,
+						android.R.attr.preferenceStyle));
 	}
 
 	public LabelPreference(@NonNull Context context) {

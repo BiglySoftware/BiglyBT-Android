@@ -90,7 +90,8 @@ public abstract class DrawerActivity
 
 				ActionBar supportActionBar = getSupportActionBar();
 				if (supportActionBar != null) {
-					View actionBarContainer = findViewById(R.id.action_mode_bar);
+					View actionBarContainer = findViewById(
+							androidx.leanback.R.id.action_mode_bar);
 					if (actionBarContainer != null) {
 						actionBarContainer.setX(x);
 					}
@@ -152,8 +153,8 @@ public abstract class DrawerActivity
 					}
 				}
 				DrawerArrowDrawable drawable = new DrawerArrowDrawable(this);
-				drawable.setColor(
-						AndroidUtilsUI.getStyleColor(this, R.attr.colorOnPrimary));
+				drawable.setColor(AndroidUtilsUI.getStyleColor(this,
+						com.google.android.material.R.attr.colorOnPrimary));
 				if (mDrawerLayout != null) {
 					setDrawerButtonPosition(
 							mDrawerLayout.isDrawerOpen(GravityCompat.START) ? 1 : 0);
