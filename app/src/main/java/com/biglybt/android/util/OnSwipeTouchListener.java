@@ -86,6 +86,7 @@ public class OnSwipeTouchListener
 			super.onLongPress(e);
 		}
 
+		/** @noinspection NullableProblems: They lie! e1 can be null */
 		@Override
 		public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX,
 				float velocityY) {
