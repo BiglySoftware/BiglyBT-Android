@@ -197,7 +197,7 @@ public class ProfileSelectorFragment
 			return true;
 		}
 		if (itemId == R.id.action_import_prefs) {
-			FileUtils.openFileChooser(activity, this, "application/octet-stream",
+			FileUtils.openFileChooser(activity, this, "application/json",
 					TorrentViewActivity.FILECHOOSER_RESULTCODE);
 			return true;
 		}
