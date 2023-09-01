@@ -28,8 +28,7 @@ import android.annotation.SuppressLint;
 import android.app.Application;
 import android.content.*;
 import android.content.pm.PackageManager;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
+import android.net.*;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.Build;
@@ -40,7 +39,7 @@ import android.util.Log;
 
 public class NetworkState
 {
-	public final static String ETHERNET_SERVICE = "ethernet";
+	private final static String ETHERNET_SERVICE = "ethernet";
 
 	private static final String TAG = "NetworkState";
 
@@ -54,6 +53,8 @@ public class NetworkState
 	private BroadcastReceiver mConnectivityReceiver;
 
 	private boolean isOnline;
+	
+	private boolean isOnlineMobile;
 
 	@Thunk
 	String onlineStateReason;
@@ -134,7 +135,11 @@ public class NetworkState
 		if (AndroidUtils.DEBUG) {
 			Log.d(TAG, "setOnline " + online);
 		}
+		if (isOnline == online && isOnlineMobile == onlineMobile) {
+			return;
+		}
 		isOnline = online;
+		isOnlineMobile = onlineMobile;
 		synchronized (listeners) {
 			for (NetworkStateListener l : listeners) {
 				l.onlineStateChanged(online, onlineMobile);
@@ -175,6 +180,17 @@ public class NetworkState
 		if (cm == null) {
 			return false;
 		}
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+			Network nw = cm.getActiveNetwork();
+			if (nw != null) {
+				NetworkCapabilities actNw = cm.getNetworkCapabilities(nw);
+				if (actNw != null) {
+					return actNw.hasCapability(
+							NetworkCapabilities.NET_CAPABILITY_INTERNET);
+				}
+			}
+		}
+
 		NetworkInfo netInfo = cm.getActiveNetworkInfo();
 		if (netInfo != null && netInfo.isConnected()) {
 			return true;
@@ -183,7 +199,6 @@ public class NetworkState
 			if (AndroidUtils.DEBUG) {
 				Log.d(TAG, "no active network");
 			}
-			//noinspection deprecation
 			netInfo = cm.getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
 			if (netInfo != null && netInfo.isConnected()) {
 				if (AndroidUtils.DEBUG) {
@@ -212,20 +227,34 @@ public class NetworkState
 	}
 
 	public boolean isOnlineMobile() {
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+			ConnectivityManager cm = (ConnectivityManager) applicationContext.getSystemService(
+					Context.CONNECTIVITY_SERVICE);
+			if (cm != null) {
+				Network nw = cm.getActiveNetwork();
+				if (nw != null) {
+					NetworkCapabilities actNw = cm.getNetworkCapabilities(nw);
+					return actNw != null
+							&& actNw.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR);
+				}
+			}
+		}
+
 		NetworkInfo netInfo = getActiveNetworkInfo();
 		if (netInfo != null && netInfo.isConnected()) {
 			int type = netInfo.getType();
-			return type == ConnectivityManager.TYPE_MOBILE || type == 4 //ConnectivityManager.TYPE_MOBILE_DUN
-					|| type == 5 //ConnectivityManager.TYPE_MOBILE_HIPRI
-					|| type == 2 //ConnectivityManager.TYPE_MOBILE_MMS
-					|| type == 3; //ConnectivityManager.TYPE_MOBILE_SUPL;
+			return type == ConnectivityManager.TYPE_MOBILE
+					|| type == ConnectivityManager.TYPE_MOBILE_DUN
+					|| type == ConnectivityManager.TYPE_MOBILE_HIPRI
+					|| type == ConnectivityManager.TYPE_MOBILE_MMS
+					|| type == ConnectivityManager.TYPE_MOBILE_SUPL;
 		}
 		return false;
 	}
 
 	private NetworkInfo getActiveNetworkInfo() {
 		ConnectivityManager cm = (ConnectivityManager) applicationContext.getSystemService(
-			Context.CONNECTIVITY_SERVICE);
+				Context.CONNECTIVITY_SERVICE);
 		if (cm == null) {
 			return null;
 		}
@@ -233,7 +262,7 @@ public class NetworkState
 			return cm.getActiveNetworkInfo();
 		} catch (Throwable t) { // Seen: DeadSystemException
 			if (AndroidUtils.DEBUG) {
-				Log.e(TAG, "getActiveNetworkInfo: ",  t);
+				Log.e(TAG, "getActiveNetworkInfo: ", t);
 			}
 			return null;
 		}
@@ -538,5 +567,12 @@ public class NetworkState
 			Log.e(TAG, ex.toString());
 		}
 		return null;
+	}
+
+	public void refresh() {
+		boolean online = isOnline(applicationContext);
+		if (online != isOnline) {
+			setOnline(online, online && isOnlineMobile());
+		}
 	}
 }

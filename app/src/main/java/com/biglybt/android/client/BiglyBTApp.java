@@ -461,6 +461,10 @@ public class BiglyBTApp
 	public static NetworkState getNetworkState() {
 		if (networkState == null) {
 			networkState = new NetworkState(applicationContext);
+		} else {
+			// saw some weird edge case where app may get out of sync with state
+			// force refresh
+			networkState.refresh();
 		}
 		return networkState;
 	}
