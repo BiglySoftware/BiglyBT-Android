@@ -113,7 +113,7 @@ repositories {
 
 dependencies {
     // https://github.com/google/desugar_jdk_libs/blob/master/CHANGELOG.md
-    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:1.2.2'
+    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs_nio:2.0.3'
 
     compileOnly 'org.jetbrains:annotations:+'
 
@@ -147,9 +147,12 @@ dependencies {
     implementation "androidx.lifecycle:lifecycle-runtime:${lifecycleVersion}"
     implementation "androidx.lifecycle:lifecycle-common-java8:${lifecycleVersion}"
     implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0'
-    implementation "androidx.fragment:fragment:1.5.3"
+    // 1.6.1 gives conflicts between org.jetbrains.kotlin:kotlin-stdlib:1.8.0 and org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.6.21
+    // Because leanback uses 1.6.21 (So does androidx.lifecycle, but latest uses 1.8.0)
+    implementation "androidx.fragment:fragment:1.5.7"
     implementation 'androidx.documentfile:documentfile:1.0.1'
-    implementation 'androidx.viewpager2:viewpager2:1.1.0-alpha01'
+    // https://developer.android.com/jetpack/androidx/releases/viewpager2
+    implementation 'androidx.viewpager2:viewpager2:1.1.0-beta02'
 
     // https://github.com/alibaba/fastjson
     implementation 'com.alibaba:fastjson:1.1.72.android'
@@ -201,8 +204,8 @@ dependencies {
     coreFlavorImplementation project(':BiglyBT-plugin-xmwebui')
     coreFlavorImplementation project(':BiglyBT-plugin-azutp')
 
-    debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.6'
-    debugMinifyImplementation 'com.squareup.leakcanary:leakcanary-android:2.6'
+    debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.12'
+    debugMinifyImplementation 'com.squareup.leakcanary:leakcanary-android:2.12'
 }
 
 task copyPluginFiles() {
