@@ -1068,8 +1068,13 @@ public class BiglyBTService
 		Context context = BiglyBTApp.getContext();
 		Intent intentStop = new Intent(context, BiglyBTService.class);
 		intentStop.setAction(BiglyBTService.INTENT_ACTION_RESTART);
+
+		int flag = PendingIntent.FLAG_CANCEL_CURRENT;
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+			flag |= PendingIntent.FLAG_IMMUTABLE;
+		}
 		PendingIntent piRestart = PendingIntent.getService(context, 0, intentStop,
-				PendingIntent.FLAG_CANCEL_CURRENT);
+				flag);
 
 		try {
 			piRestart.send();
@@ -1297,8 +1302,12 @@ public class BiglyBTService
 	private NotificationCompat.Builder getNotificationBuilder() {
 		Resources resources = getResources();
 		final Intent notificationIntent = new Intent(this, IntentHandler.class);
+		int flag = 0;
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+			flag |= PendingIntent.FLAG_IMMUTABLE;
+		}
 		final PendingIntent pi = PendingIntent.getActivity(this, 0,
-				notificationIntent, 0);
+				notificationIntent, flag);
 
 		String title = resources.getString(R.string.core_noti_title);
 
@@ -1319,8 +1328,13 @@ public class BiglyBTService
 		if (!isCoreStopping && !isServiceStopping) {
 			Intent intentStop = new Intent(this, BiglyBTService.class);
 			intentStop.setAction(INTENT_ACTION_STOP);
+
+			flag = PendingIntent.FLAG_CANCEL_CURRENT;
+			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+				flag |= PendingIntent.FLAG_IMMUTABLE;
+			}
 			PendingIntent piStop = PendingIntent.getService(this, 0, intentStop,
-					PendingIntent.FLAG_CANCEL_CURRENT);
+					flag);
 
 			builder.addAction(R.drawable.ic_power_settings_new_white_24dp,
 					resources.getString(R.string.core_noti_stop_button), piStop);
@@ -1332,8 +1346,13 @@ public class BiglyBTService
 					Intent intentPR = new Intent(this, BiglyBTService.class);
 					intentPR.setAction(
 							canPause ? INTENT_ACTION_PAUSE : INTENT_ACTION_RESUME);
+
+					flag = PendingIntent.FLAG_CANCEL_CURRENT;
+					if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+						flag |= PendingIntent.FLAG_IMMUTABLE;
+					}
 					PendingIntent piPR = PendingIntent.getService(this, 0, intentPR,
-							PendingIntent.FLAG_CANCEL_CURRENT);
+							flag);
 
 					builder.addAction(
 							canPause ? R.drawable.ic_playlist_pause_n
@@ -1349,8 +1368,13 @@ public class BiglyBTService
 			if (CorePrefs.DEBUG_CORE) {
 				Intent intentRestart = new Intent(this, BiglyBTService.class);
 				intentRestart.setAction(INTENT_ACTION_RESTART);
+
+				flag = PendingIntent.FLAG_CANCEL_CURRENT;
+				if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+					flag |= PendingIntent.FLAG_IMMUTABLE;
+				}
 				PendingIntent piRestart = PendingIntent.getService(this, 0,
-						intentRestart, PendingIntent.FLAG_CANCEL_CURRENT);
+						intentRestart, flag);
 				builder.addAction(R.drawable.ic_notification_restart, "Restart",
 						piRestart);
 			}
@@ -1516,8 +1540,13 @@ public class BiglyBTService
 		if (coreStarted) {
 			intent.setAction(INTENT_ACTION_START);
 		}
+
+		int flag = PendingIntent.FLAG_ONE_SHOT;
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+			flag |= PendingIntent.FLAG_IMMUTABLE;
+		}
 		PendingIntent pendingIntent = PendingIntent.getService(this, 1, intent,
-				PendingIntent.FLAG_ONE_SHOT);
+				flag);
 		AlarmManager alarmManager = (AlarmManager) getSystemService(
 				Context.ALARM_SERVICE);
 		if (alarmManager != null) {

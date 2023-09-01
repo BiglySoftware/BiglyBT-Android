@@ -20,9 +20,7 @@ import android.annotation.SuppressLint;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
-import android.os.Handler;
-import android.os.Looper;
-import android.os.RemoteException;
+import android.os.*;
 import android.util.Log;
 
 import androidx.core.content.ContextCompat;
@@ -144,8 +142,13 @@ public class BiglyBTServiceInitImpl
 		Context context = BiglyBTApp.getContext();
 		Intent intentStop = new Intent(context, BiglyBTService.class);
 		intentStop.setAction(BiglyBTService.INTENT_ACTION_STOP);
+
+		int flag = PendingIntent.FLAG_CANCEL_CURRENT;
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+			flag |= PendingIntent.FLAG_IMMUTABLE;
+		}
 		PendingIntent piStop = PendingIntent.getService(context, 0, intentStop,
-			PendingIntent.FLAG_CANCEL_CURRENT);
+			flag);
 
 		try {
 			piStop.send();
@@ -162,8 +165,13 @@ public class BiglyBTServiceInitImpl
 		Context context = BiglyBTApp.getContext();
 		Intent intentRestart = new Intent(context, BiglyBTService.class);
 		intentRestart.setAction(BiglyBTService.INTENT_ACTION_RESTART);
+
+		int flag = PendingIntent.FLAG_CANCEL_CURRENT;
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+			flag |= PendingIntent.FLAG_IMMUTABLE;
+		}
 		PendingIntent piRestart = PendingIntent.getService(context, 0, intentRestart,
-			PendingIntent.FLAG_CANCEL_CURRENT);
+			flag);
 
 		try {
 			piRestart.send();
