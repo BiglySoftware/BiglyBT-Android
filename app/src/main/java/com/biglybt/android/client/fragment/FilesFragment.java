@@ -19,16 +19,14 @@ package com.biglybt.android.client.fragment;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.DownloadManager;
-import android.content.ComponentName;
-import android.content.Context;
-import android.content.Intent;
-import android.content.pm.*;
+import android.content.*;
 import android.content.res.Resources;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.text.TextUtils;
 import android.text.format.DateUtils;
+import android.util.Log;
 import android.view.*;
 import android.webkit.MimeTypeMap;
 import android.widget.*;
@@ -41,7 +39,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.view.ActionMode;
 import androidx.appcompat.view.ActionMode.Callback;
 import androidx.appcompat.view.menu.MenuBuilder;
-import androidx.core.app.NotificationManagerCompat;
+import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
 import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -148,6 +146,10 @@ public class FilesFragment
 	private boolean isTorrentOpenOptions;
 
 	private SwipeRefreshLayoutExtra swipeRefresh;
+
+	private BroadcastReceiver onDownloadComplete = null;
+
+	private Map<Long, String> queuedDownloads = new HashMap<>();
 
 	public FilesFragment() {
 		super();
@@ -313,6 +315,26 @@ public class FilesFragment
 				sideListActivity.setupSideListArea(view);
 			}
 		}
+	}
+
+	@Override
+	public void onStop() {
+		queuedDownloads.clear();
+		if (onDownloadComplete != null) {
+			Context context = getContext();
+			if (context != null) {
+				try {
+					context.unregisterReceiver(onDownloadComplete);
+					log(TAG, "unregisterReceiver onDownloadComplete");
+				} catch (Throwable t) {
+					log(Log.ERROR, TAG, "unregisterReceiver: " + t);
+				}
+			} else {
+				log(TAG, "no activity; can't unregister onDownloadComplete");
+			}
+			onDownloadComplete = null;
+		}
+		super.onStop();
 	}
 
 	@Override
@@ -1028,11 +1050,16 @@ public class FilesFragment
 
 	@Thunk
 	void reallySaveFile(final String contentURL, final String outFile) {
-		DownloadManager manager = (DownloadManager) BiglyBTApp.getContext().getSystemService(
+		Context context = requireContext();
+		DownloadManager manager = (DownloadManager) context.getSystemService(
 				Context.DOWNLOAD_SERVICE);
 		if (manager == null) {
 			// TODO: Warn
 			return;
+		}
+
+		if (AndroidUtils.DEBUG) {
+			log(TAG, "saveFile " + contentURL + " to " + outFile);
 		}
 		DownloadManager.Request request = new DownloadManager.Request(
 				Uri.parse(contentURL));
@@ -1042,15 +1069,48 @@ public class FilesFragment
 		request.setNotificationVisibility(
 				DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
 
-		Context context = BiglyBTApp.getContext();
-		if (AndroidUtils.isTV(context)
-				|| !NotificationManagerCompat.from(context).areNotificationsEnabled()) {
+		if (AndroidUtils.isTV(context)) {
+			// phones have notification bar that shows file being saved.
+			// Notify Android TV peeps that it's saving
 			String s = getResources().getString(R.string.content_saving,
 					TextUtils.htmlEncode(outFile), TextUtils.htmlEncode("Downloads"));
 			CustomToast.showText(AndroidUtils.fromHTML(s), Toast.LENGTH_SHORT);
+
+			if (onDownloadComplete == null) {
+				onDownloadComplete = new BroadcastReceiver() {
+					@Override
+					public void onReceive(Context context, Intent intent) {
+						long id = intent.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID,
+								-1);
+						String found = queuedDownloads.remove(id);
+
+						if (AndroidUtils.DEBUG) {
+							log(TAG, "Download Complete for " + id + "; found=" + found);
+						}
+
+						if (found != null) {
+							String s = getResources().getString(R.string.content_saved,
+									TextUtils.htmlEncode(found),
+									TextUtils.htmlEncode("Downloads"));
+							CustomToast.showText(AndroidUtils.fromHTML(s),
+									Toast.LENGTH_SHORT);
+						}
+					}
+				};
+
+				try {
+					IntentFilter filter = new IntentFilter(
+							DownloadManager.ACTION_DOWNLOAD_COMPLETE);
+					ContextCompat.registerReceiver(context, onDownloadComplete, filter,
+							ContextCompat.RECEIVER_EXPORTED);
+				} catch (Throwable t) {
+					AnalyticsTracker.getInstance().logError(t);
+				}
+			}
 		}
 
-		manager.enqueue(request);
+		long enqueueID = manager.enqueue(request);
+		queuedDownloads.put(enqueueID, outFile);
 	}
 
 	private boolean streamFile(final Map<?, ?> selectedFile) {
