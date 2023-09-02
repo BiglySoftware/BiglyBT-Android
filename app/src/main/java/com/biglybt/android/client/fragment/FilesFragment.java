@@ -50,9 +50,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.biglybt.android.adapter.FlexibleRecyclerSelectionListener;
 import com.biglybt.android.adapter.SortableRecyclerAdapter;
 import com.biglybt.android.client.*;
-import com.biglybt.android.client.activity.ImageViewer;
 import com.biglybt.android.client.activity.TorrentOpenOptionsActivity;
-import com.biglybt.android.client.activity.VideoViewer;
 import com.biglybt.android.client.adapter.*;
 import com.biglybt.android.client.dialog.DialogFragmentSizeRange;
 import com.biglybt.android.client.rpc.ReplyMapReceivedListener;
@@ -1131,6 +1129,7 @@ public class FilesFragment
 		String name = MapUtils.getMapString(selectedFile,
 				TransmissionVars.FIELD_FILES_NAME, "video");
 		intent.putExtra("title", name); //NON-NLS
+		intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
 
 		String extension = MimeTypeMap.getFileExtensionFromUrl(
 				contentURL).toLowerCase(Locale.US);
@@ -1138,63 +1137,6 @@ public class FilesFragment
 				extension);
 		if (mimetype != null && tryLaunchWithMimeFirst) {
 			intent.setType(mimetype);
-		}
-		Class<?> fallBackIntentClass = VideoViewer.class;
-		if (mimetype != null && mimetype.startsWith("image")) {
-			fallBackIntentClass = ImageViewer.class;
-		}
-
-		final PackageManager packageManager = context == null ? null
-				: context.getPackageManager();
-		if (context != null) {
-			List<ResolveInfo> list = packageManager.queryIntentActivities(intent,
-					PackageManager.MATCH_DEFAULT_ONLY);
-			if (AndroidUtils.DEBUG) {
-				log(TAG, "num intents " + list.size());
-				for (ResolveInfo info : list) {
-					ComponentInfo componentInfo = AndroidUtils.getComponentInfo(info);
-					log(TAG, info.toString() + "/" + (componentInfo == null ? "null"
-							: (componentInfo.name + "/" + componentInfo)));
-				}
-			}
-			for (Iterator<ResolveInfo> it = list.iterator(); it.hasNext();) {
-				ResolveInfo info = it.next();
-				ComponentInfo componentInfo = AndroidUtils.getComponentInfo(info);
-				if (componentInfo != null
-						&& "com.amazon.tv.legal.notices.BuellerTermsOfUseSettingsActivity".equals(
-								componentInfo.name)) {
-					it.remove();
-				} else {
-					String packageName = info.activityInfo.packageName;
-					context.grantUriPermission(packageName, uri,
-							Intent.FLAG_GRANT_READ_URI_PERMISSION);
-				}
-			}
-
-			if (list.size() == 0) {
-				// Intent will launch, but show message to the user:
-				// "Opening web browser links is not supported"
-				intent.setClass(context, fallBackIntentClass);
-			}
-			if (list.size() == 1) {
-				ResolveInfo info = list.get(0);
-				ComponentInfo componentInfo = AndroidUtils.getComponentInfo(info);
-				if ((componentInfo != null && componentInfo.name != null)
-						&& ("com.amazon.unifiedshare.actionchooser.BuellerShareActivity".equals(
-								componentInfo.name)
-								|| componentInfo.name.startsWith(
-										"com.google.android.tv.frameworkpackagestubs.Stubs"))) {
-					intent.setClass(context, fallBackIntentClass);
-				} else {
-					ActivityInfo activity = info.activityInfo;
-					ComponentName componentName = new ComponentName(
-							activity.applicationInfo.packageName, activity.name);
-					intent.setComponent(componentName);
-					if (AndroidUtils.DEBUG) {
-						log(TAG, "setting component to " + componentName);
-					}
-				}
-			}
 		}
 
 		try {
@@ -1213,20 +1155,6 @@ public class FilesFragment
 					intent2.putExtra("title", name); //NON-NLS
 					if (!tryLaunchWithMimeFirst) {
 						intent2.setType(mimetype);
-					}
-
-					if (packageManager != null) {
-						List<ResolveInfo> list = packageManager.queryIntentActivities(
-								intent2, PackageManager.MATCH_DEFAULT_ONLY);
-						if (AndroidUtils.DEBUG) {
-							log(TAG, "num intents " + list.size());
-							for (ResolveInfo info : list) {
-								ComponentInfo componentInfo = AndroidUtils.getComponentInfo(
-										info);
-								log(TAG, info.toString() + "/" + (componentInfo == null ? "null"
-										: (componentInfo.name + "/" + componentInfo)));
-							}
-						}
 					}
 
 					startActivity(intent2);
@@ -1385,16 +1313,18 @@ public class FilesFragment
 			if (key instanceof Number) {
 				found = ((Number) key).longValue() == torrentID;
 				if (found) {
-					if (AndroidUtils.DEBUG) {
-						log(TAG, "TorrentListReceived(" + callID + "), contains torrent #" + torrentID);
+					if (AndroidUtils.DEBUG_RPC) {
+						log(TAG, "TorrentListReceived(" + callID + "), contains torrent #"
+								+ torrentID);
 					}
 					break;
 				}
 			}
 		}
 		if (!found) {
-			if (AndroidUtils.DEBUG) {
-				log(TAG, "TorrentListReceived(" + callID + "), does not contain torrent #" + torrentID);
+			if (AndroidUtils.DEBUG_RPC) {
+				log(TAG, "TorrentListReceived(" + callID
+						+ "), does not contain torrent #" + torrentID);
 			}
 			return;
 		}
