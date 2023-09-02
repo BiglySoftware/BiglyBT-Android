@@ -16,7 +16,6 @@
 
 package com.biglybt.android.widget;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -27,26 +26,18 @@ import android.widget.Toast;
 import androidx.annotation.AnyThread;
 import androidx.annotation.StringRes;
 import androidx.annotation.UiThread;
-import androidx.core.app.NotificationManagerCompat;
-import androidx.fragment.app.FragmentActivity;
 
-import com.biglybt.android.client.*;
-import com.biglybt.android.client.session.Session;
-import com.biglybt.android.client.session.SessionManager;
+import com.biglybt.android.client.BiglyBTApp;
+import com.biglybt.android.client.OffThread;
+import com.biglybt.android.client.R;
 
 public class CustomToast
-	extends Toast
 {
-	public CustomToast(Context context) {
-		super(context);
-	}
-
 	public static void showText(@StringRes int textRedId, final int duration) {
-		OffThread.runOnUIThread(() -> showText(
+		OffThread.runOnUIThread(() -> ui_showText(
 				BiglyBTApp.getContext().getResources().getString(textRedId), duration));
 	}
 
-	// TODO: Ensure user gets message when notifications are disabled
 	@AnyThread
 	public static void showText(final CharSequence text, final int duration) {
 		OffThread.runOnUIThread(() -> ui_showText(text, duration));
@@ -57,24 +48,6 @@ public class CustomToast
 		try {
 			Context context = BiglyBTApp.getContext();
 
-			boolean enabled = NotificationManagerCompat.from(
-					context).areNotificationsEnabled();
-			if (!enabled) {
-				Log.w("Toast", "Skipping toast: " + text);
-				if (AndroidUtils.DEBUG) {
-					Session session = SessionManager.getActiveSession();
-					if (session != null) {
-						FragmentActivity activity = session.getCurrentActivity();
-						if (activity != null) {
-							AndroidUtilsUI.showDialog(activity, 0, R.string.hardcoded_string,
-									text);
-						}
-					}
-				}
-				return;
-			}
-
-			@SuppressLint("ShowToast") //NON-NLS
 			Toast t = Toast.makeText(context, text, duration);
 			LayoutInflater inflater = (LayoutInflater) context.getSystemService(
 					Context.LAYOUT_INFLATER_SERVICE);
@@ -93,24 +66,4 @@ public class CustomToast
 			Log.e("TOAST", "Can't show toast " + text, t);
 		}
 	}
-
-	public static Toast makeText(Context context, CharSequence text,
-			int duration) {
-		@SuppressLint("ShowToast") //NON-NLS
-		Toast t = Toast.makeText(context, text, duration);
-		LayoutInflater inflater = (LayoutInflater) context.getSystemService(
-				Context.LAYOUT_INFLATER_SERVICE);
-		if (inflater == null) {
-			return t;
-		}
-		View layout = inflater.inflate(R.layout.custom_toast, null);
-
-		TextView textView = layout.findViewById(R.id.text);
-		textView.setText(text);
-
-		t.setView(layout);
-
-		return t;
-	}
-
 }
