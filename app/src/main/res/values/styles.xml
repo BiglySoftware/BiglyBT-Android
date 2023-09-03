@@ -224,6 +224,10 @@
 		<item name="android:windowIsTranslucent">true</item>
 		<item name="android:windowBackground">@color/transparent</item>
 		<item name="android:backgroundDimEnabled">true</item>
+
+		<!-- So that Material components get inflated instead of OS ones.
+		     Noticable on Buttons when focused (no color state change without this) -->
+		<item name="viewInflaterClass">com.google.android.material.theme.MaterialComponentsViewInflater</item>
 	</style>
 
 	<style name="AppThemeNoBackground" parent="AppTheme">
