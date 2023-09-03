@@ -139,12 +139,13 @@
 				android:text="0"
 				tools:ignore="HardcodedText"/>
 
-			<ImageButton
+			<com.google.android.material.button.MaterialButton
 				android:id="@+id/numpad_BS"
 				style="@style/NumberPickerButtonStyle"
 				android:contentDescription="@string/backspace"
-				app:srcCompat="@drawable/ic_backspace_white_24dp"
-				app:tint="?attr/colorOnBackground"
+				android:focusable="true"
+				app:icon="@drawable/ic_backspace_white_24dp"
+				app:iconGravity="textStart"
 				/>
 		</GridLayout>
 	</LinearLayout>
