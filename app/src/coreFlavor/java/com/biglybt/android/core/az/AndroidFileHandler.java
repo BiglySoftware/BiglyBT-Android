@@ -35,6 +35,7 @@ import com.biglybt.android.client.AndroidUtils;
 import com.biglybt.android.client.BiglyBTApp;
 import com.biglybt.android.util.PaulBurkeFileUtils;
 import com.biglybt.core.diskmanager.file.impl.FMFileAccess.FileAccessor;
+import com.biglybt.core.diskmanager.file.impl.FMFileAccessController.FileAccessorRAF;
 import com.biglybt.core.util.FileHandler;
 import com.biglybt.core.util.FileUtil;
 
@@ -443,6 +444,9 @@ public class AndroidFileHandler
 	@Override
 	public FileAccessor newFileAccessor(File file, String access_mode)
 			throws FileNotFoundException {
+		if (!(file instanceof AndroidFile)) {
+			return new FileAccessorRAF(file, access_mode);
+		}
 		return new AndroidFileAccessor(file, access_mode);
 	}
 }
