@@ -577,7 +577,7 @@ public class AndroidFile
 				return defaultValue;
 			}
 		} catch (Exception e) {
-			Log.w(TAG, "Failed query: " + e);
+			Log.w(TAG, "Failed queryForLong: " + e);
 			return defaultValue;
 		} finally {
 			closeQuietly(c);
@@ -1010,7 +1010,7 @@ public class AndroidFile
 				return documentUri;
 			}
 		} catch (Exception e) {
-			Log.w(TAG, "Failed query: " + e);
+			Log.w(TAG, "Failed getFirstFileUri query: " + e);
 		} finally {
 			closeQuietly(c);
 		}
@@ -1029,27 +1029,27 @@ public class AndroidFile
 	private String getRealPath() {
 		try {
 			if (!docFile.isDirectory()) {
-				return null;
+				return path;
 			}
 			Uri uri = getFirstFileUri();
 			if (uri == null) {
 				DocumentFile tmp = docFile.createDirectory("tmp");
 				if (tmp == null) {
-					return null;
+					return path;
 				}
 				uri = tmp.getUri();
 				tmp.delete();
 			}
-			String path = uri.toString();
-			int i = path.lastIndexOf("%2F");
+			String newPath = uri.toString();
+			int i = newPath.lastIndexOf("%2F");
 			if (i < 0) {
-				return null;
+				return path;
 			}
-			path = path.substring(0, i);
-			return path;
+			newPath = newPath.substring(0, i);
+			return newPath;
 		} catch (Throwable t) {
 			loge("getRealPath", t);
-			return null;
+			return path;
 		}
 	}
 
