@@ -56,16 +56,16 @@ public abstract class DialogFragmentResized
 	@DimenRes
 	private int dialogHeightRes = View.NO_ID;
 
-	private static final int[] IDS_TO_COUNT_HEIGHT = new int[] {
-		androidx.leanback.R.id.topPanel,
-		androidx.leanback.R.id.contentPanel,
-		androidx.leanback.R.id.buttonPanel
+	private static final String[] IDS_TO_COUNT_HEIGHT = new String[] {
+		"topPanel",
+		"contentPanel",
+		"buttonPanel"
 	};
 
-	private static final int[] IDS_TO_SET_MATCH_PARENT = new int[] {
-		androidx.leanback.R.id.parentPanel,
-		androidx.leanback.R.id.customPanel,
-		androidx.leanback.R.id.custom
+	private static final String[] IDS_TO_SET_MATCH_PARENT = new String[] {
+		"parentPanel",
+		"customPanel",
+		"custom"
 	};
 
 	@SuppressWarnings("WeakerAccess")
@@ -137,9 +137,14 @@ public abstract class DialogFragmentResized
 				Log.d(TAG, "resize: View: " + getView());
 			}
 
+			Resources system = Resources.getSystem();
 			// topPanel + contentPanel + buttonPanel = View size without us
 			int heightWithoutUs = 0;
-			for (int id : IDS_TO_COUNT_HEIGHT) {
+			for (String idName : IDS_TO_COUNT_HEIGHT) {
+				int id = system.getIdentifier(idName, "id", "android");
+				if (id != 0) {
+					continue;
+				}
 				ViewGroup vg = rootView.findViewById(id);
 				if (vg != null) {
 					int measuredHeight = vg.getMeasuredHeight();
@@ -153,7 +158,11 @@ public abstract class DialogFragmentResized
 				}
 			}
 
-			for (int id : IDS_TO_SET_MATCH_PARENT) {
+			for (String idName : IDS_TO_SET_MATCH_PARENT) {
+				int id = system.getIdentifier(idName, "id", "android");
+				if (id != 0) {
+					continue;
+				}
 				try {
 					ViewGroup vg = rootView.findViewById(id);
 					if (vg == null) {

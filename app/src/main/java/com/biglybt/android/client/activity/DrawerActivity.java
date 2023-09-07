@@ -17,6 +17,7 @@
 package com.biglybt.android.client.activity;
 
 import android.content.res.Configuration;
+import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
@@ -88,12 +89,16 @@ public abstract class DrawerActivity
 				}
 				mainChild.setX(x);
 
+				// Note: Doesn't appear to be needed anymore
 				ActionBar supportActionBar = getSupportActionBar();
 				if (supportActionBar != null) {
-					View actionBarContainer = findViewById(
-							androidx.leanback.R.id.action_mode_bar);
-					if (actionBarContainer != null) {
-						actionBarContainer.setX(x);
+					Resources system = Resources.getSystem();
+					int id = system.getIdentifier("action_mode_bar", "id", "android");
+					if (id != 0) {
+						View actionBarContainer = findViewById(id);
+						if (actionBarContainer != null) {
+							actionBarContainer.setX(x);
+						}
 					}
 				}
 
