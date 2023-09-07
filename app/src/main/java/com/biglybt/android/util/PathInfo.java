@@ -17,6 +17,7 @@
 package com.biglybt.android.util;
 
 import android.content.Context;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build.VERSION;
 import android.os.Build.VERSION_CODES;
@@ -38,8 +39,11 @@ import com.biglybt.android.core.az.AndroidFileHandler;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.util.*;
+import java.util.List;
+import java.util.Objects;
+import java.util.UUID;
 
 public class PathInfo
 {
@@ -140,7 +144,9 @@ public class PathInfo
 			if (VERSION.SDK_INT >= VERSION_CODES.Q) {
 				try {
 					storageVolume = sm.getStorageVolume(pathInfo.uri);
-				} catch (IllegalArgumentException e) {
+				} catch (Throwable e) {
+					// Used to throw IllegalArgumentException, but now throws
+					// IllegalStateException("Unknown volume for " + uri)
 				}
 			}
 			if (storageVolume == null) {
@@ -200,9 +206,10 @@ public class PathInfo
 			if (storageVolume != null) {
 				if (VERSION.SDK_INT >= VERSION_CODES.O) {
 					try {
-						UUID storageUuid = UUID.fromString(storageVolume.getUuid());
-						if (storageUuid != null) {
-							pathInfo.freeBytes = sm.getAllocatableBytes(storageUuid);
+						String uuid = storageVolume.getUuid();
+						if (uuid != null) {
+							pathInfo.freeBytes = sm.getAllocatableBytes(
+									UUID.fromString(uuid));
 						}
 					} catch (IllegalArgumentException ignore) {
 						// StorageVolume.getUuid can return a "XXXX-XXXX" value which
@@ -212,26 +219,75 @@ public class PathInfo
 					}
 				}
 
+				Object oPath = null;
+				Class<? extends StorageVolume> storageVolumeClass = storageVolume.getClass();
+
 				try {
-					Method mGetPath = storageVolume.getClass().getMethod("getPath");
-					Object oPath = mGetPath.invoke(storageVolume);
-					if (oPath instanceof String) {
-						pathInfo.storagePath = (String) oPath;
-						if (pathInfo.freeBytes <= 0) {
-							File file = new File(pathInfo.storagePath);
-							if (file.exists()) {
-								pathInfo.freeBytes = file.getFreeSpace();
-							}
-						}
-					}
+					Field mPath = storageVolumeClass.getDeclaredField("mPath");
+					mPath.setAccessible(true);
+					oPath = mPath.get(storageVolume).toString();
 				} catch (Throwable ignore) {
 				}
+
+				if (oPath == null) {
+					try {
+						Method mGetPath = storageVolumeClass.getMethod("getPath");
+						oPath = mGetPath.invoke(storageVolume);
+					} catch (Throwable ignore) {
+					}
+				}
+
+				if (oPath instanceof String) {
+					pathInfo.storagePath = (String) oPath;
+					if (pathInfo.freeBytes <= 0) {
+						File file = new File(pathInfo.storagePath);
+						if (file.exists()) {
+							pathInfo.freeBytes = file.getFreeSpace();
+						}
+					}
+				}
+
 				if (VERSION.SDK_INT >= VERSION_CODES.N) {
 					pathInfo.storageVolumeName = storageVolume.getDescription(context);
 					pathInfo.isRemovable = storageVolume.isRemovable();
 				}
 			}
 
+		}
+
+		if (pathInfo.shortName == null) {
+			Cursor cursor = context.getContentResolver().query(pathInfo.uri, null,
+					null, null, null);
+			try {
+				if (cursor != null && cursor.moveToFirst()) {
+					int columnIndex = cursor.getColumnIndex("_data");
+					if (columnIndex >= 0) {
+						String path = cursor.getString(columnIndex);
+						if (path != null) {
+							pathInfo.file = new File(path);
+							if (pathInfo.storagePath != null
+									&& path.startsWith(pathInfo.storagePath)) {
+								pathInfo.shortName = path.substring(
+										pathInfo.storagePath.length());
+								if (pathInfo.shortName.startsWith("/")) {
+									pathInfo.shortName = pathInfo.shortName.substring(1);
+								}
+							} else {
+								pathInfo.shortName = path;
+							}
+						}
+					}
+				}
+			} catch (Exception ignore) {
+			} finally {
+				if (cursor != null) {
+					cursor.close();
+				}
+			}
+
+			if (pathInfo.shortName == null) {
+				pathInfo.shortName = FileUtils.getUriTitle(context, pathInfo.uri);
+			}
 		}
 
 		if (pathInfo.freeBytes == 0 && pathInfo.file != null) {
@@ -311,34 +367,42 @@ public class PathInfo
 			}
 		}
 
-		if (pathInfo.shortName == null) {
-			if (VERSION.SDK_INT >= VERSION_CODES.N) {
-				StorageManager sm = (StorageManager) context.getSystemService(
-						Context.STORAGE_SERVICE);
+		if (pathInfo.shortName == null && VERSION.SDK_INT >= VERSION_CODES.N) {
+			StorageManager sm = (StorageManager) context.getSystemService(
+					Context.STORAGE_SERVICE);
 
+			try {
+				assert sm != null;
+				StorageVolume storageVolume = sm.getStorageVolume(f);
+
+				Object oPath = null;
+
+				Class<? extends StorageVolume> storageVolumeClass = storageVolume.getClass();
 				try {
-					assert sm != null;
-					StorageVolume storageVolume = sm.getStorageVolume(f);
-
-					Method mGetPath = storageVolume.getClass().getMethod("getPath");
-					Object oPath = mGetPath.invoke(storageVolume);
-					if (oPath instanceof String) {
-						String path = (String) oPath;
-						if (absolutePath.startsWith(path)) {
-							pathInfo.storageVolumeName = storageVolume.getDescription(
-									context);
-							pathInfo.storagePath = path;
-							pathInfo.shortName = absolutePath.substring(path.length());
-							if (pathInfo.shortName.startsWith("/")) {
-								pathInfo.shortName = pathInfo.shortName.substring(1);
-							}
-							pathInfo.isRemovable = storageVolume.isRemovable();
-							return pathInfo;
-						}
-					}
+					Field mPath = storageVolumeClass.getDeclaredField("mPath");
+					mPath.setAccessible(true);
+					oPath = mPath.get(storageVolume).toString();
 				} catch (Throwable ignore) {
 				}
 
+				if (oPath == null) {
+					try {
+						Method mGetPath = storageVolumeClass.getMethod("getPath");
+						oPath = mGetPath.invoke(storageVolume);
+					} catch (Throwable ignore) {
+					}
+				}
+
+				if (oPath instanceof String) {
+					String path = (String) oPath;
+					if (absolutePath.startsWith(path)) {
+						pathInfo.storageVolumeName = storageVolume.getDescription(context);
+						pathInfo.storagePath = path;
+						pathInfo.shortName = absolutePath.substring(path.length());
+						pathInfo.isRemovable = storageVolume.isRemovable();
+					}
+				}
+			} catch (Throwable ignore) {
 			}
 
 		}
