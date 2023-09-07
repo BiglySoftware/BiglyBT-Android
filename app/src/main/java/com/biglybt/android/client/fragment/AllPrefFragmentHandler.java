@@ -527,7 +527,8 @@ public class AllPrefFragmentHandler
 			@NonNull PreferenceGroup preferenceGroup,
 			@NonNull List<Map<String, Object>> parameters,
 			@NonNull HashMap<String, Preference> mapKeyPreference) {
-		for (int i = 0, parametersSize = parameters.size(); i < parametersSize; i++) {
+		for (int i = 0,
+				parametersSize = parameters.size(); i < parametersSize; i++) {
 			Map<String, Object> parameter = parameters.get(i);
 			if (parameter == null) {
 				continue;
@@ -862,6 +863,8 @@ public class AllPrefFragmentHandler
 					} else {
 						finalPreference.setSummary(startDir);
 					}
+				} else {
+					finalPreference.setSummary("");
 				}
 
 				break;
@@ -889,6 +892,26 @@ public class AllPrefFragmentHandler
 					}
 					return true;
 				});
+
+				doStandardSummary = false;
+				String fileString = (value instanceof String) ? (String) value : "";
+				Preference finalPreference = preference;
+				if (!fileString.isEmpty()) {
+					boolean isCoreSession = session.getRemoteProfile().getRemoteType() == RemoteProfile.TYPE_CORE;
+					if (isCoreSession) {
+						OffThread.runOffUIThread(() -> {
+							CharSequence s = PathInfo.buildPathInfo(
+									fileString).getFriendlyName();
+
+							OffThread.runOnUIThread(fragment, false,
+									activity -> finalPreference.setSummary(s));
+						});
+					} else {
+						finalPreference.setSummary(fileString);
+					}
+				} else {
+					finalPreference.setSummary("");
+				}
 				break;
 			}
 
