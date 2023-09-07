@@ -34,7 +34,6 @@ import android.os.Process;
 import android.os.Build.VERSION_CODES;
 import android.text.*;
 import android.util.Log;
-import android.util.SparseArray;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -617,8 +616,10 @@ public class AndroidUtils
 					sb.append('.');
 				}
 				sb.append(methodName);
+				// Used to be cnShort@fileName.java:lineNumber, but
+				// AS won't make file clickable without brackets
 				if (fileName != null) {
-					sb.append('@').append(fileName).append(".java");
+					sb.append('(').append(fileName).append(".java");
 				}
 				if (showLineNumber) {
 					int lineNumber = element.getLineNumber();
@@ -626,6 +627,7 @@ public class AndroidUtils
 						sb.append(':').append(lineNumber);
 					}
 				}
+				sb.append(')');
 				if (breakAfter) {
 					break;
 				}
@@ -849,18 +851,7 @@ public class AndroidUtils
 		}
 		PackageManager packageManager = requirePackageManager(context);
 		return packageManager.hasSystemFeature(PackageManager.FEATURE_LEANBACK)
-				|| packageManager.hasSystemFeature("android.software.leanback_only"); //NON-NLS
-
-		// API 26:
-		/**
-		 * Feature for {@link #getSystemAvailableFeatures} and
-		 * {@link #hasSystemFeature}: The device supports only leanback UI. Only
-		 * applications designed for this experience should be run, though this is
-		 * not enforced by the system.
-		 * @hide
-		 */
-		//@SdkConstant(SdkConstantType.FEATURE)
-		//public static final String FEATURE_LEANBACK_ONLY = "android.software.leanback_only";
+				|| packageManager.hasSystemFeature(PackageManager.FEATURE_LEANBACK_ONLY);
 	}
 
 	public static boolean isTV(Context context) {
@@ -885,7 +876,7 @@ public class AndroidUtils
 		//noinspection deprecation
 		isTV = packageManager.hasSystemFeature(PackageManager.FEATURE_TELEVISION)
 				|| packageManager.hasSystemFeature(PackageManager.FEATURE_LEANBACK)
-				|| packageManager.hasSystemFeature("android.software.leanback_only"); //NON-NLS
+				|| packageManager.hasSystemFeature(PackageManager.FEATURE_LEANBACK_ONLY);
 		if (isTV) {
 			if (DEBUG) {
 				Log.d(TAG,
