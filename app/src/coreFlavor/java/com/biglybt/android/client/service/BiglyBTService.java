@@ -833,7 +833,7 @@ public class BiglyBTService
 		if (onlyPluggedIn) {
 			enableBatteryMonitoring(BiglyBTApp.getContext(), corePrefs);
 		} else {
-			disableBatteryMonitoring(BiglyBTApp.getContext());
+			disableBatteryMonitoring(BiglyBTApp.getContext(), corePrefs);
 		}
 	}
 
@@ -1636,6 +1636,10 @@ public class BiglyBTService
 	void checkForSleepModeChange(@NonNull CorePrefs corePrefs) {
 		boolean bindToLocalHost = biglyBTManager != null
 				&& biglyBTManager.isBindToLocalHost();
+		if (CorePrefs.DEBUG_CORE) {
+			logd("checkForSleepModeChange, currently "
+					+ (bindToLocalHost ? "sleeping" : "awake"));
+		}
 		if (wouldBindToLocalHost(corePrefs) != bindToLocalHost) {
 			if (CorePrefs.DEBUG_CORE) {
 				logd("Need to restart to " + (bindToLocalHost ? "unsleep" : "sleep"));
@@ -1691,15 +1695,16 @@ public class BiglyBTService
 		}
 	}
 
-	private void disableBatteryMonitoring(@NonNull Context context) {
+	private void disableBatteryMonitoring(@NonNull Context context,
+			@NonNull CorePrefs corePrefs) {
 		if (batteryReceiver != null) {
 			context.unregisterReceiver(batteryReceiver);
 			batteryReceiver = null;
 			if (CorePrefs.DEBUG_CORE) {
 				logd("disableBatteryMonitoring: ");
 			}
-
 		}
+		checkForSleepModeChange(corePrefs);
 	}
 
 	private void enableBatteryMonitoring(@NonNull Context context,
@@ -1738,7 +1743,7 @@ public class BiglyBTService
 		if (CorePrefs.DEBUG_CORE) {
 			logd("enableBatteryMonitoring: ");
 		}
-
+		checkForSleepModeChange(corePrefs);
 	}
 
 }
