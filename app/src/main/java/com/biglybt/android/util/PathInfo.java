@@ -151,55 +151,70 @@ public class PathInfo
 			}
 			if (storageVolume == null) {
 				String volumeID = FileUtils.getVolumeIdFromTreeUri(pathInfo.uri);
-				if (VERSION.SDK_INT >= VERSION_CODES.N) {
-					List<StorageVolume> storageVolumes = sm.getStorageVolumes();
-					for (StorageVolume volume : storageVolumes) {
-						String uuid = volume.getUuid();
-						if (uuid != null && uuid.equals(volumeID)) {
-							storageVolume = volume;
-							break;
-						}
-					}
-				} else {
-					try {
-						final Class<?> storageVolumeClazz = Class.forName(
-								"android.os.storage.StorageVolume");
-						final Method getUuid = storageVolumeClazz.getMethod("getUuid");
-
-						Method getVolumeListMethod = StorageManager.class.getDeclaredMethod(
-								"getVolumeList");
-						StorageVolume[] sv = (StorageVolume[]) getVolumeListMethod.invoke(
-								sm);
-						for (StorageVolume volume : sv) {
-							String uuid = (String) getUuid.invoke(volume);
+				if (volumeID != null) {
+					if (VERSION.SDK_INT >= VERSION_CODES.N) {
+						List<StorageVolume> storageVolumes = sm.getStorageVolumes();
+						for (StorageVolume volume : storageVolumes) {
+							String uuid = volume.getUuid();
 							if (uuid != null && uuid.equals(volumeID)) {
 								storageVolume = volume;
-
-								try {
-									Method getDescription = storageVolumeClazz.getMethod(
-											"getDescription", Context.class);
-									pathInfo.storageVolumeName = (String) getDescription.invoke(
-											storageVolume, context);
-								} catch (Throwable t) {
-									Log.e(TAG, "buildPathInfo: ", t);
-								}
-								try {
-									Method isRemovable = storageVolumeClazz.getMethod(
-											"isRemovable");
-									pathInfo.isRemovable = (boolean) isRemovable.invoke(
-											storageVolume);
-								} catch (Throwable t) {
-									Log.e(TAG, "buildPathInfo: ", t);
-								}
-
 								break;
 							}
 						}
+					} else {
+						try {
+							final Class<?> storageVolumeClazz = Class.forName(
+									"android.os.storage.StorageVolume");
+							final Method getUuid = storageVolumeClazz.getMethod("getUuid");
 
-					} catch (Throwable t) {
-						Log.e(TAG, "buildPathInfo: ", t);
+							Method getVolumeListMethod = StorageManager.class.getDeclaredMethod(
+									"getVolumeList");
+							StorageVolume[] sv = (StorageVolume[]) getVolumeListMethod.invoke(
+									sm);
+							for (StorageVolume volume : sv) {
+								String uuid = (String) getUuid.invoke(volume);
+								if (uuid != null && uuid.equals(volumeID)) {
+									storageVolume = volume;
+
+									try {
+										Method getDescription = storageVolumeClazz.getMethod(
+												"getDescription", Context.class);
+										pathInfo.storageVolumeName = (String) getDescription.invoke(
+												storageVolume, context);
+									} catch (Throwable t) {
+										Log.e(TAG, "buildPathInfo: ", t);
+									}
+									try {
+										Method isRemovable = storageVolumeClazz.getMethod(
+												"isRemovable");
+										pathInfo.isRemovable = (boolean) isRemovable.invoke(
+												storageVolume);
+									} catch (Throwable t) {
+										Log.e(TAG, "buildPathInfo: ", t);
+									}
+
+									break;
+								}
+							}
+
+						} catch (Throwable t) {
+							Log.e(TAG, "buildPathInfo: ", t);
+						}
 					}
 
+				} else {
+					if (VERSION.SDK_INT >= VERSION_CODES.N) {
+						if (pathInfo.file == null) {
+							String path = PaulBurkeFileUtils.getPath(context, pathInfo.uri,
+									false);
+							if (path != null) {
+								pathInfo.file = new File(path);
+							}
+						}
+						if (pathInfo.file != null) {
+							storageVolume = sm.getStorageVolume(pathInfo.file);
+						}
+					}
 				}
 			}
 
