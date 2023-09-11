@@ -424,9 +424,10 @@ public class SideListHelper<ADAPTERITEM extends Comparable<ADAPTERITEM>>
 				final View textFilterHeader = activity.findViewById(
 						R.id.sidetextfilter_header);
 				if (textFilterHeader != null) {
-					if (hideUnselectedSideHeaders && activeEntry != null
-							&& activeEntry != mapEntries.get(ENTRY_TEXTFILTER)) {
-						textFilterHeader.setVisibility(View.GONE);
+					if (hideUnselectedSideHeaders) {
+						if (activeEntry != mapEntries.get(ENTRY_TEXTFILTER)) {
+							textFilterHeader.setVisibility(View.GONE);
+						}
 					} else {
 						textFilterHeader.setVisibility(
 								(getLetterFilter() != null && getLetterFilter().showLetterUI())
