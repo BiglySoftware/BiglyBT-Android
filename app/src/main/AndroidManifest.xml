@@ -60,7 +60,6 @@
 		<activity
 			android:name="com.biglybt.android.client.activity.LoginActivity"
 			android:configChanges="keyboardHidden"
-			android:label="@string/app_name"
 			android:parentActivityName="com.biglybt.android.client.activity.IntentHandler"
 			android:theme="@style/AppThemeNoBackground">
 			<meta-data
@@ -74,7 +73,6 @@
 		<activity
 			android:name="com.biglybt.android.client.activity.TorrentDetailsActivity"
 			android:configChanges="keyboardHidden"
-			android:label="@string/app_name"
 			android:parentActivityName="com.biglybt.android.client.activity.TorrentViewActivity">
 			<meta-data
 				android:name="android.support.PARENT_ACTIVITY"
@@ -132,7 +130,6 @@
 		<activity
 			android:name="com.biglybt.android.client.activity.TorrentViewActivity"
 			android:configChanges="keyboardHidden"
-			android:label="@string/app_name"
 			android:parentActivityName="com.biglybt.android.client.activity.IntentHandler">
 			<meta-data
 				android:name="android.support.PARENT_ACTIVITY"
@@ -149,7 +146,6 @@
 			android:name="com.biglybt.android.client.activity.IntentHandler"
 			android:alwaysRetainTaskState="true"
 			android:configChanges="keyboardHidden|orientation|screenSize"
-			android:label="@string/app_name"
 			android:launchMode="singleTask"
 			android:exported="true"
 			android:theme="@style/ThemeSplash">
