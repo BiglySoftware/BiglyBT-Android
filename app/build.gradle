@@ -150,7 +150,7 @@ dependencies {
     // 1.6.1 gives conflicts between org.jetbrains.kotlin:kotlin-stdlib:1.8.0 and org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.6.21
     // Because leanback uses 1.6.21 (So does androidx.lifecycle, but latest uses 1.8.0)
     implementation "androidx.fragment:fragment:1.5.7"
-    implementation 'androidx.documentfile:documentfile:1.0.1'
+    implementation 'androidx.documentfile:documentfile:1.1.0-alpha01'
     // https://developer.android.com/jetpack/androidx/releases/viewpager2
     implementation 'androidx.viewpager2:viewpager2:1.1.0-beta02'
 
