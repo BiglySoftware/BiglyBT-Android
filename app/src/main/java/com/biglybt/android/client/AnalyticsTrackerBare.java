@@ -177,6 +177,9 @@ public class AnalyticsTrackerBare
 	@Override
 	public void logCrash(Throwable e, Thread thread) {
 		try {
+			if (AndroidUtils.DEBUG) {
+				Log.e(TAG, "logCrash: ", e);
+			}
 			logCrash(true, toString(e), e == null ? "" : getCompressedStackTrace(e),
 					"*" + thread.getName());
 		} catch (Throwable t) {
