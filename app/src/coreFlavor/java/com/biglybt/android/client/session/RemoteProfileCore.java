@@ -21,8 +21,10 @@ import java.util.Map;
 
 import com.biglybt.android.client.CorePrefs;
 import com.biglybt.android.client.CoreRemoteAccessPreferences;
+import com.biglybt.android.client.dialog.DialogFragmentBiglyBTCoreProfile;
 
 import android.Manifest;
+import android.os.Build;
 
 import androidx.annotation.NonNull;
 
@@ -59,6 +61,8 @@ public class RemoteProfileCore
 
 	@Override
 	public List<String> getRequiredPermissions() {
+		/** See also {@link DialogFragmentBiglyBTCoreProfile#saveAndClose()} */
+
 		final List<String> permissionsNeeded = super.getRequiredPermissions();
 		permissionsNeeded.add(Manifest.permission.WRITE_EXTERNAL_STORAGE);
 
@@ -68,6 +72,10 @@ public class RemoteProfileCore
 		}
 		if (corePrefs.getPrefDisableSleep()) {
 			permissionsNeeded.add(Manifest.permission.WAKE_LOCK);
+		}
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+			// https://developer.android.com/develop/ui/views/notifications/notification-permission
+			permissionsNeeded.add(Manifest.permission.POST_NOTIFICATIONS);
 		}
 
 		return permissionsNeeded;

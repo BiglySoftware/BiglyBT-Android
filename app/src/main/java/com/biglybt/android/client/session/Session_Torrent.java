@@ -32,6 +32,8 @@ import androidx.collection.LongSparseArray;
 import androidx.fragment.app.FragmentActivity;
 
 import com.biglybt.android.client.*;
+import com.biglybt.android.client.AppCompatActivityM.PermissionRequestResults;
+import com.biglybt.android.client.AppCompatActivityM.PermissionResultHandler;
 import com.biglybt.android.client.activity.TorrentOpenOptionsActivity;
 import com.biglybt.android.client.rpc.*;
 import com.biglybt.android.util.FileUtils;
@@ -602,7 +604,7 @@ public class Session_Torrent
 		}
 	}
 
-	public void openTorrent(final FragmentActivity activity, final Uri uri) {
+	public void openTorrent(final AppCompatActivityM activity, final Uri uri) {
 		session.ensureNotDestroyed();
 		if (AndroidUtils.DEBUG) {
 			Log.d(TAG, "openTorrent " + uri);
@@ -615,11 +617,22 @@ public class Session_Torrent
 			Log.d(TAG, "openTorrent " + scheme);
 		}
 		if ("file".equals(scheme) || "content".equals(scheme)) {
-			AndroidUtilsUI.requestPermissions(activity, new String[] {
+			activity.requestPermissions(new String[] {
 				Manifest.permission.READ_EXTERNAL_STORAGE
-			}, () -> openTorrent_perms(activity, uri),
-					() -> CustomToast.showText(R.string.content_read_failed_perms_denied,
-							Toast.LENGTH_LONG));
+			}, new PermissionResultHandler() {
+				@WorkerThread
+				@Override
+				public void onAllGranted() {
+					openTorrent_perms(activity, uri);
+				}
+
+				@WorkerThread
+				@Override
+				public void onSomeDenied(PermissionRequestResults results) {
+					CustomToast.showText(R.string.content_read_failed_perms_denied,
+							Toast.LENGTH_LONG);
+				}
+			});
 		} else {
 			openTorrent(activity, uri.toString(), (String) null);
 		}

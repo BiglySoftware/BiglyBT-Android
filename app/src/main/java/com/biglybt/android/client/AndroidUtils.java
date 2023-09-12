@@ -1034,6 +1034,22 @@ public class AndroidUtils
 	@SuppressLint("LogConditional")
 	public static boolean hasPermisssion(@NonNull Context context,
 			@NonNull String permission) {
+		if (VERSION.SDK_INT >= VERSION_CODES.R
+				&& permission.equals(Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+			// targetApi >= Android 11,  WRITE_EXTERNAL_STORAGE no longer provide any additional access.
+			return true;
+		}
+		if (VERSION.SDK_INT >= VERSION_CODES.TIRAMISU
+				&& permission.equals(Manifest.permission.READ_EXTERNAL_STORAGE)) {
+			// Starting in API level 33, this permission has no effect
+			return true;
+		}
+		if (VERSION.SDK_INT < VERSION_CODES.KITKAT
+				&& permission.equals(Manifest.permission.READ_EXTERNAL_STORAGE)) {
+			// This permission is enforced starting in API level 19
+			return true;
+		}
+
 		PackageManager packageManager = requirePackageManager(context);
 		try {
 			packageManager.getPermissionInfo(permission, 0);

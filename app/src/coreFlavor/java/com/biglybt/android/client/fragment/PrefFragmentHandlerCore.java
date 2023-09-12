@@ -29,6 +29,8 @@ import androidx.annotation.*;
 import androidx.fragment.app.Fragment;
 import androidx.preference.*;
 
+import com.biglybt.android.client.AppCompatActivityM.PermissionRequestResults;
+import com.biglybt.android.client.AppCompatActivityM.PermissionResultHandler;
 import com.biglybt.android.client.R;
 import com.biglybt.android.client.*;
 import com.biglybt.android.client.activity.SessionActivity;
@@ -138,13 +140,23 @@ public class PrefFragmentHandlerCore
 					boolean b = ((TwoStatePreference) preference).isChecked();
 					prefs.put(CorePrefs.PREF_CORE_AUTOSTART, b);
 					if (b) {
-						AndroidUtilsUI.requestPermissions(activity, new String[] {
+						// Note: In theory there's no need to ask for RECEIVE_BOOT_COMPLETED perms
+						activity.requestPermissions(new String[] {
 							android.Manifest.permission.RECEIVE_BOOT_COMPLETED
-						}, null, () -> {
-							TrayPreferences prefs12 = BiglyBTApp.getAppPreferences().getPreferences();
-							prefs12.put(CorePrefs.PREF_CORE_AUTOSTART, false);
+						}, new PermissionResultHandler() {
+							@WorkerThread
+							@Override
+							public void onAllGranted() {
+							}
 
-							updateWidgets();
+							@WorkerThread
+							@Override
+							public void onSomeDenied(PermissionRequestResults results) {
+								TrayPreferences prefs12 = BiglyBTApp.getAppPreferences().getPreferences();
+								prefs12.put(CorePrefs.PREF_CORE_AUTOSTART, false);
+
+								updateWidgets();
+							}
 						});
 					}
 				});
@@ -158,13 +170,23 @@ public class PrefFragmentHandlerCore
 					prefs.put(CorePrefs.PREF_CORE_DISABLESLEEP, b);
 
 					if (b) {
-						AndroidUtilsUI.requestPermissions(activity, new String[] {
+						// Note: In theory there's no need to ask for WAKE_LOCK perms
+						activity.requestPermissions(new String[] {
 							android.Manifest.permission.WAKE_LOCK
-						}, null, () -> {
-							TrayPreferences prefs1 = BiglyBTApp.getAppPreferences().getPreferences();
-							prefs1.put(CorePrefs.PREF_CORE_DISABLESLEEP, false);
+						}, new PermissionResultHandler() {
+							@WorkerThread
+							@Override
+							public void onAllGranted() {
+							}
 
-							updateWidgets();
+							@WorkerThread
+							@Override
+							public void onSomeDenied(PermissionRequestResults results) {
+								TrayPreferences prefs1 = BiglyBTApp.getAppPreferences().getPreferences();
+								prefs1.put(CorePrefs.PREF_CORE_DISABLESLEEP, false);
+
+								updateWidgets();
+							}
 						});
 					}
 				});

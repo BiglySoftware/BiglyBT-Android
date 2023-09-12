@@ -16,28 +16,31 @@
 
 package com.biglybt.android.client;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.pm.PackageManager;
+import android.content.pm.PackageManager.NameNotFoundException;
+import android.content.pm.PermissionInfo;
+import android.os.Build.VERSION;
+import android.os.Build.VERSION_CODES;
 import android.os.Bundle;
 import android.os.PersistableBundle;
 import android.util.Log;
 
-import androidx.annotation.AnyThread;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
+import androidx.annotation.*;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.collection.LongSparseArray;
 import androidx.core.app.ActivityCompat;
 
-import com.biglybt.util.RunnableWorkerThread;
-
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 /**
  * Activity with permission handing methods
- *
+ * <p>
  * Created by TuxPaper on 3/18/16.
- *
+ * <p>
  * Duplicate code in {@link FragmentM}
  */
 @SuppressLint("Registered")
@@ -46,17 +49,37 @@ public class AppCompatActivityM
 {
 	private int requestPermissionID = 0;
 
-	private final LongSparseArray<RunnableWorkerThread[]> requestPermissionRunnables = new LongSparseArray<>();
+	public interface PermissionResultHandler
+	{
+
+		@WorkerThread
+		void onAllGranted();
+
+		@WorkerThread
+		void onSomeDenied(PermissionRequestResults results);
+	}
+
+	private final LongSparseArray<PermissionResultHandler> requestPermissionRunnables = new LongSparseArray<>();
 
 	private String classSimpleName;
 
 	private boolean isActivityVisible;
 
-	private static class PermissionRequestResults
+	public static class PermissionRequestResults
 	{
 		final String[] permissions;
 
 		final int[] grantResults;
+		
+		public List<String> getDenies() {
+			List<String> listDenies = new ArrayList<>();
+			for (int i = 0; i < permissions.length; i++) {
+					if (grantResults[i] == PackageManager.PERMISSION_DENIED) {
+						listDenies.add(permissions[i]);
+					}
+			}
+			return listDenies;
+		}
 
 		PermissionRequestResults(String[] permissions, int[] grantResults) {
 			this.permissions = permissions;
@@ -73,53 +96,82 @@ public class AppCompatActivityM
 	 */
 	@AnyThread
 	public boolean requestPermissions(@NonNull String[] permissions,
-			RunnableWorkerThread runnableOnGrant,
-			@Nullable RunnableWorkerThread runnableOnDeny) {
+			@Nullable PermissionResultHandler permissionResultHandler) {
+
+		if (AndroidUtils.DEBUG) {
+			log("Perms", "Requesting " + Arrays.toString(permissions));
+		}
 
 		// requestPermissions supposedly does checkSelfPermission for us, but
 		// I get prompted anyway, and clicking Revoke (on an already granted perm):
 		// I/ActivityManager: Killing xxxx:com.vuze.android.client/u0a24 (adj 1): permissions revoked
 		// Also, requestPermissions assumes PERMISSION_REVOKED on unknown
 		// permission strings (ex READ_EXTERNAL_STORAGE on API 7)
-		boolean allGranted = true;
+		List<String> neededPermissions = new ArrayList<>();
 		if (permissions.length > 0) {
 			PackageManager packageManager = getPackageManager();
 			for (String permission : permissions) {
+				if (VERSION.SDK_INT >= VERSION_CODES.R
+						&& permission.equals(Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+					// targetApi >= Android 11,  WRITE_EXTERNAL_STORAGE no longer provide any additional access.
+					continue;
+				}
+				if (VERSION.SDK_INT >= VERSION_CODES.TIRAMISU
+						&& permission.equals(Manifest.permission.READ_EXTERNAL_STORAGE)) {
+					// Starting in API level 33, this permission has no effect
+					continue;
+				}
+				if (VERSION.SDK_INT < VERSION_CODES.KITKAT
+						&& permission.equals(Manifest.permission.READ_EXTERNAL_STORAGE)) {
+					// This permission is enforced starting in API level 19
+					continue;
+				}
+
+				PermissionInfo permissionInfo = null;
 				try {
-					packageManager.getPermissionInfo(permission, 0);
-				} catch (PackageManager.NameNotFoundException e) {
+					permissionInfo = packageManager.getPermissionInfo(permission, 0);
+				} catch (NameNotFoundException e) {
 					log("Perms", "requestPermissions: Permission " + permission
 							+ " doesn't exist.  Assuming granted.");
 					continue;
 				}
 				if (ActivityCompat.checkSelfPermission(this,
 						permission) != PackageManager.PERMISSION_GRANTED) {
-					allGranted = false;
-					break;
+					if (AndroidUtils.DEBUG) {
+						if (VERSION.SDK_INT >= VERSION_CODES.M) {
+							log("Perms", permission + " not granted. shouldShowRationale? "
+									+ shouldShowRequestPermissionRationale(permission));
+							if (permissionInfo != null) {
+								log("Perms", permissionInfo.loadLabel(packageManager) + ": "
+										+ permissionInfo.loadDescription(packageManager));
+							}
+						}
+					}
+					neededPermissions.add(permission);
 				}
 			}
 		}
 
-		if (allGranted) {
+		if (neededPermissions.isEmpty()) {
 			if (AndroidUtils.DEBUG) {
-				log("Perms", "requestPermissions: allGranted ("
-						+ Arrays.toString(permissions) + ", running " + runnableOnGrant);
+				log("Perms",
+						"requestPermissions: allGranted (" + Arrays.toString(permissions)
+								+ ", running " + permissionResultHandler);
 			}
-			if (runnableOnGrant != null) {
-				OffThread.runOffUIThread(runnableOnGrant);
+			if (permissionResultHandler != null) {
+				OffThread.runOffUIThread(permissionResultHandler::onAllGranted);
 			}
 			return true;
 		}
 
+		permissions = neededPermissions.toArray(new String[0]);
+
 		if (AndroidUtils.DEBUG) {
 			log("Perms", "requestPermissions: requesting "
-					+ Arrays.toString(permissions) + " for " + runnableOnGrant);
+					+ Arrays.toString(permissions) + " for " + permissionResultHandler);
 		}
 		requestPermissionRunnables.put(requestPermissionID,
-				new RunnableWorkerThread[] {
-					runnableOnGrant,
-					runnableOnDeny
-				});
+				permissionResultHandler);
 		ActivityCompat.requestPermissions(this, permissions, requestPermissionID);
 		requestPermissionID++;
 		return false;
@@ -251,9 +303,7 @@ public class AppCompatActivityM
 			@NonNull String[] permissions, @NonNull int[] grantResults) {
 		super.onRequestPermissionsResult(requestCode, permissions, grantResults);
 
-		RunnableWorkerThread[] runnables = requestPermissionRunnables.get(
-				requestCode);
-		if (runnables != null) {
+		if (requestPermissionRunnables.containsKey(requestCode)) {
 
 			if (isPaused) {
 				// https://code.google.com/p/android/issues/detail?id=190966
@@ -263,10 +313,12 @@ public class AppCompatActivityM
 					requestPermissionResults = new LongSparseArray<>();
 				}
 				requestPermissionResults.put(requestCode,
-					new PermissionRequestResults(permissions, grantResults));
+						new PermissionRequestResults(permissions, grantResults));
 				return;
 			}
 
+			PermissionResultHandler permissionResultHandler = requestPermissionRunnables.get(
+					requestCode);
 			requestPermissionRunnables.remove(requestCode);
 
 			boolean allGranted = grantResults.length > 0;
@@ -283,18 +335,16 @@ public class AppCompatActivityM
 			if (AndroidUtils.DEBUG) {
 				log("Perms",
 						"onRequestPermissionsResult: " + Arrays.toString(permissions) + " "
-								+ (allGranted ? "granted" : "revoked") + " for "
-								+ runnables[0]);
+								+ (allGranted ? "granted" : "revoked"));
 			}
 
-			if (allGranted && runnables[0] != null) {
-				OffThread.runOffUIThread(runnables[0]);
-				return;
-			}
-
-			if (!allGranted && runnables[1] != null) {
-				OffThread.runOffUIThread(runnables[1]);
-				return;
+			if (permissionResultHandler != null) {
+				if (allGranted) {
+					OffThread.runOffUIThread(permissionResultHandler::onAllGranted);
+				} else {
+					OffThread.runOffUIThread(() -> permissionResultHandler.onSomeDenied(
+							new PermissionRequestResults(permissions, grantResults)));
+				}
 			}
 		}
 	}

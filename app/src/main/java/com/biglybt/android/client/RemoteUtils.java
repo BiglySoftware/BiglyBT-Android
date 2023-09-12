@@ -16,18 +16,20 @@
 
 package com.biglybt.android.client;
 
-import android.Manifest;
+import android.Manifest.permission;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build.VERSION;
+import android.os.Build.VERSION_CODES;
 import android.os.Bundle;
 
-import androidx.annotation.AnyThread;
-import androidx.annotation.NonNull;
-import androidx.annotation.UiThread;
+import androidx.annotation.*;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
 
+import com.biglybt.android.client.AppCompatActivityM.PermissionRequestResults;
+import com.biglybt.android.client.AppCompatActivityM.PermissionResultHandler;
 import com.biglybt.android.client.activity.IntentHandler;
 import com.biglybt.android.client.activity.TorrentViewActivity;
 import com.biglybt.android.client.dialog.DialogFragmentBiglyBTCoreProfile;
@@ -71,15 +73,39 @@ public class RemoteUtils
 		if (requiredPermissions.size() > 0) {
 			return activity.requestPermissions(
 					requiredPermissions.toArray(new String[0]),
-					() -> OffThread.runOnUIThread(() -> {
+					new PermissionResultHandler() {
+						@WorkerThread
+						@Override
+						public void onAllGranted() {
+							OffThread.runOnUIThread(() -> {
 
-						if (closeActivityOnSuccess && !isMain) {
-							activity.finish();
+								if (closeActivityOnSuccess && !isMain) {
+									activity.finish();
+								}
+								reallyOpenRemote(activity, remoteProfile, isMain);
+							});
 						}
-						reallyOpenRemote(activity, remoteProfile, isMain);
-					}),
-					() -> AndroidUtilsUI.showDialog(activity, R.string.permission_denied,
-							R.string.error_client_requires_permissions));
+
+						@WorkerThread
+						@Override
+						public void onSomeDenied(PermissionRequestResults results) {
+							List<String> denies = results.getDenies();
+							if (VERSION.SDK_INT >= VERSION_CODES.TIRAMISU) {
+								denies.remove(permission.POST_NOTIFICATIONS);
+							}
+							if (denies.size() > 0) {
+								AndroidUtilsUI.showDialog(activity, R.string.permission_denied,
+										R.string.error_client_requires_permissions);
+							} else {
+								OffThread.runOnUIThread(() -> {
+									if (closeActivityOnSuccess && !isMain) {
+										activity.finish();
+									}
+									reallyOpenRemote(activity, remoteProfile, isMain);
+								});
+							}
+						}
+					});
 		}
 
 		if (closeActivityOnSuccess && !isMain) {
@@ -170,30 +196,25 @@ public class RemoteUtils
 
 	public static void createCoreProfile(@NonNull final FragmentActivity activity,
 			final OnCoreProfileCreated l) {
-		AndroidUtilsUI.requestPermissions(activity, new String[] {
-			Manifest.permission.WRITE_EXTERNAL_STORAGE
-		}, () -> {
-			RemoteProfile coreProfile = RemoteUtils.getCoreProfile();
-			if (coreProfile != null) {
-				if (l != null) {
-					l.onCoreProfileCreated(coreProfile, true);
-				}
-				return;
-			}
-
-			RemoteProfile localProfile = RemoteProfileFactory.create(
-					RemoteProfile.TYPE_CORE);
-			localProfile.setHost("localhost");
-			localProfile.setPort(RPC.LOCAL_BIGLYBT_PORT);
-			localProfile.setNick(activity.getString(R.string.local_name,
-					AndroidUtils.getFriendlyDeviceName()));
-			localProfile.setUpdateInterval(2);
-
+		RemoteProfile coreProfile = RemoteUtils.getCoreProfile();
+		if (coreProfile != null) {
 			if (l != null) {
-				l.onCoreProfileCreated(localProfile, false);
+				l.onCoreProfileCreated(coreProfile, true);
 			}
-		}, () -> AndroidUtilsUI.showDialog(activity, R.string.permission_denied,
-				R.string.error_client_requires_permissions));
+			return;
+		}
+
+		RemoteProfile localProfile = RemoteProfileFactory.create(
+				RemoteProfile.TYPE_CORE);
+		localProfile.setHost("localhost");
+		localProfile.setPort(RPC.LOCAL_BIGLYBT_PORT);
+		localProfile.setNick(activity.getString(R.string.local_name,
+				AndroidUtils.getFriendlyDeviceName()));
+		localProfile.setUpdateInterval(2);
+
+		if (l != null) {
+			l.onCoreProfileCreated(localProfile, false);
+		}
 	}
 
 	private static RemoteProfile getCoreProfile() {

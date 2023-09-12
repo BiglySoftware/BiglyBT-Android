@@ -31,9 +31,7 @@ import android.view.*;
 import android.webkit.MimeTypeMap;
 import android.widget.*;
 
-import androidx.annotation.MenuRes;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
+import androidx.annotation.*;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.view.ActionMode;
@@ -48,6 +46,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.biglybt.android.adapter.FlexibleRecyclerSelectionListener;
 import com.biglybt.android.adapter.SortableRecyclerAdapter;
 import com.biglybt.android.client.*;
+import com.biglybt.android.client.AppCompatActivityM.PermissionRequestResults;
+import com.biglybt.android.client.AppCompatActivityM.PermissionResultHandler;
 import com.biglybt.android.client.activity.TorrentOpenOptionsActivity;
 import com.biglybt.android.client.adapter.*;
 import com.biglybt.android.client.dialog.DialogFragmentSizeRange;
@@ -1041,11 +1041,22 @@ public class FilesFragment
 
 	@Thunk
 	void saveFile(final String contentURL, final String outFile) {
-		requestPermissions(new String[] {
+		((AppCompatActivityM) requireActivity()).requestPermissions(new String[] {
 			Manifest.permission.WRITE_EXTERNAL_STORAGE
-		}, () -> reallySaveFile(contentURL, outFile),
-				() -> CustomToast.showText(R.string.content_saved_failed_perms_denied,
-						Toast.LENGTH_LONG));
+		}, new PermissionResultHandler() {
+			@WorkerThread
+			@Override
+			public void onAllGranted() {
+				reallySaveFile(contentURL, outFile);
+			}
+
+			@WorkerThread
+			@Override
+			public void onSomeDenied(PermissionRequestResults results) {
+				CustomToast.showText(R.string.content_saved_failed_perms_denied,
+						Toast.LENGTH_LONG);
+			}
+		});
 	}
 
 	@Thunk

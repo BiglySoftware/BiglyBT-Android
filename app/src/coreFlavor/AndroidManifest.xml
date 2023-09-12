@@ -32,6 +32,8 @@
 	
 	<!-- Starting API 28, foreground services must request the FOREGROUND_SERVICE permission -->
 	<uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+	<!-- Android 13 (API level 33) and higher supports a runtime permission for sending non-exempt (including Foreground Services (FGS)) notifications from an app -->
+	<uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
 
 	<application android:name="com.biglybt.android.client.BiglyBTApp">
 

@@ -672,28 +672,6 @@ public class AndroidUtilsUI
 		return true;
 	}
 
-	@AnyThread
-	public static void requestPermissions(Activity activity,
-			@NonNull String[] permissions,
-			@Nullable RunnableWorkerThread runnableOnGrant,
-			@Nullable RunnableWorkerThread runnableOnDeny) {
-
-		if (!(activity instanceof AppCompatActivityM)) {
-			Log.e(TAG,
-					"requestPermissions: activity " + activity
-							+ " is not AppCompatActivityM for "
-							+ AndroidUtils.getCompressedStackTrace());
-			// fallback and just run it and hope we have perms
-			if (runnableOnGrant != null) {
-				OffThread.runOffUIThread(runnableOnGrant);
-			}
-			return;
-		}
-
-		AppCompatActivityM a = (AppCompatActivityM) activity;
-		a.requestPermissions(permissions, runnableOnGrant, runnableOnDeny);
-	}
-
 	public interface LinkClickListener
 	{
 		/**
