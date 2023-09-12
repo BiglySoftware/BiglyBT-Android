@@ -108,6 +108,8 @@ public class PrefFragmentHandlerCore
 
 	private static final String TAG = "PrefFragHandlerCore";
 
+	private String localIpAddress;
+
 	public PrefFragmentHandlerCore(SessionActivity activity, Fragment fragment) {
 		super(activity, fragment);
 	}
@@ -218,8 +220,7 @@ public class PrefFragmentHandlerCore
 			case KEY_RACCESS_SHOWQR: {
 				OffThread.runOffUIThread(this::saveRemoteAccessPrefs);
 				try {
-					String url = "biglybt://remote/profile?h="
-							+ NetworkState.getLocalIpAddress() + "&p="
+					String url = "biglybt://remote/profile?h=" + localIpAddress + "&p="
 							+ RPC.LOCAL_BIGLYBT_PORT;
 					boolean reqPW = ds.getBoolean(KEY_RACCESS_REQPW, false);
 					if (reqPW) {
@@ -229,7 +230,7 @@ public class PrefFragmentHandlerCore
 							url += "&reqPW=1";
 						}
 					}
-					String urlWebUI = "http://" + NetworkState.getLocalIpAddress() + ":"
+					String urlWebUI = "http://" + localIpAddress + ":"
 							+ RPC.LOCAL_BIGLYBT_PORT;
 					DialogFragmentRemoteAccessQR.open(
 							activity.getSupportFragmentManager(), url, urlWebUI);
@@ -343,6 +344,11 @@ public class PrefFragmentHandlerCore
 		//       listener stuff
 		BiglyCoreUtils.waitForCore();
 
+		final String screenKey = preferenceScreen.getKey();
+		if (KEY_RACCESS_SCREEN.equals(screenKey)) {
+			localIpAddress = NetworkState.getLocalIpAddress();
+		}
+
 		final Preference prefSavePath = findPreference(KEY_SAVE_PATH);
 		if (prefSavePath != null) {
 			String sDir = ds.getString(KEY_SESSION_DOWNLOAD_PATH);
@@ -375,7 +381,7 @@ public class PrefFragmentHandlerCore
 			}
 			Bundle extras = prefRemAccessScreen.getExtras();
 
-			extras.putCharSequence("summary",	s);
+			extras.putCharSequence("summary", s);
 		}
 	}
 
@@ -603,7 +609,7 @@ public class PrefFragmentHandlerCore
 		if (prefAllowLANAccess != null) {
 			prefAllowLANAccess.setChecked(allowLANAccess);
 			prefAllowLANAccess.setSummaryOn(
-					NetworkState.getLocalIpAddress() + ":" + RPC.LOCAL_BIGLYBT_PORT);
+					localIpAddress + ":" + RPC.LOCAL_BIGLYBT_PORT);
 		}
 
 		TwoStatePreference prefReqPW = (TwoStatePreference) findPreference(
