@@ -19,9 +19,7 @@ package com.biglybt.android.client;
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.*;
-import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
+import android.content.*;
 import android.content.pm.ComponentInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
@@ -32,6 +30,7 @@ import android.os.*;
 import android.os.Build.VERSION;
 import android.os.Process;
 import android.os.Build.VERSION_CODES;
+import android.provider.Settings;
 import android.text.*;
 import android.util.Log;
 import android.view.Menu;
@@ -228,6 +227,35 @@ public class AndroidUtils
 	}
 
 	public static String getFriendlyDeviceName() {
+
+		ContentResolver contentResolver = BiglyBTApp.getContext().getContentResolver();
+
+		if (VERSION.SDK_INT >= VERSION_CODES.JELLY_BEAN_MR1) {
+			String deviceName = Settings.Global.getString(contentResolver,
+					"device_name");
+			if (deviceName != null) {
+				return deviceName;
+			}
+
+			deviceName = Settings.Global.getString(contentResolver,
+					"default_device_name");
+			if (deviceName != null) {
+				return deviceName;
+			}
+		} else {
+			String deviceName = Settings.System.getString(contentResolver,
+					"device_name");
+			if (deviceName != null) {
+				return deviceName;
+			}
+
+			deviceName = Settings.System.getString(contentResolver,
+					"default_device_name");
+			if (deviceName != null) {
+				return deviceName;
+			}
+		}
+
 		String deviceName = Build.PRODUCT == null ? "" : Build.PRODUCT;
 		if (Build.BRAND != null) {
 			if (deviceName.isEmpty()) {
