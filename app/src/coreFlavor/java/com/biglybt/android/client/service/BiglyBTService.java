@@ -29,6 +29,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.WorkerThread;
 import androidx.core.app.NotificationCompat;
+import androidx.core.content.ContextCompat;
 
 import com.biglybt.android.client.*;
 import com.biglybt.android.client.CorePrefs.CorePrefsChangedListener;
@@ -392,6 +393,9 @@ public class BiglyBTService
 		@Override
 		public void onReceive(Context context, Intent intent) {
 			String action = intent.getAction();
+			if (CorePrefs.DEBUG_CORE) {
+				logd("Screen " + action);
+			}
 			if (action == null) {
 				return;
 			}
@@ -1153,7 +1157,11 @@ public class BiglyBTService
 		IntentFilter filter = new IntentFilter(Intent.ACTION_SCREEN_ON);
 		filter.addAction(Intent.ACTION_SCREEN_OFF);
 		screenReceiver = new ScreenReceiver();
-		registerReceiver(screenReceiver, filter);
+		Intent intent = ContextCompat.registerReceiver(this, screenReceiver, filter,
+				ContextCompat.RECEIVER_EXPORTED);
+		if (CorePrefs.DEBUG_CORE) {
+			logd("registered Screen intent " + intent);
+		}
 		initChannels(this);
 	}
 
@@ -1712,18 +1720,14 @@ public class BiglyBTService
 		if (batteryReceiver != null) {
 			return;
 		}
-		IntentFilter intentFilterConnected = new IntentFilter(
-				Intent.ACTION_POWER_CONNECTED);
-		IntentFilter intentFilterDisconnected = new IntentFilter(
-				Intent.ACTION_POWER_DISCONNECTED);
+		IntentFilter filter = new IntentFilter(Intent.ACTION_POWER_CONNECTED);
+		filter.addAction(Intent.ACTION_POWER_DISCONNECTED);
 
 		batteryReceiver = new BroadcastReceiver() {
 			@Override
 			public void onReceive(Context context, Intent intent) {
-				if (CorePrefs.DEBUG_CORE && intent.getAction() != null) {
-					boolean isConnected = intent.getAction().equals(
-							Intent.ACTION_POWER_CONNECTED);
-					logd("Battery connected? " + isConnected);
+				if (CorePrefs.DEBUG_CORE) {
+					logd("Battery received " + intent.getAction());
 				}
 				Core core = BiglyBTService.this.core;
 				if (core == null) {
@@ -1738,8 +1742,8 @@ public class BiglyBTService
 				}
 			}
 		};
-		context.registerReceiver(batteryReceiver, intentFilterConnected);
-		context.registerReceiver(batteryReceiver, intentFilterDisconnected);
+		ContextCompat.registerReceiver(context, batteryReceiver, filter,
+				ContextCompat.RECEIVER_EXPORTED);
 		if (CorePrefs.DEBUG_CORE) {
 			logd("enableBatteryMonitoring: ");
 		}
