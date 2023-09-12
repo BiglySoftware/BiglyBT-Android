@@ -16,6 +16,7 @@
 
 package com.biglybt.android.client;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.*;
@@ -113,7 +114,7 @@ public class AndroidUtils
 		"RedundantSuppression"
 	})
 	public static final boolean DEBUG_SIDELIST = DEBUG && false;
-		
+
 	private static final String TAG = "Utils";
 
 	private static final Object[] XMLescapes = new Object[] {
@@ -725,14 +726,14 @@ public class AndroidUtils
 			return info.activityInfo;
 		if (info.serviceInfo != null)
 			return info.serviceInfo;
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+		if (VERSION.SDK_INT >= VERSION_CODES.KITKAT) {
 			return getComponentInfo_v19(info);
 		}
 		return null;
 	}
 
 	@Nullable
-	@TargetApi(Build.VERSION_CODES.KITKAT)
+	@TargetApi(VERSION_CODES.KITKAT)
 	private static ComponentInfo getComponentInfo_v19(@NonNull ResolveInfo info) {
 		if (info.providerInfo != null)
 			return info.providerInfo;
@@ -877,9 +878,9 @@ public class AndroidUtils
 		if (context == null) {
 			context = BiglyBTApp.getContext();
 		}
-		PackageManager packageManager = requirePackageManager(context);
-		return packageManager.hasSystemFeature(PackageManager.FEATURE_LEANBACK)
-				|| packageManager.hasSystemFeature(PackageManager.FEATURE_LEANBACK_ONLY);
+		PackageManager pm = requirePackageManager(context);
+		return pm.hasSystemFeature(PackageManager.FEATURE_LEANBACK)
+				|| pm.hasSystemFeature(PackageManager.FEATURE_LEANBACK_ONLY);
 	}
 
 	public static boolean isTV(Context context) {
@@ -899,12 +900,12 @@ public class AndroidUtils
 			return isTV;
 		}
 
-		PackageManager packageManager = requirePackageManager(context);
+		PackageManager pm = requirePackageManager(context);
 		// alternate check
 		//noinspection deprecation
-		isTV = packageManager.hasSystemFeature(PackageManager.FEATURE_TELEVISION)
-				|| packageManager.hasSystemFeature(PackageManager.FEATURE_LEANBACK)
-				|| packageManager.hasSystemFeature(PackageManager.FEATURE_LEANBACK_ONLY);
+		isTV = pm.hasSystemFeature(PackageManager.FEATURE_TELEVISION)
+				|| pm.hasSystemFeature(PackageManager.FEATURE_LEANBACK)
+				|| pm.hasSystemFeature(PackageManager.FEATURE_LEANBACK_ONLY);
 		if (isTV) {
 			if (DEBUG) {
 				Log.d(TAG,
@@ -913,7 +914,7 @@ public class AndroidUtils
 			return isTV;
 		}
 
-		String[] names = packageManager.getSystemSharedLibraryNames();
+		String[] names = pm.getSystemSharedLibraryNames();
 		if (names != null) {
 			for (String name : names) {
 				if (name.startsWith("com.google.android.tv")) { //NON-NLS
@@ -1079,7 +1080,7 @@ public class AndroidUtils
 
 	// From https://stackoverflow.com/a/55842542
 	private static String getProcessName() {
-		if (Build.VERSION.SDK_INT >= 28) {
+		if (VERSION.SDK_INT >= 28) {
 			return Application.getProcessName();
 		}
 
@@ -1092,7 +1093,7 @@ public class AndroidUtils
 
 			// Before API 18, the method was incorrectly named "currentPackageName", but it still returned the process name
 			// See https://github.com/aosp-mirror/platform_frameworks_base/commit/b57a50bd16ce25db441da5c1b63d48721bb90687
-			String methodName = Build.VERSION.SDK_INT >= 18 ? "currentProcessName"
+			String methodName = VERSION.SDK_INT >= 18 ? "currentProcessName"
 					: "currentPackageName";
 
 			Method getProcessName = activityThread.getDeclaredMethod(methodName);
@@ -1238,7 +1239,7 @@ public class AndroidUtils
 			return new SpannedString(message);
 		}
 		Spanned spanned;
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+		if (VERSION.SDK_INT >= VERSION_CODES.N) {
 			spanned = Html.fromHtml(message, Html.FROM_HTML_MODE_LEGACY);
 		} else {
 			//noinspection deprecation
