@@ -17,19 +17,23 @@
 package com.biglybt.android.client.fragment;
 
 import android.app.Activity;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
+import android.os.Build.VERSION;
+import android.os.Build.VERSION_CODES;
 import android.os.Bundle;
 import android.text.*;
 import android.text.method.DigitsKeyListener;
 import android.text.style.ForegroundColorSpan;
 import android.text.style.StrikethroughSpan;
 import android.util.Log;
-import android.util.SparseArray;
 import android.view.inputmethod.EditorInfo;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts.StartActivityForResult;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.UiThread;
@@ -182,9 +186,9 @@ public class AllPrefFragmentHandler
 	@Thunk
 	boolean reloadingSection = false;
 
-	private int requestCode = 0;
+	private ActivityResultLauncher<Intent> launcher;
 
-	private final SparseArray<Map<String, Object>> mapRequestCodeToParam = new SparseArray<>();
+	private Map<String, Object> currentFileChooserParameter = null;
 
 	public AllPrefFragmentHandler(@NonNull Fragment fragment,
 			@NonNull PreferenceManager preferenceManager, Bundle savedInstanceState,
@@ -248,6 +252,40 @@ public class AllPrefFragmentHandler
 		sessionChangedListener = newSession -> session = newSession;
 		session = SessionManager.findOrCreateSession(fragment,
 				sessionChangedListener);
+
+		launcher = fragment.registerForActivityResult(new StartActivityForResult(),
+				(result) -> {
+					if (currentFileChooserParameter == null) {
+						if (AndroidUtils.DEBUG) {
+							Log.w(TAG, "FileChooserLauncher: no current parameter");
+						}
+						return;
+					}
+					Map<String, Object> parameter = currentFileChooserParameter;
+					currentFileChooserParameter = null;
+
+					Intent resultIntent = result.getData();
+					Uri uri = resultIntent == null
+							|| result.getResultCode() != Activity.RESULT_OK ? null
+									: resultIntent.getData();
+					if (uri == null) {
+						return;
+					}
+
+					final int takeFlags = resultIntent.getFlags()
+							& (Intent.FLAG_GRANT_READ_URI_PERMISSION
+							| Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+					if (VERSION.SDK_INT >= VERSION_CODES.KITKAT) {
+						ContentResolver contentResolver = activity.getContentResolver();
+						contentResolver.takePersistableUriPermission(uri, takeFlags);
+					}
+
+					String key = MapUtils.getMapString(parameter, "key", null);
+					if (key == null) {
+						return;
+					}
+					setParameter(parameter, key, uri.toString());
+				});
 
 		reloadSection();
 	}
@@ -880,9 +918,9 @@ public class AllPrefFragmentHandler
 					if (session.getRemoteProfile().isLocalHost()) {
 						//TODO: figure out extensions
 						//MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension)
-						mapRequestCodeToParam.put(requestCode, parameter);
-						FileUtils.openFileChooser(activity, fragment, "*/*", requestCode);
-						requestCode++;
+
+						currentFileChooserParameter = parameter;
+						FileUtils.launchFileChooser(activity, "*/*", launcher);
 					} else {
 						AndroidUtilsUI.createTextBoxDialog(context, label, null, null,
 								(String) value, EditorInfo.IME_ACTION_DONE,
@@ -1392,26 +1430,5 @@ public class AllPrefFragmentHandler
 
 	PreferenceScreen getPreferenceScreen() {
 		return preferenceScreen;
-	}
-
-	public void onActivityResult(int requestCode, int resultCode,
-			@Nullable Intent intent) {
-		if (resultCode != Activity.RESULT_OK || intent == null) {
-			return;
-		}
-		Map<String, Object> parameter = mapRequestCodeToParam.get(resultCode);
-		String key = MapUtils.getMapString(parameter, "key", null);
-		if (key == null) {
-			return;
-		}
-		Uri uri = intent.getData();
-		if (uri == null) {
-			return;
-		}
-		String path = PaulBurkeFileUtils.getPath(activity, uri);
-		if (path == null) {
-			return;
-		}
-		setParameter(parameter, key, path);
 	}
 }

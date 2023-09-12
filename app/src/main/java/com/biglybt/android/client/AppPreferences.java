@@ -19,6 +19,7 @@ package com.biglybt.android.client;
 import android.Manifest;
 import android.app.Activity;
 import android.app.Application;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.net.Uri;
@@ -27,17 +28,18 @@ import android.text.format.DateUtils;
 import android.util.Log;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultLauncher;
 import androidx.annotation.*;
 import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentActivity;
 
+import com.biglybt.android.client.AppCompatActivityM.PermissionRequestResults;
+import com.biglybt.android.client.AppCompatActivityM.PermissionResultHandler;
 import com.biglybt.android.client.session.RemoteProfile;
 import com.biglybt.android.client.session.RemoteProfileFactory;
-import com.biglybt.android.util.FileUtils;
-import com.biglybt.android.util.JSONUtils;
-import com.biglybt.android.util.MapUtils;
+import com.biglybt.android.util.*;
 import com.biglybt.android.widget.CustomToast;
+import com.biglybt.util.RunnableWorkerThread;
 import com.biglybt.util.Thunk;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
@@ -587,18 +589,36 @@ public class AppPreferences
 		dialog.show();
 	}
 
-	public static void importPrefs(final AppCompatActivityM activity,
-			final Uri uri) {
+	public void importPrefs(@NonNull Context context,
+			@NonNull ActivityResultLauncher<Intent> launcher) {
+		FileUtils.launchFileChooser(context, FileUtils.getMimeTypeForExt("json"),
+				launcher);
+	}
+
+	public void importPrefs(final AppCompatActivityM activity, final Uri uri,
+			RunnableWorkerThread runAfterImport) {
 		activity.requestPermissions(new String[] {
 			Manifest.permission.READ_EXTERNAL_STORAGE
-		}, () -> importPrefs_withPerms(activity, uri),
-				() -> CustomToast.showText(R.string.content_read_failed_perms_denied,
-						Toast.LENGTH_LONG));
+		}, new PermissionResultHandler() {
+			@WorkerThread
+			@Override
+			public void onAllGranted() {
+				importPrefs_withPerms(activity, uri, runAfterImport);
+			}
+
+			@WorkerThread
+			@Override
+			public void onSomeDenied(PermissionRequestResults results) {
+				CustomToast.showText(R.string.content_read_failed_perms_denied,
+						Toast.LENGTH_LONG);
+			}
+		});
 	}
 
 	@Thunk
 	@WorkerThread
-	static boolean importPrefs_withPerms(FragmentActivity activity, Uri uri) {
+	boolean importPrefs_withPerms(FragmentActivity activity, Uri uri,
+			RunnableWorkerThread runAfterImport) {
 		if (uri == null) {
 			return false;
 		}
@@ -636,7 +656,11 @@ public class AppPreferences
 
 				Map<String, Object> map = JSONUtils.decodeJSON(s);
 
-				BiglyBTApp.getAppPreferences().replacePreferences(map);
+				replacePreferences(map);
+
+				if (runAfterImport != null) {
+					runAfterImport.run();
+				}
 
 				return true;
 
@@ -668,46 +692,109 @@ public class AppPreferences
 		return false;
 	}
 
-	public static void exportPrefs(final AppCompatActivityM activity) {
+	public void exportPrefs(@NonNull AppCompatActivityM activity,
+			@NonNull ActivityResultLauncher<Intent> launcher) {
 		activity.requestPermissions(new String[] {
 			Manifest.permission.WRITE_EXTERNAL_STORAGE
-		}, () -> exportPrefs((AppCompatActivity) activity),
-				() -> CustomToast.showText(R.string.content_saved_failed_perms_denied,
-						Toast.LENGTH_LONG));
+		}, new PermissionResultHandler() {
+			@WorkerThread
+			@Override
+			public void onAllGranted() {
+				exportPrefs_withPerms(activity, launcher);
+			}
+
+			@WorkerThread
+			@Override
+			public void onSomeDenied(PermissionRequestResults results) {
+				CustomToast.showText(R.string.content_saved_failed_perms_denied,
+						Toast.LENGTH_LONG);
+			}
+		});
+	}
+	
+	@Thunk
+	void exportPrefs_withPerms(@NonNull Context context,
+			@NonNull ActivityResultLauncher<Intent> launcher) {
+		if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.KITKAT) {
+			Intent intent = FileUtils.createNewFileChooserIntent("application/json",
+					null, "BiglyBTSettings.json");
+			if (intent != null) {
+				launcher.launch(intent);
+				return;
+			}
+		}
+		OffThread.runOffUIThread(() -> exportPrefs(context, null));
 	}
 
-	@Thunk
 	@WorkerThread
-	static void exportPrefs(final AppCompatActivity activity) {
-		// TODO: Ask for save path
-		String failText = null;
-		String c = BiglyBTApp.getAppPreferences().getString(KEY_CONFIG, "");
-		final File directory = AndroidUtils.getDownloadDir();
-		final File outFile = new File(directory, "BiglyBTSettings.json");
+	public void exportPrefs(@NonNull Context context, @Nullable Uri uri) {
+		String c = getAllPrefsAsString();
 
+		String resultText;
+		String failText = null;
+		BufferedWriter writer = null;
+		String filename = "BiglyBTSettings.json";
+		String parentPath = "";
 		try {
-			BufferedWriter writer = new BufferedWriter(new FileWriter(outFile));
+			if (uri == null) {
+				if (AndroidUtils.DEBUG) {
+					Log.d(TAG, "Writing " + filename + " via fallback");
+				}
+				final File directory = AndroidUtils.getDownloadDir();
+				final File outFile = new File(directory, filename);
+				parentPath = outFile.getParent();
+
+				writer = new BufferedWriter(new FileWriter(outFile));
+			} else {
+				OutputStream outputStream = context.getContentResolver().openOutputStream(
+						uri, "w");
+				PathInfo pathInfo = PathInfo.buildPathInfo(uri.toString());
+				if (pathInfo.storageVolumeName != null) {
+					parentPath = pathInfo.storageVolumeName;
+				} else if (pathInfo.storagePath != null) {
+					parentPath = pathInfo.storagePath;
+				}
+				if (pathInfo.shortName != null) {
+					filename = pathInfo.shortName;
+				} else {
+					filename = FileUtils.getUriTitle(context, uri);
+				}
+				if (AndroidUtils.DEBUG) {
+					Log.d(TAG, "Writing " + filename + " via Uri " + uri);
+				}
+				writer = new BufferedWriter(new OutputStreamWriter(outputStream));
+			}
+
 			writer.write(c);
-			writer.close();
+
 		} catch (Exception e) {
 			AnalyticsTracker.getInstance().logError(e);
 			failText = e.getMessage();
+		} finally {
+			if (writer != null) {
+				try {
+					writer.close();
+				} catch (IOException ignore) {
+				}
+			}
 		}
-		String s;
+
 		if (failText == null) {
-			s = activity.getResources().getString(R.string.content_saved,
-					TextUtils.htmlEncode(outFile.getName()),
-					TextUtils.htmlEncode(outFile.getParent()));
+			resultText = context.getResources().getString(R.string.content_saved,
+					TextUtils.htmlEncode(filename), TextUtils.htmlEncode(parentPath));
 		} else {
-			s = activity.getResources().getString(R.string.content_saved_failed,
-					TextUtils.htmlEncode(outFile.getName()),
-					TextUtils.htmlEncode(outFile.getParent()),
-					TextUtils.htmlEncode(failText));
+			resultText = context.getResources().getString(
+					R.string.content_saved_failed, TextUtils.htmlEncode(filename),
+					TextUtils.htmlEncode(parentPath), TextUtils.htmlEncode(failText));
 		}
-		CustomToast.showText(AndroidUtils.fromHTML(s), Toast.LENGTH_LONG);
+		CustomToast.showText(AndroidUtils.fromHTML(resultText), Toast.LENGTH_LONG);
 	}
 
-	void replacePreferences(Map<String, Object> map) {
+	private String getAllPrefsAsString() {
+		return getString(KEY_CONFIG, "");
+	}
+
+	private void replacePreferences(Map<String, Object> map) {
 		if (map == null || map.size() == 0) {
 			return;
 		}

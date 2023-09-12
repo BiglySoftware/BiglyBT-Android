@@ -128,8 +128,8 @@ public class DialogFragmentMoveData
 	}
 
 	@Override
-	protected void setupWidgets(@NonNull View view) {
-		super.setupWidgets(view);
+	protected void setupWidgets(@NonNull View view, String savedNewLocation) {
+		super.setupWidgets(view, savedNewLocation);
 
 		Resources resources = getResources();
 

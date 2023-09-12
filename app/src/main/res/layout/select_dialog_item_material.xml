@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/sidelist_content_selector"
+    android:clickable="false"
+    android:descendantFocusability="blocksDescendants"
+    android:gravity="center_vertical"
+    android:orientation="horizontal"
+    android:paddingStart="?attr/listPreferredItemPaddingStart"
+    android:paddingLeft="?attr/listPreferredItemPaddingStart"
+    android:paddingTop="8dp"
+    android:paddingEnd="?attr/listPreferredItemPaddingEnd"
+    android:paddingRight="?attr/listPreferredItemPaddingEnd"
+    android:paddingBottom="8dp"
+    >
+
+    <ImageView
+        android:id="@android:id/icon"
+        android:layout_width="wrap_content"
+        android:layout_height="48dp"
+        android:layout_gravity="center_vertical"
+        android:adjustViewBounds="true"
+        android:scaleType="fitCenter"
+        tools:ignore="ContentDescription"
+        tools:src="@drawable/biglybt_logo"
+        />
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        >
+
+        <TextView
+            android:id="@android:id/text1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:paddingLeft="8dp"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            tools:text="App Name"
+            />
+
+        <TextView
+            android:id="@android:id/text2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:alpha="0.7"
+            android:textSize="12sp"
+            android:gravity="center_vertical"
+            android:paddingLeft="8dp"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            tools:text="com.example.uri"
+            />
+    </LinearLayout>
+</LinearLayout>

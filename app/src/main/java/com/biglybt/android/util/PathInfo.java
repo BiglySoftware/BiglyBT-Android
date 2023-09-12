@@ -17,7 +17,6 @@
 package com.biglybt.android.util;
 
 import android.content.Context;
-import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build.VERSION;
 import android.os.Build.VERSION_CODES;
@@ -39,9 +38,6 @@ import com.biglybt.android.core.az.AndroidFileHandler;
 
 import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -140,83 +136,7 @@ public class PathInfo
 				Context.STORAGE_SERVICE);
 
 		if (sm != null) {
-			StorageVolume storageVolume = null;
-			if (VERSION.SDK_INT >= VERSION_CODES.Q) {
-				try {
-					storageVolume = sm.getStorageVolume(pathInfo.uri);
-				} catch (Throwable e) {
-					// Used to throw IllegalArgumentException, but now throws
-					// IllegalStateException("Unknown volume for " + uri)
-				}
-			}
-			if (storageVolume == null) {
-				String volumeID = FileUtils.getVolumeIdFromTreeUri(pathInfo.uri);
-				if (volumeID != null) {
-					if (VERSION.SDK_INT >= VERSION_CODES.N) {
-						List<StorageVolume> storageVolumes = sm.getStorageVolumes();
-						for (StorageVolume volume : storageVolumes) {
-							String uuid = volume.getUuid();
-							if (uuid != null && uuid.equals(volumeID)) {
-								storageVolume = volume;
-								break;
-							}
-						}
-					} else {
-						try {
-							final Class<?> storageVolumeClazz = Class.forName(
-									"android.os.storage.StorageVolume");
-							final Method getUuid = storageVolumeClazz.getMethod("getUuid");
-
-							Method getVolumeListMethod = StorageManager.class.getDeclaredMethod(
-									"getVolumeList");
-							StorageVolume[] sv = (StorageVolume[]) getVolumeListMethod.invoke(
-									sm);
-							for (StorageVolume volume : sv) {
-								String uuid = (String) getUuid.invoke(volume);
-								if (uuid != null && uuid.equals(volumeID)) {
-									storageVolume = volume;
-
-									try {
-										Method getDescription = storageVolumeClazz.getMethod(
-												"getDescription", Context.class);
-										pathInfo.storageVolumeName = (String) getDescription.invoke(
-												storageVolume, context);
-									} catch (Throwable t) {
-										Log.e(TAG, "buildPathInfo: ", t);
-									}
-									try {
-										Method isRemovable = storageVolumeClazz.getMethod(
-												"isRemovable");
-										pathInfo.isRemovable = (boolean) isRemovable.invoke(
-												storageVolume);
-									} catch (Throwable t) {
-										Log.e(TAG, "buildPathInfo: ", t);
-									}
-
-									break;
-								}
-							}
-
-						} catch (Throwable t) {
-							Log.e(TAG, "buildPathInfo: ", t);
-						}
-					}
-
-				} else {
-					if (VERSION.SDK_INT >= VERSION_CODES.N) {
-						if (pathInfo.file == null) {
-							String path = PaulBurkeFileUtils.getPath(context, pathInfo.uri,
-									false);
-							if (path != null) {
-								pathInfo.file = new File(path);
-							}
-						}
-						if (pathInfo.file != null) {
-							storageVolume = sm.getStorageVolume(pathInfo.file);
-						}
-					}
-				}
-			}
+			StorageVolume storageVolume = FileUtils.findStorageVolume(context, sm, pathInfo);
 
 			if (storageVolume != null) {
 				if (VERSION.SDK_INT >= VERSION_CODES.O) {
@@ -234,26 +154,10 @@ public class PathInfo
 					}
 				}
 
-				Object oPath = null;
-				Class<? extends StorageVolume> storageVolumeClass = storageVolume.getClass();
+				String storageVolumePath = FileUtils.getStorageVolumePath(storageVolume);
 
-				try {
-					Field mPath = storageVolumeClass.getDeclaredField("mPath");
-					mPath.setAccessible(true);
-					oPath = mPath.get(storageVolume).toString();
-				} catch (Throwable ignore) {
-				}
-
-				if (oPath == null) {
-					try {
-						Method mGetPath = storageVolumeClass.getMethod("getPath");
-						oPath = mGetPath.invoke(storageVolume);
-					} catch (Throwable ignore) {
-					}
-				}
-
-				if (oPath instanceof String) {
-					pathInfo.storagePath = (String) oPath;
+				if (storageVolumePath != null) {
+					pathInfo.storagePath = storageVolumePath;
 					if (pathInfo.freeBytes <= 0) {
 						File file = new File(pathInfo.storagePath);
 						if (file.exists()) {
@@ -262,46 +166,31 @@ public class PathInfo
 					}
 				}
 
-				if (VERSION.SDK_INT >= VERSION_CODES.N) {
-					pathInfo.storageVolumeName = storageVolume.getDescription(context);
-					pathInfo.isRemovable = storageVolume.isRemovable();
-				}
+				pathInfo.storageVolumeName = FileUtils.getStorageVolumeDescription(context,
+						storageVolume, pathInfo.storageVolumeName);
+				pathInfo.isRemovable = FileUtils.isStorageVolumeRemovable(storageVolume,
+						pathInfo.isRemovable);
 			}
-
 		}
 
 		if (pathInfo.shortName == null) {
-			Cursor cursor = context.getContentResolver().query(pathInfo.uri, null,
-					null, null, null);
-			try {
-				if (cursor != null && cursor.moveToFirst()) {
-					int columnIndex = cursor.getColumnIndex("_data");
-					if (columnIndex >= 0) {
-						String path = cursor.getString(columnIndex);
-						if (path != null) {
-							pathInfo.file = new File(path);
-							if (pathInfo.storagePath != null
-									&& path.startsWith(pathInfo.storagePath)) {
-								pathInfo.shortName = path.substring(
-										pathInfo.storagePath.length());
-								if (pathInfo.shortName.startsWith("/")) {
-									pathInfo.shortName = pathInfo.shortName.substring(1);
-								}
-							} else {
-								pathInfo.shortName = path;
-							}
-						}
-					}
-				}
-			} catch (Exception ignore) {
-			} finally {
-				if (cursor != null) {
-					cursor.close();
+			if (pathInfo.file == null) {
+				String path = PaulBurkeFileUtils.getPath(context, pathInfo.uri, false);
+				if (path != null) {
+					pathInfo.file = new File(path);
 				}
 			}
-
-			if (pathInfo.shortName == null) {
-				pathInfo.shortName = FileUtils.getUriTitle(context, pathInfo.uri);
+			if (pathInfo.file != null) {
+				String path = pathInfo.file.toString();
+				if (pathInfo.storagePath != null
+						&& path.startsWith(pathInfo.storagePath)) {
+					pathInfo.shortName = path.substring(pathInfo.storagePath.length());
+					if (pathInfo.shortName.startsWith("/")) {
+						pathInfo.shortName = pathInfo.shortName.substring(1);
+					}
+				} else {
+					pathInfo.shortName = path;
+				}
 			}
 		}
 
@@ -332,14 +221,37 @@ public class PathInfo
 
 		File[] externalFilesDirs = ContextCompat.getExternalFilesDirs(context,
 				null);
-		if (externalFilesDirs.length > 1 && externalFilesDirs[1] != null) {
-			String sdPath = externalFilesDirs[1].getAbsolutePath();
-			if (absolutePath.startsWith(sdPath)) {
-				pathInfo.storageVolumeName = context.getString(
-						R.string.private_external_storage);
-				pathInfo.storagePath = sdPath;
-				pathInfo.shortName = absolutePath.substring(sdPath.length());
-				pathInfo.isRemovable = true;
+		if (externalFilesDirs.length > 1) {
+			for (int i = 1; i < externalFilesDirs.length; i++) {
+				if (externalFilesDirs[i] == null) {
+					continue;
+				}
+
+				String sdPath = externalFilesDirs[i].getAbsolutePath();
+				if (absolutePath.startsWith(sdPath)) {
+					pathInfo.storageVolumeName = context.getString(
+							R.string.private_external_storage);
+					pathInfo.storagePath = sdPath;
+					pathInfo.shortName = absolutePath.substring(sdPath.length());
+
+					// Put the real storage volume name in shortName, since
+					// storageVolumeName contains more nuanced text
+					StorageManager sm = (StorageManager) context.getSystemService(
+							Context.STORAGE_SERVICE);
+					if (sm != null) {
+						StorageVolume storageVolume = FileUtils.findStorageVolume(context, sm, pathInfo);
+						String storageVolumeDescription = FileUtils.getStorageVolumeDescription(
+								context, storageVolume, pathInfo.shortName);
+						if (storageVolumeDescription != null) {
+							pathInfo.shortName = pathInfo.shortName.isEmpty() ?
+									storageVolumeDescription :
+									storageVolumeDescription + ", " + pathInfo.shortName;
+						}
+					}
+
+					pathInfo.isRemovable = true;
+					break;
+				}
 			}
 		}
 
@@ -382,39 +294,25 @@ public class PathInfo
 			}
 		}
 
-		if (pathInfo.shortName == null && VERSION.SDK_INT >= VERSION_CODES.N) {
+		if (pathInfo.shortName == null || pathInfo.storageVolumeName == null) {
 			StorageManager sm = (StorageManager) context.getSystemService(
 					Context.STORAGE_SERVICE);
 
 			try {
 				assert sm != null;
-				StorageVolume storageVolume = sm.getStorageVolume(f);
+				StorageVolume storageVolume = FileUtils.findStorageVolume(context, sm, pathInfo);
 
-				Object oPath = null;
+				String storageVolumePath = FileUtils.getStorageVolumePath(storageVolume);
 
-				Class<? extends StorageVolume> storageVolumeClass = storageVolume.getClass();
-				try {
-					Field mPath = storageVolumeClass.getDeclaredField("mPath");
-					mPath.setAccessible(true);
-					oPath = mPath.get(storageVolume).toString();
-				} catch (Throwable ignore) {
-				}
-
-				if (oPath == null) {
-					try {
-						Method mGetPath = storageVolumeClass.getMethod("getPath");
-						oPath = mGetPath.invoke(storageVolume);
-					} catch (Throwable ignore) {
-					}
-				}
-
-				if (oPath instanceof String) {
-					String path = (String) oPath;
-					if (absolutePath.startsWith(path)) {
-						pathInfo.storageVolumeName = storageVolume.getDescription(context);
-						pathInfo.storagePath = path;
-						pathInfo.shortName = absolutePath.substring(path.length());
-						pathInfo.isRemovable = storageVolume.isRemovable();
+				if (storageVolumePath != null) {
+					if (absolutePath.startsWith(storageVolumePath)) {
+						pathInfo.storageVolumeName = FileUtils.getStorageVolumeDescription(context,
+								storageVolume, pathInfo.storageVolumeName);
+						pathInfo.storagePath = storageVolumePath;
+						pathInfo.shortName = absolutePath.substring(
+								storageVolumePath.length());
+						pathInfo.isRemovable = FileUtils.isStorageVolumeRemovable(storageVolume,
+								pathInfo.isRemovable);
 					}
 				}
 			} catch (Throwable ignore) {
@@ -471,6 +369,9 @@ public class PathInfo
 		}
 
 		PathInfo other = (PathInfo) obj;
+		if (isSAF != other.isSAF) {
+			return false;
+		}
 		if (file == null || other.file == null) {
 			// R8 will desugar Objects.equals, so the minAPI 19 lint warning is wrong
 			//noinspection NewApi

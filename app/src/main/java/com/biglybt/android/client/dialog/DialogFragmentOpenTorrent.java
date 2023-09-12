@@ -16,29 +16,31 @@
 
 package com.biglybt.android.client.dialog;
 
-import com.biglybt.android.client.AndroidUtils;
-import com.biglybt.android.client.AndroidUtilsUI;
-import com.biglybt.android.client.AndroidUtilsUI.AlertDialogBuilder;
-import com.biglybt.android.client.R;
-import com.biglybt.android.client.activity.TorrentOpenOptionsActivity;
-import com.biglybt.android.client.activity.TorrentViewActivity;
-import com.biglybt.android.client.session.Session;
-import com.biglybt.android.client.session.SessionManager;
-import com.biglybt.android.util.FileUtils;
-import com.biglybt.util.Thunk;
-
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.fragment.app.FragmentManager;
-import androidx.appcompat.app.AlertDialog;
 import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.Button;
 import android.widget.EditText;
+
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts.StartActivityForResult;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
+import androidx.fragment.app.FragmentManager;
+
+import com.biglybt.android.client.*;
+import com.biglybt.android.client.AndroidUtilsUI.AlertDialogBuilder;
+import com.biglybt.android.client.activity.TorrentOpenOptionsActivity;
+import com.biglybt.android.client.session.Session;
+import com.biglybt.android.client.session.SessionManager;
+import com.biglybt.android.util.FileUtils;
+import com.biglybt.util.Thunk;
 
 /**
  * This is the dialog box that asks the user for a URL/File/Hash.
@@ -55,6 +57,8 @@ public class DialogFragmentOpenTorrent
 	@Thunk
 	EditText mTextTorrent;
 
+	private ActivityResultLauncher<Intent> launcherOpenTorrent;
+
 	public static void openOpenTorrentDialog(FragmentManager fm,
 			String profileID) {
 		DialogFragmentOpenTorrent dlg = new DialogFragmentOpenTorrent();
@@ -62,6 +66,39 @@ public class DialogFragmentOpenTorrent
 		bundle.putString(SessionManager.BUNDLE_KEY, profileID);
 		dlg.setArguments(bundle);
 		AndroidUtilsUI.showDialog(dlg, fm, TAG);
+	}
+
+	@Override
+	public void onCreate(@Nullable Bundle savedInstanceState) {
+		launcherOpenTorrent = registerForActivityResult(
+				new StartActivityForResult(), (result) -> {
+					if (AndroidUtils.DEBUG) {
+						Log.d(TAG, "launcherOpenTorrent: result=" + result);
+					}
+					if (result.getResultCode() != Activity.RESULT_OK) {
+						return;
+					}
+					Intent intent = result.getData();
+					if (intent == null) {
+						return;
+					}
+					Uri uri = intent.getData();
+					if (uri == null) {
+						return;
+					}
+					Session session = SessionManager.findOrCreateSession(this, null);
+					if (session == null) {
+						return;
+					}
+
+					session.torrent.openTorrent((AppCompatActivityM) requireActivity(), uri);
+					Dialog dialog = getDialog();
+					if (dialog != null) {
+						dialog.dismiss();
+					}
+				});
+
+		super.onCreate(savedInstanceState);
 	}
 
 	@Override
@@ -95,31 +132,20 @@ public class DialogFragmentOpenTorrent
 		});
 		builder.setNegativeButton(android.R.string.cancel,
 				(dialog, id) -> DialogFragmentOpenTorrent.this.getDialog().cancel());
-		builder.setNeutralButton(R.string.button_browse,
-				(dialog, which) -> FileUtils.openFileChooser(requireActivity(),
-						"application/x-bittorrent",
-						TorrentViewActivity.FILECHOOSER_RESULTCODE));
-		return builder.create();
-	}
+		builder.setNeutralButton(R.string.button_browse, null);
+		AlertDialog dialog = builder.create();
 
-	@Override
-	public void onActivityResult(int requestCode, int resultCode, Intent intent) {
-		// This won't actually get called if this class is launched via DailogFragment.show()
-		// It will be passed to parent (invoker's) activity
-		if (AndroidUtils.DEBUG) {
-			Log.e(TAG, "ActivityResult " + requestCode + "/" + resultCode);
-		}
-		if (requestCode == TorrentViewActivity.FILECHOOSER_RESULTCODE) {
-			Uri result = intent == null || resultCode != Activity.RESULT_OK ? null
-					: intent.getData();
-			if (result == null) {
-				return;
+		// Prevent Neutral button from closing dialog, otherwise 
+		// launcherOpenTorrent.ActivityResultCallback won't get called
+		dialog.setOnShowListener(di -> {
+			Button btnNeutral = dialog.getButton(AlertDialog.BUTTON_NEUTRAL);
+			if (btnNeutral != null) {
+				btnNeutral.setOnClickListener(v -> {
+					FileUtils.launchFileChooser(requireContext(),
+							FileUtils.getMimeTypeForExt("torrent"), launcherOpenTorrent);
+				});
 			}
-			Session session = SessionManager.findOrCreateSession(this, null);
-			if (session == null) {
-				return;
-			}
-			session.torrent.openTorrent(getActivity(), result);
-		}
+		});
+		return dialog;
 	}
 }

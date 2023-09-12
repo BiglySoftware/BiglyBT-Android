@@ -151,32 +151,29 @@
 			android:configChanges="keyboardHidden|orientation|screenSize"
 			android:launchMode="singleTask"
 			android:exported="true"
-			android:theme="@style/ThemeSplash">
-			<intent-filter>
+			android:theme="@style/ThemeSplash"
+			tools:ignore="IntentFilterUniqueDataAttributes"
+			>
+
+			<intent-filter android:label="BiglyBT">
 				<action android:name="android.intent.action.MAIN"/>
 
 				<category android:name="android.intent.category.LAUNCHER"/>
 				<category android:name="android.intent.category.LEANBACK_LAUNCHER"/>
 			</intent-filter>
+
 			<intent-filter android:label="BiglyBT Remote">
 				<action android:name="android.intent.action.VIEW"/>
 
 				<category android:name="android.intent.category.BROWSABLE"/>
 				<category android:name="android.intent.category.DEFAULT"/>
 
-				<data
-					android:host="remote.vuze.com"
-					android:scheme="http"/>
-				<data
-					android:host="remote.vuze.com"
-					android:scheme="https"/>
-				<data
-					android:host="remote.biglybt.com"
-					android:scheme="http"/>
-				<data
-					android:host="remote.biglybt.com"
-					android:scheme="https"/>
+				<data android:scheme="http" android:host="remote.vuze.com"/>
+				<data android:scheme="https" android:host="remote.vuze.com"/>
+				<data android:scheme="http" android:host="remote.biglybt.com"/>
+				<data android:scheme="https" android:host="remote.biglybt.com"/>
 			</intent-filter>
+
 			<intent-filter android:label="BiglyBT Torrent Url Opener">
 				<action android:name="android.intent.action.VIEW"/>
 
@@ -184,556 +181,247 @@
 				<category android:name="android.intent.category.DEFAULT"/>
 
 				<!-- >> http >> -->
-				<data
-					android:host="*"
-					android:pathPattern=".*\\.torrent"
-					android:scheme="http"/>
-				<data
-					android:host="*"
-					android:pathPattern=".*\\..*\\.torrent"
-					android:scheme="http"/>
-				<data
-					android:host="*"
-					android:pathPattern=".*\\..*\\..*\\.torrent"
-					android:scheme="http"/>
-				<data
-					android:host="*"
-					android:pathPattern=".*\\..*\\..*\\..*\\.torrent"
-					android:scheme="http"/>
-				<data
-					android:host="*"
-					android:pathPattern=".*\\..*\\..*\\..*\\..*\\.torrent"
-					android:scheme="http"/>
-				<data
-					android:host="*"
-					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\.torrent"
-					android:scheme="http"/>
-				<data
-					android:host="*"
-					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\.torrent"
-					android:scheme="http"/>
-				<data
-					android:host="*"
-					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\.torrent"
-					android:scheme="http"/>
-				<data
-					android:host="*"
-					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\.torrent"
-					android:scheme="http"/>
-				<data
-					android:host="*"
-					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\.torrent"
-					android:scheme="http"/>
-				<data
-					android:host="*"
-					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\.torrent"
-					android:scheme="http"/>
-				<data
-					android:host="*"
-					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\.torrent"
-					android:scheme="http"/>
-				<data
-					android:host="*"
-					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\.torrent"
-					android:scheme="http"/>
-				<data
-					android:host="*"
-					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\.torrent"
-					android:scheme="http"/>
-				<data
-					android:host="*"
-					android:pathPattern=".*\\.tor"
-					android:scheme="http"/>
-				<data
-					android:host="*"
-					android:pathPattern=".*\\..*\\.tor"
-					android:scheme="http"/>
-				<data
-					android:host="*"
-					android:pathPattern=".*\\..*\\..*\\.tor"
-					android:scheme="http"/>
-				<data
-					android:host="*"
-					android:pathPattern=".*\\..*\\..*\\..*\\.tor"
-					android:scheme="http"/>
-				<data
-					android:host="*"
-					android:pathPattern=".*\\..*\\..*\\..*\\..*\\.tor"
-					android:scheme="http"/>
-				<data
-					android:host="*"
-					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\.tor"
-					android:scheme="http"/>
-				<data
-					android:host="*"
-					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\.tor"
-					android:scheme="http"/>
-				<data
-					android:host="*"
-					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\.tor"
-					android:scheme="http"/>
-				<data
-					android:host="*"
-					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\.tor"
-					android:scheme="http"/>
-				<data
-					android:host="*"
-					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\.tor"
-					android:scheme="http"/>
-				<data
-					android:host="*"
-					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\.tor"
-					android:scheme="http"/>
-				<data
-					android:host="*"
-					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\.tor"
-					android:scheme="http"/>
-				<data
-					android:host="*"
-					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\.tor"
-					android:scheme="http"/>
-				<data
-					android:host="*"
-					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\.tor"
-					android:scheme="http"/>
-				<data
-					android:host="*"
-					android:pathPattern=".*\\.vuze"
-					android:scheme="http"/>
-				<data
-					android:host="*"
-					android:pathPattern=".*\\..*\\.vuze"
-					android:scheme="http"/>
-				<data
-					android:host="*"
-					android:pathPattern=".*\\..*\\..*\\.vuze"
-					android:scheme="http"/>
-				<data
-					android:host="*"
-					android:pathPattern=".*\\..*\\..*\\..*\\.vuze"
-					android:scheme="http"/>
-				<data
-					android:host="*"
-					android:pathPattern=".*\\..*\\..*\\..*\\..*\\.vuze"
-					android:scheme="http"/>
-				<data
-					android:host="*"
-					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\.vuze"
-					android:scheme="http"/>
-				<data
-					android:host="*"
-					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\.vuze"
-					android:scheme="http"/>
-				<data
-					android:host="*"
-					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\.vuze"
-					android:scheme="http"/>
-				<data
-					android:host="*"
-					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\.vuze"
-					android:scheme="http"/>
-				<data
-					android:host="*"
-					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\.vuze"
-					android:scheme="http"/>
-				<data
-					android:host="*"
-					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\.vuze"
-					android:scheme="http"/>
-				<data
-					android:host="*"
-					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\.vuze"
-					android:scheme="http"/>
-				<data
-					android:host="*"
-					android:pathPattern=".*\\.biglybt"
-					android:scheme="http"/>
-				<data
-					android:host="*"
-					android:pathPattern=".*\\..*\\.biglybt"
-					android:scheme="http"/>
-				<data
-					android:host="*"
-					android:pathPattern=".*\\..*\\..*\\.biglybt"
-					android:scheme="http"/>
-				<data
-					android:host="*"
-					android:pathPattern=".*\\..*\\..*\\..*\\.biglybt"
-					android:scheme="http"/>
-				<data
-					android:host="*"
-					android:pathPattern=".*\\..*\\..*\\..*\\..*\\.biglybt"
-					android:scheme="http"/>
-				<data
-					android:host="*"
-					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\.biglybt"
-					android:scheme="http"/>
-				<data
-					android:host="*"
-					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\.biglybt"
-					android:scheme="http"/>
-				<data
-					android:host="*"
-					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\.biglybt"
-					android:scheme="http"/>
-				<data
-					android:host="*"
-					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\.biglybt"
-					android:scheme="http"/>
-				<data
-					android:host="*"
-					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\.biglybt"
-					android:scheme="http"/>
-				<data
-					android:host="*"
-					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\.biglybt"
-					android:scheme="http"/>
-				<data
-					android:host="*"
-					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\.biglybt"
-					android:scheme="http"/>
-				<data
-					android:host="*"
-					android:pathPattern=".*\\.bcuri"
-					android:scheme="http"/>
-				<data
-					android:host="*"
-					android:pathPattern=".*\\..*\\.bcuri"
-					android:scheme="http"/>
-				<data
-					android:host="*"
-					android:pathPattern=".*\\..*\\..*\\.bcuri"
-					android:scheme="http"/>
-				<data
-					android:host="*"
-					android:pathPattern=".*\\..*\\..*\\..*\\.bcuri"
-					android:scheme="http"/>
-				<data
-					android:host="*"
-					android:pathPattern=".*\\..*\\..*\\..*\\..*\\.bcuri"
-					android:scheme="http"/>
-				<data
-					android:host="*"
-					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\.bcuri"
-					android:scheme="http"/>
-				<data
-					android:host="*"
-					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\.bcuri"
-					android:scheme="http"/>
-				<data
-					android:host="*"
-					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\.bcuri"
-					android:scheme="http"/>
-				<data
-					android:host="*"
-					android:pathPattern=".*\\.bctpuri"
-					android:scheme="http"/>
-				<data
-					android:host="*"
-					android:pathPattern=".*\\..*\\.bctpuri"
-					android:scheme="http"/>
-				<data
-					android:host="*"
-					android:pathPattern=".*\\..*\\..*\\.bctpuri"
-					android:scheme="http"/>
-				<data
-					android:host="*"
-					android:pathPattern=".*\\..*\\..*\\..*\\.bctpuri"
-					android:scheme="http"/>
-				<data
-					android:host="*"
-					android:pathPattern=".*\\..*\\..*\\..*\\..*\\.bctpuri"
-					android:scheme="http"/>
-				<data
-					android:host="*"
-					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\.bctpuri"
-					android:scheme="http"/>
-				<data
-					android:host="*"
-					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\.bctpuri"
-					android:scheme="http"/>
-				<data
-					android:host="*"
-					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\.bctpuri"
-					android:scheme="http"/>
+				<!-- .* is not greedy, and pathSuffix in >= API 31 -->
+				<data android:scheme="http" android:host="*"
+					android:pathPattern=".*\\.torrent"/>
+				<data android:scheme="http" android:host="*"
+					android:pathPattern=".*\\..*\\.torrent"/>
+				<data android:scheme="http" android:host="*"
+					android:pathPattern=".*\\..*\\..*\\.torrent"/>
+				<data android:scheme="http" android:host="*"
+					android:pathPattern=".*\\..*\\..*\\..*\\.torrent"/>
+				<data android:scheme="http" android:host="*"
+					android:pathPattern=".*\\..*\\..*\\..*\\..*\\.torrent"/>
+				<data android:scheme="http" android:host="*"
+					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\.torrent"/>
+				<data android:scheme="http" android:host="*"
+					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\.torrent"/>
+				<data android:scheme="http" android:host="*"
+					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\.torrent"/>
+				<data android:scheme="http" android:host="*"
+					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\.torrent"/>
+				<data android:scheme="http" android:host="*"
+					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\.torrent"/>
+				<data android:scheme="http" android:host="*"
+					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\.torrent"/>
+				<data android:scheme="http" android:host="*"
+					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\.torrent"/>
+				<data android:scheme="http" android:host="*"
+					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\.torrent"/>
+				<data android:scheme="http" android:host="*"
+					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\.torrent"/>
+				<!-- ^ matches http up to "This.path.has.four.teen.dots.instead.of.spaces.which.is.sadly.very.common.torrent" -->
+
+				<data android:scheme="http" android:host="*"
+					android:pathPattern=".*\\.tor"/>
+				<data android:scheme="http" android:host="*"
+					android:pathPattern=".*\\..*\\.tor"/>
+				<data android:scheme="http" android:host="*"
+					android:pathPattern=".*\\..*\\..*\\.tor"/>
+				<data android:scheme="http" android:host="*"
+					android:pathPattern=".*\\..*\\..*\\..*\\.tor"/>
+				<data android:scheme="http" android:host="*"
+					android:pathPattern=".*\\..*\\..*\\..*\\..*\\.tor"/>
+				<data android:scheme="http" android:host="*"
+					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\.tor"/>
+				<data android:scheme="http" android:host="*"
+					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\.tor"/>
+				<data android:scheme="http" android:host="*"
+					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\.tor"/>
+				<data android:scheme="http" android:host="*"
+					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\.tor"/>
+				<data android:scheme="http" android:host="*"
+					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\.tor"/>
+				<data android:scheme="http" android:host="*"
+					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\.tor"/>
+				<data android:scheme="http" android:host="*"
+					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\.tor"/>
+				<data android:scheme="http" android:host="*"
+					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\.tor"/>
+				<data android:scheme="http" android:host="*"
+					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\.tor"/>
+				<!-- ^ matches http up to "This.path.has.four.teen.dots.instead.of.spaces.which.is.sadly.very.common.tor" -->
+
+				<!-- https >> -->
+				<data android:scheme="https" android:host="*"
+					android:pathPattern=".*\\.torrent"/>
+				<data android:scheme="https" android:host="*"
+					android:pathPattern=".*\\..*\\.torrent"/>
+				<data android:scheme="https" android:host="*"
+					android:pathPattern=".*\\..*\\..*\\.torrent"/>
+				<data android:scheme="https" android:host="*"
+					android:pathPattern=".*\\..*\\..*\\..*\\.torrent"/>
+				<data android:scheme="https" android:host="*"
+					android:pathPattern=".*\\..*\\..*\\..*\\..*\\.torrent"/>
+				<data android:scheme="https" android:host="*"
+					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\.torrent"/>
+				<data android:scheme="https" android:host="*"
+					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\.torrent"/>
+				<data android:scheme="https" android:host="*"
+					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\.torrent"/>
+				<data android:scheme="https" android:host="*"
+					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\.torrent"/>
+				<data android:scheme="https" android:host="*"
+					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\.torrent"/>
+				<data android:scheme="https" android:host="*"
+					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\.torrent"/>
+				<data android:scheme="https" android:host="*"
+					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\.torrent"/>
+				<data android:scheme="https" android:host="*"
+					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\.torrent"/>
+				<data android:scheme="https" android:host="*"
+					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\.torrent"/>
+				<!-- ^ matches http up to "This.path.has.four.teen.dots.instead.of.spaces.which.is.sadly.very.common.torrent" -->
+
+				<data android:scheme="https" android:host="*"
+					android:pathPattern=".*\\.tor"/>
+				<data android:scheme="https" android:host="*"
+					android:pathPattern=".*\\..*\\.tor"/>
+				<data android:scheme="https" android:host="*"
+					android:pathPattern=".*\\..*\\..*\\.tor"/>
+				<data android:scheme="https" android:host="*"
+					android:pathPattern=".*\\..*\\..*\\..*\\.tor"/>
+				<data android:scheme="https" android:host="*"
+					android:pathPattern=".*\\..*\\..*\\..*\\..*\\.tor"/>
+				<data android:scheme="https" android:host="*"
+					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\.tor"/>
+				<data android:scheme="https" android:host="*"
+					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\.tor"/>
+				<data android:scheme="https" android:host="*"
+					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\.tor"/>
+				<data android:scheme="https" android:host="*"
+					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\.tor"/>
+				<data android:scheme="https" android:host="*"
+					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\.tor"/>
+				<data android:scheme="https" android:host="*"
+					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\.tor"/>
+				<data android:scheme="https" android:host="*"
+					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\.tor"/>
+				<data android:scheme="https" android:host="*"
+					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\.tor"/>
+				<data android:scheme="https" android:host="*"
+					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\.tor"/>
+				<!-- ^ matches http up to "This.path.has.four.teen.dots.instead.of.spaces.which.is.sadly.very.common.tor" -->
+				<!-- << https << -->
+
+			</intent-filter>
+
+			<intent-filter android:label="BiglyBT File Opener">
+				<action android:name="android.intent.action.VIEW"/>
+
+				<category android:name="android.intent.category.BROWSABLE"/>
+				<category android:name="android.intent.category.DEFAULT"/>
+
+				<!-- https >> -->
+				<data android:scheme="http" android:host="*"
+					android:pathPattern=".*\\.vuze"/>
+				<data android:scheme="http" android:host="*"
+					android:pathPattern=".*\\..*\\.vuze"/>
+				<data android:scheme="http" android:host="*"
+					android:pathPattern=".*\\..*\\..*\\.vuze"/>
+				<data android:scheme="http" android:host="*"
+					android:pathPattern=".*\\..*\\..*\\..*\\.vuze"/>
+				<data android:scheme="http" android:host="*"
+					android:pathPattern=".*\\..*\\..*\\..*\\..*\\.vuze"/>
+				<data android:scheme="http" android:host="*"
+					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\.vuze"/>
+				<data android:scheme="http" android:host="*"
+					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\.vuze"/>
+				<data android:scheme="http" android:host="*"
+					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\.vuze"/>
+				<data android:scheme="http" android:host="*"
+					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\.vuze"/>
+				<data android:scheme="http" android:host="*"
+					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\.vuze"/>
+				<data android:scheme="http" android:host="*"
+					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\.vuze"/>
+				<data android:scheme="http" android:host="*"
+					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\.vuze"/>
+				<!-- ^ matches http up to "This.path.has.twelve.dots.which.hopefully.does.not.happen.very.often.vuze" -->
+
+				<data android:scheme="http" android:host="*"
+					android:pathPattern=".*\\.biglybt"/>
+				<data android:scheme="http" android:host="*"
+					android:pathPattern=".*\\..*\\.biglybt"/>
+				<data android:scheme="http" android:host="*"
+					android:pathPattern=".*\\..*\\..*\\.biglybt"/>
+				<data android:scheme="http" android:host="*"
+					android:pathPattern=".*\\..*\\..*\\..*\\.biglybt"/>
+				<data android:scheme="http" android:host="*"
+					android:pathPattern=".*\\..*\\..*\\..*\\..*\\.biglybt"/>
+				<data android:scheme="http" android:host="*"
+					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\.biglybt"/>
+				<data android:scheme="http" android:host="*"
+					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\.biglybt"/>
+				<data android:scheme="http" android:host="*"
+					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\.biglybt"/>
+				<data android:scheme="http" android:host="*"
+					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\.biglybt"/>
+				<data android:scheme="http" android:host="*"
+					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\.biglybt"/>
+				<data android:scheme="http" android:host="*"
+					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\.biglybt"/>
+				<data android:scheme="http" android:host="*"
+					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\.biglybt"/>
+				<!-- ^ matches http up to "This.path.has.twelve.dots.which.hopefully.does.not.happen.very.often.biglybt" -->
+
 				<!-- << http << -->
 
 
-				<!-- https >> -->
-				<data
-					android:host="*"
-					android:pathPattern=".*\\.torrent"
-					android:scheme="https"/>
-				<data
-					android:host="*"
-					android:pathPattern=".*\\..*\\.torrent"
-					android:scheme="https"/>
-				<data
-					android:host="*"
-					android:pathPattern=".*\\..*\\..*\\.torrent"
-					android:scheme="https"/>
-				<data
-					android:host="*"
-					android:pathPattern=".*\\..*\\..*\\..*\\.torrent"
-					android:scheme="https"/>
-				<data
-					android:host="*"
-					android:pathPattern=".*\\..*\\..*\\..*\\..*\\.torrent"
-					android:scheme="https"/>
-				<data
-					android:host="*"
-					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\.torrent"
-					android:scheme="https"/>
-				<data
-					android:host="*"
-					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\.torrent"
-					android:scheme="https"/>
-				<data
-					android:host="*"
-					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\.torrent"
-					android:scheme="https"/>
-				<data
-					android:host="*"
-					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\.torrent"
-					android:scheme="https"/>
-				<data
-					android:host="*"
-					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\.torrent"
-					android:scheme="https"/>
-				<data
-					android:host="*"
-					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\.torrent"
-					android:scheme="https"/>
-				<data
-					android:host="*"
-					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\.torrent"
-					android:scheme="https"/>
-				<data
-					android:host="*"
-					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\.torrent"
-					android:scheme="https"/>
-				<data
-					android:host="*"
-					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\.torrent"
-					android:scheme="https"/>
-				<data
-					android:host="*"
-					android:pathPattern=".*\\.tor"
-					android:scheme="https"/>
-				<data
-					android:host="*"
-					android:pathPattern=".*\\..*\\.tor"
-					android:scheme="https"/>
-				<data
-					android:host="*"
-					android:pathPattern=".*\\..*\\..*\\.tor"
-					android:scheme="https"/>
-				<data
-					android:host="*"
-					android:pathPattern=".*\\..*\\..*\\..*\\.tor"
-					android:scheme="https"/>
-				<data
-					android:host="*"
-					android:pathPattern=".*\\..*\\..*\\..*\\..*\\.tor"
-					android:scheme="https"/>
-				<data
-					android:host="*"
-					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\.tor"
-					android:scheme="https"/>
-				<data
-					android:host="*"
-					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\.tor"
-					android:scheme="https"/>
-				<data
-					android:host="*"
-					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\.tor"
-					android:scheme="https"/>
-				<data
-					android:host="*"
-					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\.tor"
-					android:scheme="https"/>
-				<data
-					android:host="*"
-					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\.tor"
-					android:scheme="https"/>
-				<data
-					android:host="*"
-					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\.tor"
-					android:scheme="https"/>
-				<data
-					android:host="*"
-					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\.tor"
-					android:scheme="https"/>
-				<data
-					android:host="*"
-					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\.tor"
-					android:scheme="https"/>
-				<data
-					android:host="*"
-					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\.tor"
-					android:scheme="https"/>
-				<data
-					android:host="*"
-					android:pathPattern=".*\\.vuze"
-					android:scheme="https"/>
-				<data
-					android:host="*"
-					android:pathPattern=".*\\..*\\.vuze"
-					android:scheme="https"/>
-				<data
-					android:host="*"
-					android:pathPattern=".*\\..*\\..*\\.vuze"
-					android:scheme="https"/>
-				<data
-					android:host="*"
-					android:pathPattern=".*\\..*\\..*\\..*\\.vuze"
-					android:scheme="https"/>
-				<data
-					android:host="*"
-					android:pathPattern=".*\\..*\\..*\\..*\\..*\\.vuze"
-					android:scheme="https"/>
-				<data
-					android:host="*"
-					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\.vuze"
-					android:scheme="https"/>
-				<data
-					android:host="*"
-					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\.vuze"
-					android:scheme="https"/>
-				<data
-					android:host="*"
-					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\.vuze"
-					android:scheme="https"/>
-				<data
-					android:host="*"
-					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\.vuze"
-					android:scheme="https"/>
-				<data
-					android:host="*"
-					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\.vuze"
-					android:scheme="https"/>
-				<data
-					android:host="*"
-					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\.vuze"
-					android:scheme="https"/>
-				<data
-					android:host="*"
-					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\.vuze"
-					android:scheme="https"/>
-				<data
-					android:host="*"
-					android:pathPattern=".*\\.biglybt"
-					android:scheme="https"/>
-				<data
-					android:host="*"
-					android:pathPattern=".*\\..*\\.biglybt"
-					android:scheme="https"/>
-				<data
-					android:host="*"
-					android:pathPattern=".*\\..*\\..*\\.biglybt"
-					android:scheme="https"/>
-				<data
-					android:host="*"
-					android:pathPattern=".*\\..*\\..*\\..*\\.biglybt"
-					android:scheme="https"/>
-				<data
-					android:host="*"
-					android:pathPattern=".*\\..*\\..*\\..*\\..*\\.biglybt"
-					android:scheme="https"/>
-				<data
-					android:host="*"
-					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\.biglybt"
-					android:scheme="https"/>
-				<data
-					android:host="*"
-					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\.biglybt"
-					android:scheme="https"/>
-				<data
-					android:host="*"
-					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\.biglybt"
-					android:scheme="https"/>
-				<data
-					android:host="*"
-					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\.biglybt"
-					android:scheme="https"/>
-				<data
-					android:host="*"
-					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\.biglybt"
-					android:scheme="https"/>
-				<data
-					android:host="*"
-					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\.biglybt"
-					android:scheme="https"/>
-				<data
-					android:host="*"
-					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\.biglybt"
-					android:scheme="https"/>
-				<data
-					android:host="*"
-					android:pathPattern=".*\\.bcuri"
-					android:scheme="https"/>
-				<data
-					android:host="*"
-					android:pathPattern=".*\\..*\\.bcuri"
-					android:scheme="https"/>
-				<data
-					android:host="*"
-					android:pathPattern=".*\\..*\\..*\\.bcuri"
-					android:scheme="https"/>
-				<data
-					android:host="*"
-					android:pathPattern=".*\\..*\\..*\\..*\\.bcuri"
-					android:scheme="https"/>
-				<data
-					android:host="*"
-					android:pathPattern=".*\\..*\\..*\\..*\\..*\\.bcuri"
-					android:scheme="https"/>
-				<data
-					android:host="*"
-					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\.bcuri"
-					android:scheme="https"/>
-				<data
-					android:host="*"
-					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\.bcuri"
-					android:scheme="https"/>
-				<data
-					android:host="*"
-					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\.bcuri"
-					android:scheme="https"/>
-				<data
-					android:host="*"
-					android:pathPattern=".*\\.bctpuri"
-					android:scheme="https"/>
-				<data
-					android:host="*"
-					android:pathPattern=".*\\..*\\.bctpuri"
-					android:scheme="https"/>
-				<data
-					android:host="*"
-					android:pathPattern=".*\\..*\\..*\\.bctpuri"
-					android:scheme="https"/>
-				<data
-					android:host="*"
-					android:pathPattern=".*\\..*\\..*\\..*\\.bctpuri"
-					android:scheme="https"/>
-				<data
-					android:host="*"
-					android:pathPattern=".*\\..*\\..*\\..*\\..*\\.bctpuri"
-					android:scheme="https"/>
-				<data
-					android:host="*"
-					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\.bctpuri"
-					android:scheme="https"/>
-				<data
-					android:host="*"
-					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\.bctpuri"
-					android:scheme="https"/>
-				<data
-					android:host="*"
-					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\.bctpuri"
-					android:scheme="https"/>
+				<data android:scheme="https" android:host="*"
+					android:pathPattern=".*\\.vuze"/>
+				<data android:scheme="https" android:host="*"
+					android:pathPattern=".*\\..*\\.vuze"/>
+				<data android:scheme="https" android:host="*"
+					android:pathPattern=".*\\..*\\..*\\.vuze"/>
+				<data android:scheme="https" android:host="*"
+					android:pathPattern=".*\\..*\\..*\\..*\\.vuze"/>
+				<data android:scheme="https" android:host="*"
+					android:pathPattern=".*\\..*\\..*\\..*\\..*\\.vuze"/>
+				<data android:scheme="https" android:host="*"
+					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\.vuze"/>
+				<data android:scheme="https" android:host="*"
+					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\.vuze"/>
+				<data android:scheme="https" android:host="*"
+					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\.vuze"/>
+				<data android:scheme="https" android:host="*"
+					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\.vuze"/>
+				<data android:scheme="https" android:host="*"
+					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\.vuze"/>
+				<data android:scheme="https" android:host="*"
+					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\.vuze"/>
+				<data android:scheme="https" android:host="*"
+					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\.vuze"/>
+				<!-- ^ matches https up to "This.path.has.twelve.dots.which.hopefully.does.not.happen.very.often.vuze" -->
+
+				<data android:scheme="https" android:host="*"
+					android:pathPattern=".*\\.biglybt"/>
+				<data android:scheme="https" android:host="*"
+					android:pathPattern=".*\\..*\\.biglybt"/>
+				<data android:scheme="https" android:host="*"
+					android:pathPattern=".*\\..*\\..*\\.biglybt"/>
+				<data android:scheme="https" android:host="*"
+					android:pathPattern=".*\\..*\\..*\\..*\\.biglybt"/>
+				<data android:scheme="https" android:host="*"
+					android:pathPattern=".*\\..*\\..*\\..*\\..*\\.biglybt"/>
+				<data android:scheme="https" android:host="*"
+					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\.biglybt"/>
+				<data android:scheme="https" android:host="*"
+					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\.biglybt"/>
+				<data android:scheme="https" android:host="*"
+					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\.biglybt"/>
+				<data android:scheme="https" android:host="*"
+					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\.biglybt"/>
+				<data android:scheme="https" android:host="*"
+					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\.biglybt"/>
+				<data android:scheme="https" android:host="*"
+					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\.biglybt"/>
+				<data android:scheme="https" android:host="*"
+					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\.biglybt"/>
+				<!-- ^ matches https up to "This.path.has.twelve.dots.which.hopefully.does.not.happen.very.often.biglybt" -->
 				<!-- << https << -->
 			</intent-filter>
+
 			<intent-filter android:label="BiglyBT Magnet URI Opener">
 				<action android:name="android.intent.action.VIEW"/>
 
@@ -742,7 +430,8 @@
 
 				<data android:scheme="magnet"/>
 			</intent-filter>
-			<intent-filter android:label="BiglyBT">
+
+			<intent-filter android:label="BiglyBT Scheme URI Opener">
 				<action android:name="android.intent.action.VIEW"/>
 
 				<category android:name="android.intent.category.BROWSABLE"/>
@@ -751,959 +440,405 @@
 				<data android:scheme="vuze"/>
 				<data android:scheme="biglybt"/>
 			</intent-filter>
+
 			<intent-filter android:label="BiglyBT URL Opener">
 				<action android:name="android.intent.action.VIEW"/>
 
 				<category android:name="android.intent.category.BROWSABLE"/>
 				<category android:name="android.intent.category.DEFAULT"/>
 
-				<data
-					android:host="*"
-					android:mimeType="application/x-bittorrent"
-					android:scheme="http"/>
-				<data
-					android:host="*"
-					android:mimeType="application/x-bittorrent"
-					android:scheme="https"/>
+				<data android:scheme="http"	android:host="*"
+					android:mimeType="application/x-bittorrent"/>
+				<data android:scheme="https" android:host="*"
+					android:mimeType="application/x-bittorrent"/>
 			</intent-filter>
+
+			<intent-filter android:label="BiglyBT Opener">
+				<!-- Tested on Android 33, Google Drive & Files & "Files by Google" -->
+				<!-- This is also the one File Commander uses for "Open With", even though mimetype sent is */* -->
+				<action android:name="android.intent.action.VIEW"/>
+
+				<category android:name="android.intent.category.BROWSABLE"/>
+				<category android:name="android.intent.category.DEFAULT"/>
+
+				<data android:scheme="content" android:host="*"
+					android:mimeType="application/x-bittorrent"/>
+				<data android:scheme="file" android:host="*"
+					android:mimeType="application/x-bittorrent"/>
+			</intent-filter>
+
+			<intent-filter android:label="BiglyBT Manage">
+				<action android:name="android.provider.action.MANAGE_DOCUMENT"/>
+
+				<category android:name="android.intent.category.BROWSABLE"/>
+				<category android:name="android.intent.category.DEFAULT"/>
+
+				<data android:scheme="content" android:host="*"
+					android:mimeType="application/x-bittorrent"/>
+				<data android:scheme="file" android:host="*"
+					android:mimeType="application/x-bittorrent"/>
+			</intent-filter>
+
 			<intent-filter android:label="BiglyBT File Opener">
 				<action android:name="android.intent.action.VIEW"/>
 
 				<category android:name="android.intent.category.BROWSABLE"/>
 				<category android:name="android.intent.category.DEFAULT"/>
 
-				<data
-					android:host="*"
-					android:mimeType="application/x-bittorrent"
-					android:scheme="file"/>
-			</intent-filter>
-			<intent-filter android:label="BiglyBT">
-				<action android:name="android.provider.action.MANAGE_DOCUMENT"/>
-
-				<category android:name="android.intent.category.BROWSABLE"/>
-				<category android:name="android.intent.category.DEFAULT"/>
-
-				<data
-					android:host="*"
-					android:mimeType="application/x-bittorrent"
-					android:scheme="content"/>
-			</intent-filter>
-			<intent-filter android:label="BiglyBT Torrent Content Opener">
-				<action android:name="android.intent.action.VIEW"/>
-
-				<category android:name="android.intent.category.BROWSABLE"/>
-				<category android:name="android.intent.category.DEFAULT"/>
-
-				<data
-					android:host="*"
-					android:mimeType="application/x-bittorrent"
-					android:scheme="content"/>
-			</intent-filter>
-			<intent-filter android:label="BiglyBT Content Opener">
-				<action android:name="android.intent.action.VIEW"/>
-
-				<category android:name="android.intent.category.BROWSABLE"/>
-				<category android:name="android.intent.category.DEFAULT"/>
-
 				<!-- This one makes Google Drive work -->
-				<data
-					android:host="*"
-					android:mimeType="application/x-biglybt"
-					android:scheme="content"/>
+				<data android:scheme="content" android:host="*"
+					android:mimeType="application/x-biglybt"/>
+				<data android:scheme="file" android:host="*"
+					android:mimeType="application/x-biglybt"/>
+				<data android:scheme="http" android:host="*"
+					android:mimeType="application/x-biglybt"/>
+				<data android:scheme="https" android:host="*"
+					android:mimeType="application/x-biglybt"/>
+
+				<data android:scheme="content"	android:host="*"
+					android:mimeType="application/x-vuze"/>
+				<data android:scheme="file"	android:host="*"
+					android:mimeType="application/x-vuze"/>
+				<data android:scheme="http"	android:host="*"
+					android:mimeType="application/x-vuze"/>
+				<data android:scheme="https" android:host="*"
+					android:mimeType="application/x-vuze"/>
 			</intent-filter>
-			<intent-filter android:label="BiglyBT">
-				<action android:name="android.intent.action.VIEW"/>
 
-				<category android:name="android.intent.category.BROWSABLE"/>
-				<category android:name="android.intent.category.DEFAULT"/>
-
-				<data
-					android:host="*"
-					android:mimeType="application/x-vuze"
-					android:scheme="http"/>
-				<data
-					android:host="*"
-					android:mimeType="application/x-vuze"
-					android:scheme="https"/>
-				<data
-					android:host="*"
-					android:mimeType="application/x-biglybt"
-					android:scheme="http"/>
-				<data
-					android:host="*"
-					android:mimeType="application/x-biglybt"
-					android:scheme="https"/>
-			</intent-filter>
-			<intent-filter android:label="BiglyBT bctp-uri Opener">
-				<action android:name="android.intent.action.VIEW"/>
-
-				<category android:name="android.intent.category.BROWSABLE"/>
-				<category android:name="android.intent.category.DEFAULT"/>
-
-				<data
-					android:host="*"
-					android:mimeType="application/x-bctp-uri"
-					android:scheme="http"/>
-				<data
-					android:host="*"
-					android:mimeType="application/x-bctp-uri"
-					android:scheme="https"/>
-			</intent-filter>
-			<intent-filter android:label="BiglyBT bc-uri Opener">
-				<action android:name="android.intent.action.VIEW"/>
-
-				<category android:name="android.intent.category.BROWSABLE"/>
-				<category android:name="android.intent.category.DEFAULT"/>
-
-				<data
-					android:host="*"
-					android:mimeType="application/x-bc-uri"
-					android:scheme="http"/>
-				<data
-					android:host="*"
-					android:mimeType="application/x-bc-uri"
-					android:scheme="https"/>
-			</intent-filter>
 			<intent-filter android:label="BiglyBT file:// Opener">
 				<action android:name="android.intent.action.VIEW"/>
 
 				<category android:name="android.intent.category.BROWSABLE"/>
 				<category android:name="android.intent.category.DEFAULT"/>
 
-				<data
-					android:host="*"
-					android:mimeType="*/*"
-					android:pathPattern=".*\\.torrent"
-					android:scheme="file"/>
-				<data
-					android:host="*"
-					android:mimeType="*/*"
-					android:pathPattern=".*\\..*\\.torrent"
-					android:scheme="file"/>
-				<data
-					android:host="*"
-					android:mimeType="*/*"
-					android:pathPattern=".*\\..*\\..*\\.torrent"
-					android:scheme="file"/>
-				<data
-					android:host="*"
-					android:mimeType="*/*"
-					android:pathPattern=".*\\..*\\..*\\..*\\.torrent"
-					android:scheme="file"/>
-				<data
-					android:host="*"
-					android:mimeType="*/*"
-					android:pathPattern=".*\\..*\\..*\\..*\\..*\\.torrent"
-					android:scheme="file"/>
-				<data
-					android:host="*"
-					android:mimeType="*/*"
-					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\.torrent"
-					android:scheme="file"/>
-				<data
-					android:host="*"
-					android:mimeType="*/*"
-					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\.torrent"
-					android:scheme="file"/>
-				<data
-					android:host="*"
-					android:mimeType="*/*"
-					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\.torrent"
-					android:scheme="file"/>
-				<data
-					android:host="*"
-					android:mimeType="*/*"
-					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\.torrent"
-					android:scheme="file"/>
-				<data
-					android:host="*"
-					android:mimeType="*/*"
-					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\.torrent"
-					android:scheme="file"/>
-				<data
-					android:host="*"
-					android:mimeType="*/*"
-					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\.torrent"
-					android:scheme="file"/>
-				<data
-					android:host="*"
-					android:mimeType="*/*"
-					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\.torrent"
-					android:scheme="file"/>
-				<data
-					android:host="*"
-					android:mimeType="*/*"
-					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\.torrent"
-					android:scheme="file"/>
-				<data
-					android:host="*"
-					android:mimeType="*/*"
-					android:pathPattern=".*\\.tor"
-					android:scheme="file"/>
-				<data
-					android:host="*"
-					android:mimeType="*/*"
-					android:pathPattern=".*\\..*\\.tor"
-					android:scheme="file"/>
-				<data
-					android:host="*"
-					android:mimeType="*/*"
-					android:pathPattern=".*\\..*\\..*\\.tor"
-					android:scheme="file"/>
-				<data
-					android:host="*"
-					android:mimeType="*/*"
-					android:pathPattern=".*\\..*\\..*\\..*\\.tor"
-					android:scheme="file"/>
-				<data
-					android:host="*"
-					android:mimeType="*/*"
-					android:pathPattern=".*\\..*\\..*\\..*\\..*\\.tor"
-					android:scheme="file"/>
-				<data
-					android:host="*"
-					android:mimeType="*/*"
-					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\.tor"
-					android:scheme="file"/>
-				<data
-					android:host="*"
-					android:mimeType="*/*"
-					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\.tor"
-					android:scheme="file"/>
-				<data
-					android:host="*"
-					android:mimeType="*/*"
-					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\.tor"
-					android:scheme="file"/>
-				<data
-					android:host="*"
-					android:mimeType="*/*"
-					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\.tor"
-					android:scheme="file"/>
-				<data
-					android:host="*"
-					android:mimeType="*/*"
-					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\.tor"
-					android:scheme="file"/>
-				<data
-					android:host="*"
-					android:mimeType="*/*"
-					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\.tor"
-					android:scheme="file"/>
-				<data
-					android:host="*"
-					android:mimeType="*/*"
-					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\.tor"
-					android:scheme="file"/>
-				<data
-					android:host="*"
-					android:mimeType="*/*"
-					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\.tor"
-					android:scheme="file"/>
-				<data
-					android:host="*"
-					android:mimeType="*/*"
-					android:pathPattern=".*\\.vuze"
-					android:scheme="file"/>
-				<data
-					android:host="*"
-					android:mimeType="*/*"
-					android:pathPattern=".*\\..*\\.vuze"
-					android:scheme="file"/>
-				<data
-					android:host="*"
-					android:mimeType="*/*"
-					android:pathPattern=".*\\..*\\..*\\.vuze"
-					android:scheme="file"/>
-				<data
-					android:host="*"
-					android:mimeType="*/*"
-					android:pathPattern=".*\\..*\\..*\\..*\\.vuze"
-					android:scheme="file"/>
-				<data
-					android:host="*"
-					android:mimeType="*/*"
-					android:pathPattern=".*\\..*\\..*\\..*\\..*\\.vuze"
-					android:scheme="file"/>
-				<data
-					android:host="*"
-					android:mimeType="*/*"
-					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\.vuze"
-					android:scheme="file"/>
-				<data
-					android:host="*"
-					android:mimeType="*/*"
-					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\.vuze"
-					android:scheme="file"/>
-				<data
-					android:host="*"
-					android:mimeType="*/*"
-					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\.vuze"
-					android:scheme="file"/>
-				<data
-					android:host="*"
-					android:mimeType="*/*"
-					android:pathPattern=".*\\.biglybt"
-					android:scheme="file"/>
-				<data
-					android:host="*"
-					android:mimeType="*/*"
-					android:pathPattern=".*\\..*\\.biglybt"
-					android:scheme="file"/>
-				<data
-					android:host="*"
-					android:mimeType="*/*"
-					android:pathPattern=".*\\..*\\..*\\.biglybt"
-					android:scheme="file"/>
-				<data
-					android:host="*"
-					android:mimeType="*/*"
-					android:pathPattern=".*\\..*\\..*\\..*\\.biglybt"
-					android:scheme="file"/>
-				<data
-					android:host="*"
-					android:mimeType="*/*"
-					android:pathPattern=".*\\..*\\..*\\..*\\..*\\.biglybt"
-					android:scheme="file"/>
-				<data
-					android:host="*"
-					android:mimeType="*/*"
-					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\.biglybt"
-					android:scheme="file"/>
-				<data
-					android:host="*"
-					android:mimeType="*/*"
-					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\.biglybt"
-					android:scheme="file"/>
-				<data
-					android:host="*"
-					android:mimeType="*/*"
-					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\.biglybt"
-					android:scheme="file"/>
-				<data
-					android:host="*"
-					android:mimeType="*/*"
-					android:pathPattern=".*\\.bcuri"
-					android:scheme="file"/>
-				<data
-					android:host="*"
-					android:mimeType="*/*"
-					android:pathPattern=".*\\..*\\.bcuri"
-					android:scheme="file"/>
-				<data
-					android:host="*"
-					android:mimeType="*/*"
-					android:pathPattern=".*\\..*\\..*\\.bcuri"
-					android:scheme="file"/>
-				<data
-					android:host="*"
-					android:mimeType="*/*"
-					android:pathPattern=".*\\..*\\..*\\..*\\.bcuri"
-					android:scheme="file"/>
-				<data
-					android:host="*"
-					android:mimeType="*/*"
-					android:pathPattern=".*\\..*\\..*\\..*\\..*\\.bcuri"
-					android:scheme="file"/>
-				<data
-					android:host="*"
-					android:mimeType="*/*"
-					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\.bcuri"
-					android:scheme="file"/>
-				<data
-					android:host="*"
-					android:mimeType="*/*"
-					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\.bcuri"
-					android:scheme="file"/>
-				<data
-					android:host="*"
-					android:mimeType="*/*"
-					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\.bcuri"
-					android:scheme="file"/>
-				<data
-					android:host="*"
-					android:mimeType="*/*"
-					android:pathPattern=".*\\.bctpuri"
-					android:scheme="file"/>
-				<data
-					android:host="*"
-					android:mimeType="*/*"
-					android:pathPattern=".*\\..*\\.bctpuri"
-					android:scheme="file"/>
-				<data
-					android:host="*"
-					android:mimeType="*/*"
-					android:pathPattern=".*\\..*\\..*\\.bctpuri"
-					android:scheme="file"/>
-				<data
-					android:host="*"
-					android:mimeType="*/*"
-					android:pathPattern=".*\\..*\\..*\\..*\\.bctpuri"
-					android:scheme="file"/>
-				<data
-					android:host="*"
-					android:mimeType="*/*"
-					android:pathPattern=".*\\..*\\..*\\..*\\..*\\.bctpuri"
-					android:scheme="file"/>
-				<data
-					android:host="*"
-					android:mimeType="*/*"
-					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\.bctpuri"
-					android:scheme="file"/>
-				<data
-					android:host="*"
-					android:mimeType="*/*"
-					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\.bctpuri"
-					android:scheme="file"/>
-				<data
-					android:host="*"
-					android:mimeType="*/*"
-					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\.bctpuri"
-					android:scheme="file"/>
+				<data android:scheme="file" android:mimeType="*/*" android:host="*"
+					android:pathPattern=".*\\.torrent"/>
+				<data android:scheme="file" android:mimeType="*/*" android:host="*"
+					android:pathPattern=".*\\..*\\.torrent"/>
+				<data android:scheme="file" android:mimeType="*/*" android:host="*"
+					android:pathPattern=".*\\..*\\..*\\.torrent"/>
+				<data android:scheme="file" android:mimeType="*/*" android:host="*"
+					android:pathPattern=".*\\..*\\..*\\..*\\.torrent"/>
+				<data android:scheme="file" android:mimeType="*/*" android:host="*"
+					android:pathPattern=".*\\..*\\..*\\..*\\..*\\.torrent"/>
+				<data android:scheme="file" android:mimeType="*/*" android:host="*"
+					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\.torrent"/>
+				<data android:scheme="file" android:mimeType="*/*" android:host="*"
+					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\.torrent"/>
+				<data android:scheme="file" android:mimeType="*/*" android:host="*"
+					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\.torrent"/>
+				<data android:scheme="file" android:mimeType="*/*" android:host="*"
+					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\.torrent"/>
+				<data android:scheme="file" android:mimeType="*/*" android:host="*"
+					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\.torrent"/>
+				<data android:scheme="file" android:mimeType="*/*" android:host="*"
+					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\.torrent"/>
+				<data android:scheme="file" android:mimeType="*/*" android:host="*"
+					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\.torrent"/>
+				<data android:scheme="file" android:mimeType="*/*" android:host="*"
+					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\.torrent"/>
+
+				<data android:scheme="file" android:mimeType="*/*" android:host="*"
+					android:pathPattern=".*\\.tor"/>
+				<data android:scheme="file" android:mimeType="*/*" android:host="*"
+					android:pathPattern=".*\\..*\\.tor"/>
+				<data android:scheme="file" android:mimeType="*/*" android:host="*"
+					android:pathPattern=".*\\..*\\..*\\.tor"/>
+				<data android:scheme="file" android:mimeType="*/*" android:host="*"
+					android:pathPattern=".*\\..*\\..*\\..*\\.tor"/>
+				<data android:scheme="file" android:mimeType="*/*" android:host="*"
+					android:pathPattern=".*\\..*\\..*\\..*\\..*\\.tor"/>
+				<data android:scheme="file" android:mimeType="*/*" android:host="*"
+					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\.tor"/>
+				<data android:scheme="file" android:mimeType="*/*" android:host="*"
+					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\.tor"/>
+				<data android:scheme="file" android:mimeType="*/*" android:host="*"
+					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\.tor"/>
+				<data android:scheme="file" android:mimeType="*/*" android:host="*"
+					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\.tor"/>
+				<data android:scheme="file" android:mimeType="*/*" android:host="*"
+					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\.tor"/>
+				<data android:scheme="file" android:mimeType="*/*" android:host="*"
+					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\.tor"/>
+				<data android:scheme="file" android:mimeType="*/*" android:host="*"
+					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\.tor"/>
+				<data android:scheme="file" android:mimeType="*/*" android:host="*"
+					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\.tor"/>
+
+				<data android:scheme="file" android:mimeType="*/*" android:host="*"
+					android:pathPattern=".*\\.vuze"/>
+				<data android:scheme="file" android:mimeType="*/*" android:host="*"
+					android:pathPattern=".*\\..*\\.vuze"/>
+				<data android:scheme="file" android:mimeType="*/*" android:host="*"
+					android:pathPattern=".*\\..*\\..*\\.vuze"/>
+				<data android:scheme="file" android:mimeType="*/*" android:host="*"
+					android:pathPattern=".*\\..*\\..*\\..*\\.vuze"/>
+				<data android:scheme="file" android:mimeType="*/*" android:host="*"
+					android:pathPattern=".*\\..*\\..*\\..*\\..*\\.vuze"/>
+				<data android:scheme="file" android:mimeType="*/*" android:host="*"
+					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\.vuze"/>
+				<data android:scheme="file" android:mimeType="*/*" android:host="*"
+					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\.vuze"/>
+				<data android:scheme="file" android:mimeType="*/*" android:host="*"
+					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\.vuze"/>
+
+				<data android:scheme="file" android:mimeType="*/*" android:host="*"
+					android:pathPattern=".*\\.biglybt"/>
+				<data android:scheme="file" android:mimeType="*/*" android:host="*"
+					android:pathPattern=".*\\..*\\.biglybt"/>
+				<data android:scheme="file" android:mimeType="*/*" android:host="*"
+					android:pathPattern=".*\\..*\\..*\\.biglybt"/>
+				<data android:scheme="file" android:mimeType="*/*" android:host="*"
+					android:pathPattern=".*\\..*\\..*\\..*\\.biglybt"/>
+				<data android:scheme="file" android:mimeType="*/*" android:host="*"
+					android:pathPattern=".*\\..*\\..*\\..*\\..*\\.biglybt"/>
+				<data android:scheme="file" android:mimeType="*/*" android:host="*"
+					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\.biglybt"/>
+				<data android:scheme="file" android:mimeType="*/*" android:host="*"
+					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\.biglybt"/>
+				<data android:scheme="file" android:mimeType="*/*" android:host="*"
+					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\.biglybt"/>
 			</intent-filter>
+
 			<intent-filter android:label="BiglyBT content:// Opener">
 				<action android:name="android.intent.action.VIEW"/>
 
 				<category android:name="android.intent.category.BROWSABLE"/>
 				<category android:name="android.intent.category.DEFAULT"/>
 
-				<data
-					android:host="*"
-					android:pathPattern=".*\\.torrent"
-					android:scheme="content"/>
-				<data
-					android:host="*"
-					android:pathPattern=".*\\..*\\.torrent"
-					android:scheme="content"/>
-				<data
-					android:host="*"
-					android:pathPattern=".*\\..*\\..*\\.torrent"
-					android:scheme="content"/>
-				<data
-					android:host="*"
-					android:pathPattern=".*\\..*\\..*\\..*\\.torrent"
-					android:scheme="content"/>
-				<data
-					android:host="*"
-					android:pathPattern=".*\\..*\\..*\\..*\\..*\\.torrent"
-					android:scheme="content"/>
-				<data
-					android:host="*"
-					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\.torrent"
-					android:scheme="content"/>
-				<data
-					android:host="*"
-					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\.torrent"
-					android:scheme="content"/>
-				<data
-					android:host="*"
-					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\.torrent"
-					android:scheme="content"/>
-				<data
-					android:host="*"
-					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\.torrent"
-					android:scheme="content"/>
-				<data
-					android:host="*"
-					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\.torrent"
-					android:scheme="content"/>
-				<data
-					android:host="*"
-					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\.torrent"
-					android:scheme="content"/>
-				<data
-					android:host="*"
-					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\.torrent"
-					android:scheme="content"/>
-				<data
-					android:host="*"
-					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\.torrent"
-					android:scheme="content"/>
-				<data
-					android:host="*"
-					android:pathPattern=".*\\.tor"
-					android:scheme="content"/>
-				<data
-					android:host="*"
-					android:pathPattern=".*\\..*\\.tor"
-					android:scheme="content"/>
-				<data
-					android:host="*"
-					android:pathPattern=".*\\..*\\..*\\.tor"
-					android:scheme="content"/>
-				<data
-					android:host="*"
-					android:pathPattern=".*\\..*\\..*\\..*\\.tor"
-					android:scheme="content"/>
-				<data
-					android:host="*"
-					android:pathPattern=".*\\..*\\..*\\..*\\..*\\.tor"
-					android:scheme="content"/>
-				<data
-					android:host="*"
-					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\.tor"
-					android:scheme="content"/>
-				<data
-					android:host="*"
-					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\.tor"
-					android:scheme="content"/>
-				<data
-					android:host="*"
-					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\.tor"
-					android:scheme="content"/>
-				<data
-					android:host="*"
-					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\.tor"
-					android:scheme="content"/>
-				<data
-					android:host="*"
-					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\.tor"
-					android:scheme="content"/>
-				<data
-					android:host="*"
-					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\.tor"
-					android:scheme="content"/>
-				<data
-					android:host="*"
-					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\.tor"
-					android:scheme="content"/>
-				<data
-					android:host="*"
-					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\.tor"
-					android:scheme="content"/>
-				<data
-					android:host="*"
-					android:pathPattern=".*\\.vuze"
-					android:scheme="content"/>
-				<data
-					android:host="*"
-					android:pathPattern=".*\\..*\\.vuze"
-					android:scheme="content"/>
-				<data
-					android:host="*"
-					android:pathPattern=".*\\..*\\..*\\.vuze"
-					android:scheme="content"/>
-				<data
-					android:host="*"
-					android:pathPattern=".*\\..*\\..*\\..*\\.vuze"
-					android:scheme="content"/>
-				<data
-					android:host="*"
-					android:pathPattern=".*\\..*\\..*\\..*\\..*\\.vuze"
-					android:scheme="content"/>
-				<data
-					android:host="*"
-					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\.vuze"
-					android:scheme="content"/>
-				<data
-					android:host="*"
-					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\.vuze"
-					android:scheme="content"/>
-				<data
-					android:host="*"
-					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\.vuze"
-					android:scheme="content"/>
-				<data
-					android:host="*"
-					android:pathPattern=".*\\.biglybt"
-					android:scheme="content"/>
-				<data
-					android:host="*"
-					android:pathPattern=".*\\..*\\.biglybt"
-					android:scheme="content"/>
-				<data
-					android:host="*"
-					android:pathPattern=".*\\..*\\..*\\.biglybt"
-					android:scheme="content"/>
-				<data
-					android:host="*"
-					android:pathPattern=".*\\..*\\..*\\..*\\.biglybt"
-					android:scheme="content"/>
-				<data
-					android:host="*"
-					android:pathPattern=".*\\..*\\..*\\..*\\..*\\.biglybt"
-					android:scheme="content"/>
-				<data
-					android:host="*"
-					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\.biglybt"
-					android:scheme="content"/>
-				<data
-					android:host="*"
-					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\.biglybt"
-					android:scheme="content"/>
-				<data
-					android:host="*"
-					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\.biglybt"
-					android:scheme="content"/>
-				<data
-					android:host="*"
-					android:pathPattern=".*\\.bcuri"
-					android:scheme="content"/>
-				<data
-					android:host="*"
-					android:pathPattern=".*\\..*\\.bcuri"
-					android:scheme="content"/>
-				<data
-					android:host="*"
-					android:pathPattern=".*\\..*\\..*\\.bcuri"
-					android:scheme="content"/>
-				<data
-					android:host="*"
-					android:pathPattern=".*\\..*\\..*\\..*\\.bcuri"
-					android:scheme="content"/>
-				<data
-					android:host="*"
-					android:pathPattern=".*\\..*\\..*\\..*\\..*\\.bcuri"
-					android:scheme="content"/>
-				<data
-					android:host="*"
-					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\.bcuri"
-					android:scheme="content"/>
-				<data
-					android:host="*"
-					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\.bcuri"
-					android:scheme="content"/>
-				<data
-					android:host="*"
-					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\.bcuri"
-					android:scheme="content"/>
-				<data
-					android:host="*"
-					android:pathPattern=".*\\.bctpuri"
-					android:scheme="content"/>
-				<data
-					android:host="*"
-					android:pathPattern=".*\\..*\\.bctpuri"
-					android:scheme="content"/>
-				<data
-					android:host="*"
-					android:pathPattern=".*\\..*\\..*\\.bctpuri"
-					android:scheme="content"/>
-				<data
-					android:host="*"
-					android:pathPattern=".*\\..*\\..*\\..*\\.bctpuri"
-					android:scheme="content"/>
-				<data
-					android:host="*"
-					android:pathPattern=".*\\..*\\..*\\..*\\..*\\.bctpuri"
-					android:scheme="content"/>
-				<data
-					android:host="*"
-					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\.bctpuri"
-					android:scheme="content"/>
-				<data
-					android:host="*"
-					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\.bctpuri"
-					android:scheme="content"/>
-				<data
-					android:host="*"
-					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\.bctpuri"
-					android:scheme="content"/>
+				<data android:scheme="content" android:host="*"
+					android:pathPattern=".*\\.torrent"/>
+				<data android:scheme="content" android:host="*"
+					android:pathPattern=".*\\..*\\.torrent"/>
+				<data android:scheme="content" android:host="*"
+					android:pathPattern=".*\\..*\\..*\\.torrent"/>
+				<data android:scheme="content" android:host="*"
+					android:pathPattern=".*\\..*\\..*\\..*\\.torrent"/>
+				<data android:scheme="content" android:host="*"
+					android:pathPattern=".*\\..*\\..*\\..*\\..*\\.torrent"/>
+				<data android:scheme="content" android:host="*"
+					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\.torrent"/>
+				<data android:scheme="content" android:host="*"
+					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\.torrent"/>
+				<data android:scheme="content" android:host="*"
+					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\.torrent"/>
+				<data android:scheme="content" android:host="*"
+					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\.torrent"/>
+				<data android:scheme="content" android:host="*"
+					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\.torrent"/>
+				<data android:scheme="content" android:host="*"
+					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\.torrent"/>
+				<data android:scheme="content" android:host="*"
+					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\.torrent"/>
+				<data android:scheme="content" android:host="*"
+					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\.torrent"/>
+
+				<data android:scheme="content" android:host="*"
+					android:pathPattern=".*\\.tor"/>
+				<data android:scheme="content" android:host="*"
+					android:pathPattern=".*\\..*\\.tor"/>
+				<data android:scheme="content" android:host="*"
+					android:pathPattern=".*\\..*\\..*\\.tor"/>
+				<data android:scheme="content" android:host="*"
+					android:pathPattern=".*\\..*\\..*\\..*\\.tor"/>
+				<data android:scheme="content" android:host="*"
+					android:pathPattern=".*\\..*\\..*\\..*\\..*\\.tor"/>
+				<data android:scheme="content" android:host="*"
+					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\.tor"/>
+				<data android:scheme="content" android:host="*"
+					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\.tor"/>
+				<data android:scheme="content" android:host="*"
+					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\.tor"/>
+				<data android:scheme="content" android:host="*"
+					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\.tor"/>
+				<data android:scheme="content" android:host="*"
+					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\.tor"/>
+				<data android:scheme="content" android:host="*"
+					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\.tor"/>
+				<data android:scheme="content" android:host="*"
+					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\.tor"/>
+				<data android:scheme="content" android:host="*"
+					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\.tor"/>
+
+				<data android:scheme="content" android:host="*"
+					android:pathPattern=".*\\.vuze"/>
+				<data android:scheme="content" android:host="*"
+					android:pathPattern=".*\\..*\\.vuze"/>
+				<data android:scheme="content" android:host="*"
+					android:pathPattern=".*\\..*\\..*\\.vuze"/>
+				<data android:scheme="content" android:host="*"
+					android:pathPattern=".*\\..*\\..*\\..*\\.vuze"/>
+				<data android:scheme="content" android:host="*"
+					android:pathPattern=".*\\..*\\..*\\..*\\..*\\.vuze"/>
+				<data android:scheme="content" android:host="*"
+					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\.vuze"/>
+				<data android:scheme="content" android:host="*"
+					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\.vuze"/>
+				<data android:scheme="content" android:host="*"
+					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\.vuze"/>
+
+				<data android:scheme="content" android:host="*"
+					android:pathPattern=".*\\.biglybt"/>
+				<data android:scheme="content" android:host="*"
+					android:pathPattern=".*\\..*\\.biglybt"/>
+				<data android:scheme="content" android:host="*"
+					android:pathPattern=".*\\..*\\..*\\.biglybt"/>
+				<data android:scheme="content" android:host="*"
+					android:pathPattern=".*\\..*\\..*\\..*\\.biglybt"/>
+				<data android:scheme="content" android:host="*"
+					android:pathPattern=".*\\..*\\..*\\..*\\..*\\.biglybt"/>
+				<data android:scheme="content" android:host="*"
+					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\.biglybt"/>
+				<data android:scheme="content" android:host="*"
+					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\.biglybt"/>
+				<data android:scheme="content" android:host="*"
+					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\.biglybt"/>
 			</intent-filter>
+
 			<intent-filter android:label="BiglyBT content:// opener">
 				<action android:name="android.intent.action.VIEW"/>
 
 				<category android:name="android.intent.category.BROWSABLE"/>
 				<category android:name="android.intent.category.DEFAULT"/>
 
-				<data
-					android:host="*"
-					android:mimeType="*/*"
-					android:pathPattern=".*\\.torrent"
-					android:scheme="content"/>
-				<data
-					android:host="*"
-					android:mimeType="*/*"
-					android:pathPattern=".*\\..*\\.torrent"
-					android:scheme="content"/>
+				<data android:scheme="content" android:mimeType="*/*" android:host="*"
+					android:pathPattern=".*\\.torrent"/>
+				<data android:scheme="content" android:mimeType="*/*" android:host="*"
+					android:pathPattern=".*\\..*\\.torrent"/>
+				<data android:scheme="content" android:mimeType="*/*" android:host="*"
+					android:pathPattern=".*\\..*\\..*\\.torrent"/>
+				<data android:scheme="content" android:mimeType="*/*" android:host="*"
+					android:pathPattern=".*\\..*\\..*\\..*\\.torrent"/>
+				<data android:scheme="content" android:mimeType="*/*" android:host="*"
+					android:pathPattern=".*\\..*\\..*\\..*\\..*\\.torrent"/>
+				<data android:scheme="content" android:mimeType="*/*" android:host="*"
+					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\.torrent"/>
+				<data android:scheme="content" android:mimeType="*/*" android:host="*"
+					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\.torrent"/>
 			</intent-filter>
-			<intent-filter android:label="BiglyBT content:// torrent opener">
+
+			<intent-filter android:label="BiglyBT File content:// opener">
+				<!-- Solid Explorer (but not the label), Mi File Manager -->
 				<action android:name="android.intent.action.VIEW"/>
 
 				<category android:name="android.intent.category.BROWSABLE"/>
 				<category android:name="android.intent.category.DEFAULT"/>
 
-				<data
-					android:host="*"
-					android:mimeType="*/*"
-					android:pathPattern=".*\\.torrent"
-					android:scheme="content"/>
-				<data
-					android:host="*"
-					android:mimeType="*/*"
-					android:pathPattern=".*\\..*\\.torrent"
-					android:scheme="content"/>
-				<data
-					android:host="*"
-					android:mimeType="*/*"
-					android:pathPattern=".*\\..*\\..*\\.torrent"
-					android:scheme="content"/>
-			</intent-filter>
-			<intent-filter android:label="BiglyBT content:// opener">
-				<action android:name="android.intent.action.VIEW"/>
+				<data android:scheme="content" android:mimeType="*/*" android:host="*"
+					android:pathPattern=".*\\.biglybt"/>
+				<data android:scheme="content" android:mimeType="*/*" android:host="*"
+					android:pathPattern=".*\\..*\\.biglybt"/>
+				<data android:scheme="content" android:mimeType="*/*" android:host="*"
+					android:pathPattern=".*\\..*\\..*\\.biglybt"/>
+				<data android:scheme="content" android:mimeType="*/*" android:host="*"
+					android:pathPattern=".*\\..*\\..*\\..*\\.biglybt"/>
 
-				<category android:name="android.intent.category.BROWSABLE"/>
-				<category android:name="android.intent.category.DEFAULT"/>
-
-				<data
-					android:host="*"
-					android:mimeType="*/*"
-					android:pathPattern=".*\\.biglybt"
-					android:scheme="content"/>
-				<data
-					android:host="*"
-					android:mimeType="*/*"
-					android:pathPattern=".*\\..*\\.biglybt"
-					android:scheme="content"/>
-				<data
-					android:host="*"
-					android:mimeType="*/*"
-					android:pathPattern=".*\\..*\\..*\\.biglybt"
-					android:scheme="content"/>
+				<data android:scheme="content" android:mimeType="*/*" android:host="*"
+					android:pathPattern=".*\\.vuze"/>
+				<data android:scheme="content" android:mimeType="*/*" android:host="*"
+					android:pathPattern=".*\\..*\\.vuze"/>
+				<data android:scheme="content" android:mimeType="*/*" android:host="*"
+					android:pathPattern=".*\\..*\\..*\\.vuze"/>
+				<data android:scheme="content" android:mimeType="*/*" android:host="*"
+					android:pathPattern=".*\\..*\\..*\\..*\\.vuze"/>
 			</intent-filter>
+
 			<intent-filter android:label="BiglyBT file:// opener">
 				<action android:name="android.intent.action.VIEW"/>
 
 				<category android:name="android.intent.category.BROWSABLE"/>
 				<category android:name="android.intent.category.DEFAULT"/>
 
-				<data
-					android:host="*"
-					android:pathPattern=".*\\.torrent"
-					android:scheme="file"/>
+				<data android:scheme="file" android:host="*"
+					android:pathPattern=".*\\.torrent"/>
 
-				<data
-					android:host="*"
-					android:pathPattern=".*\\.torrent"
-					android:scheme="file"/>
-				<data
-					android:host="*"
-					android:pathPattern=".*\\..*\\.torrent"
-					android:scheme="file"/>
-				<data
-					android:host="*"
-					android:pathPattern=".*\\..*\\..*\\.torrent"
-					android:scheme="file"/>
-				<data
-					android:host="*"
-					android:pathPattern=".*\\..*\\..*\\..*\\.torrent"
-					android:scheme="file"/>
-				<data
-					android:host="*"
-					android:pathPattern=".*\\..*\\..*\\..*\\..*\\.torrent"
-					android:scheme="file"/>
-				<data
-					android:host="*"
-					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\.torrent"
-					android:scheme="file"/>
-				<data
-					android:host="*"
-					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\.torrent"
-					android:scheme="file"/>
-				<data
-					android:host="*"
-					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\.torrent"
-					android:scheme="file"/>
-				<data
-					android:host="*"
-					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\.torrent"
-					android:scheme="file"/>
-				<data
-					android:host="*"
-					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\.torrent"
-					android:scheme="file"/>
-				<data
-					android:host="*"
-					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\.torrent"
-					android:scheme="file"/>
-				<data
-					android:host="*"
-					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\.torrent"
-					android:scheme="file"/>
-				<data
-					android:host="*"
-					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\.torrent"
-					android:scheme="file"/>
-				<data
-					android:host="*"
-					android:pathPattern=".*\\.tor"
-					android:scheme="file"/>
-				<data
-					android:host="*"
-					android:pathPattern=".*\\..*\\.tor"
-					android:scheme="file"/>
-				<data
-					android:host="*"
-					android:pathPattern=".*\\..*\\..*\\.tor"
-					android:scheme="file"/>
-				<data
-					android:host="*"
-					android:pathPattern=".*\\..*\\..*\\..*\\.tor"
-					android:scheme="file"/>
-				<data
-					android:host="*"
-					android:pathPattern=".*\\..*\\..*\\..*\\..*\\.tor"
-					android:scheme="file"/>
-				<data
-					android:host="*"
-					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\.tor"
-					android:scheme="file"/>
-				<data
-					android:host="*"
-					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\.tor"
-					android:scheme="file"/>
-				<data
-					android:host="*"
-					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\.tor"
-					android:scheme="file"/>
-				<data
-					android:host="*"
-					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\.tor"
-					android:scheme="file"/>
-				<data
-					android:host="*"
-					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\.tor"
-					android:scheme="file"/>
-				<data
-					android:host="*"
-					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\.tor"
-					android:scheme="file"/>
-				<data
-					android:host="*"
-					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\.tor"
-					android:scheme="file"/>
-				<data
-					android:host="*"
-					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\.tor"
-					android:scheme="file"/>
-				<data
-					android:host="*"
-					android:pathPattern=".*\\.vuze"
-					android:scheme="file"/>
-				<data
-					android:host="*"
-					android:pathPattern=".*\\..*\\.vuze"
-					android:scheme="file"/>
-				<data
-					android:host="*"
-					android:pathPattern=".*\\..*\\..*\\.vuze"
-					android:scheme="file"/>
-				<data
-					android:host="*"
-					android:pathPattern=".*\\..*\\..*\\..*\\.vuze"
-					android:scheme="file"/>
-				<data
-					android:host="*"
-					android:pathPattern=".*\\..*\\..*\\..*\\..*\\.vuze"
-					android:scheme="file"/>
-				<data
-					android:host="*"
-					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\.vuze"
-					android:scheme="file"/>
-				<data
-					android:host="*"
-					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\.vuze"
-					android:scheme="file"/>
-				<data
-					android:host="*"
-					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\.vuze"
-					android:scheme="file"/>
-				<data
-					android:host="*"
-					android:pathPattern=".*\\.biglybt"
-					android:scheme="file"/>
-				<data
-					android:host="*"
-					android:pathPattern=".*\\..*\\.biglybt"
-					android:scheme="file"/>
-				<data
-					android:host="*"
-					android:pathPattern=".*\\..*\\..*\\.biglybt"
-					android:scheme="file"/>
-				<data
-					android:host="*"
-					android:pathPattern=".*\\..*\\..*\\..*\\.biglybt"
-					android:scheme="file"/>
-				<data
-					android:host="*"
-					android:pathPattern=".*\\..*\\..*\\..*\\..*\\.biglybt"
-					android:scheme="file"/>
-				<data
-					android:host="*"
-					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\.biglybt"
-					android:scheme="file"/>
-				<data
-					android:host="*"
-					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\.biglybt"
-					android:scheme="file"/>
-				<data
-					android:host="*"
-					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\.biglybt"
-					android:scheme="file"/>
-				<data
-					android:host="*"
-					android:pathPattern=".*\\.bcuri"
-					android:scheme="file"/>
-				<data
-					android:host="*"
-					android:pathPattern=".*\\..*\\.bcuri"
-					android:scheme="file"/>
-				<data
-					android:host="*"
-					android:pathPattern=".*\\..*\\..*\\.bcuri"
-					android:scheme="file"/>
-				<data
-					android:host="*"
-					android:pathPattern=".*\\..*\\..*\\..*\\.bcuri"
-					android:scheme="file"/>
-				<data
-					android:host="*"
-					android:pathPattern=".*\\..*\\..*\\..*\\..*\\.bcuri"
-					android:scheme="file"/>
-				<data
-					android:host="*"
-					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\.bcuri"
-					android:scheme="file"/>
-				<data
-					android:host="*"
-					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\.bcuri"
-					android:scheme="file"/>
-				<data
-					android:host="*"
-					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\.bcuri"
-					android:scheme="file"/>
-				<data
-					android:host="*"
-					android:pathPattern=".*\\.bctpuri"
-					android:scheme="file"/>
-				<data
-					android:host="*"
-					android:pathPattern=".*\\..*\\.bctpuri"
-					android:scheme="file"/>
-				<data
-					android:host="*"
-					android:pathPattern=".*\\..*\\..*\\.bctpuri"
-					android:scheme="file"/>
-				<data
-					android:host="*"
-					android:pathPattern=".*\\..*\\..*\\..*\\.bctpuri"
-					android:scheme="file"/>
-				<data
-					android:host="*"
-					android:pathPattern=".*\\..*\\..*\\..*\\..*\\.bctpuri"
-					android:scheme="file"/>
-				<data
-					android:host="*"
-					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\.bctpuri"
-					android:scheme="file"/>
-				<data
-					android:host="*"
-					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\.bctpuri"
-					android:scheme="file"/>
-				<data
-					android:host="*"
-					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\.bctpuri"
-					android:scheme="file"/>
+				<data android:scheme="file" android:host="*"
+					android:pathPattern=".*\\.torrent"/>
+				<data android:scheme="file" android:host="*"
+					android:pathPattern=".*\\..*\\.torrent"/>
+				<data android:scheme="file" android:host="*"
+					android:pathPattern=".*\\..*\\..*\\.torrent"/>
+				<data android:scheme="file" android:host="*"
+					android:pathPattern=".*\\..*\\..*\\..*\\.torrent"/>
+				<data android:scheme="file" android:host="*"
+					android:pathPattern=".*\\..*\\..*\\..*\\..*\\.torrent"/>
+				<data android:scheme="file" android:host="*"
+					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\.torrent"/>
+				<data android:scheme="file" android:host="*"
+					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\.torrent"/>
+				<data android:scheme="file" android:host="*"
+					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\.torrent"/>
+				<data android:scheme="file" android:host="*"
+					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\.torrent"/>
+				<data android:scheme="file" android:host="*"
+					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\.torrent"/>
+				<data android:scheme="file" android:host="*"
+					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\.torrent"/>
+				<data android:scheme="file" android:host="*"
+					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\.torrent"/>
+				<data android:scheme="file" android:host="*"
+					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\.torrent"/>
+
+				<data android:scheme="file" android:host="*"
+					android:pathPattern=".*\\.tor"/>
+				<data android:scheme="file" android:host="*"
+					android:pathPattern=".*\\..*\\.tor"/>
+				<data android:scheme="file" android:host="*"
+					android:pathPattern=".*\\..*\\..*\\.tor"/>
+				<data android:scheme="file" android:host="*"
+					android:pathPattern=".*\\..*\\..*\\..*\\.tor"/>
+				<data android:scheme="file" android:host="*"
+					android:pathPattern=".*\\..*\\..*\\..*\\..*\\.tor"/>
+				<data android:scheme="file" android:host="*"
+					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\.tor"/>
+				<data android:scheme="file" android:host="*"
+					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\.tor"/>
+				<data android:scheme="file" android:host="*"
+					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\.tor"/>
+				<data android:scheme="file" android:host="*"
+					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\.tor"/>
+				<data android:scheme="file" android:host="*"
+					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\.tor"/>
+				<data android:scheme="file" android:host="*"
+					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\.tor"/>
+				<data android:scheme="file" android:host="*"
+					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\.tor"/>
+				<data android:scheme="file" android:host="*"
+					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\.tor"/>
+
+				<data android:scheme="file" android:host="*"
+					android:pathPattern=".*\\.vuze"/>
+				<data android:scheme="file" android:host="*"
+					android:pathPattern=".*\\..*\\.vuze"/>
+				<data android:scheme="file" android:host="*"
+					android:pathPattern=".*\\..*\\..*\\.vuze"/>
+				<data android:scheme="file" android:host="*"
+					android:pathPattern=".*\\..*\\..*\\..*\\.vuze"/>
+				<data android:scheme="file" android:host="*"
+					android:pathPattern=".*\\..*\\..*\\..*\\..*\\.vuze"/>
+				<data android:scheme="file" android:host="*"
+					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\.vuze"/>
+				<data android:scheme="file" android:host="*"
+					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\.vuze"/>
+				<data android:scheme="file" android:host="*"
+					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\.vuze"/>
+
+				<data android:scheme="file" android:host="*"
+					android:pathPattern=".*\\.biglybt"/>
+				<data android:scheme="file" android:host="*"
+					android:pathPattern=".*\\..*\\.biglybt"/>
+				<data android:scheme="file" android:host="*"
+					android:pathPattern=".*\\..*\\..*\\.biglybt"/>
+				<data android:scheme="file" android:host="*"
+					android:pathPattern=".*\\..*\\..*\\..*\\.biglybt"/>
+				<data android:scheme="file" android:host="*"
+					android:pathPattern=".*\\..*\\..*\\..*\\..*\\.biglybt"/>
+				<data android:scheme="file" android:host="*"
+					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\.biglybt"/>
+				<data android:scheme="file" android:host="*"
+					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\.biglybt"/>
+				<data android:scheme="file" android:host="*"
+					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\.biglybt"/>
 			</intent-filter>
 		</activity>
 		<activity
@@ -1726,4 +861,17 @@
 
 	</application>
 
+	<queries>
+		<!-- for queryIntentActivities -->
+		<intent>
+			<action android:name="android.intent.action.OPEN_DOCUMENT_TREE" />
+		</intent>
+		<intent>
+			<action android:name="android.intent.action.GET_CONTENT" />
+		</intent>
+		<intent>
+			<action android:name="android.intent.action.GET_CONTENT" />
+			<data android:mimeType="application/*" />
+		</intent>
+	</queries>
 </manifest>

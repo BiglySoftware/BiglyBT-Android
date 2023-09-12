@@ -16,7 +16,6 @@
 
 package com.biglybt.android.client.fragment;
 
-import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -59,14 +58,6 @@ public class AllSettingsFragmentM
 	@Override
 	public Fragment getCallbackFragment() {
 		return this;
-	}
-
-	@Override
-	public void onActivityResult(int requestCode, int resultCode,
-			@Nullable Intent data) {
-		if (handler != null) {
-			handler.onActivityResult(requestCode, resultCode, data);
-		}
 	}
 
 	@Override

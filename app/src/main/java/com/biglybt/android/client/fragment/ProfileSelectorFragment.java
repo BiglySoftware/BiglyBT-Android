@@ -22,10 +22,10 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.*;
-import android.widget.AdapterView;
-import android.widget.Button;
-import android.widget.ListView;
+import android.widget.*;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts.StartActivityForResult;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
@@ -33,7 +33,6 @@ import androidx.appcompat.widget.Toolbar;
 
 import com.biglybt.android.client.*;
 import com.biglybt.android.client.activity.LoginActivity;
-import com.biglybt.android.client.activity.TorrentViewActivity;
 import com.biglybt.android.client.adapter.ProfileArrayAdapter;
 import com.biglybt.android.client.dialog.DialogFragmentAbout;
 import com.biglybt.android.client.dialog.DialogFragmentGenericRemoteProfile;
@@ -41,7 +40,6 @@ import com.biglybt.android.client.dialog.DialogFragmentGiveback;
 import com.biglybt.android.client.rpc.RPC;
 import com.biglybt.android.client.session.RemoteProfile;
 import com.biglybt.android.client.session.RemoteProfileFactory;
-import com.biglybt.android.util.FileUtils;
 import com.biglybt.util.Thunk;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
@@ -64,6 +62,41 @@ public class ProfileSelectorFragment
 	@Thunk
 	ProfileArrayAdapter adapter;
 
+	private ActivityResultLauncher<Intent> launcherExport;
+
+	private ActivityResultLauncher<Intent> launcherImport;
+
+	@Override
+	public void onCreate(@Nullable Bundle savedInstanceState) {
+		launcherExport = registerForActivityResult(new StartActivityForResult(),
+				(result) -> {
+					if (result.getResultCode() != Activity.RESULT_OK) {
+						return;
+					}
+					Intent resultIntent = result.getData();
+					OffThread.runOffUIThread(
+							() -> BiglyBTApp.getAppPreferences().exportPrefs(
+									requireContext(),
+									resultIntent == null ? null : resultIntent.getData()));
+				});
+
+		launcherImport = registerForActivityResult(new StartActivityForResult(),
+				(result) -> {
+					Intent resultIntent = result.getData();
+					Uri uri = resultIntent == null
+							|| result.getResultCode() != Activity.RESULT_OK ? null
+									: resultIntent.getData();
+					if (uri == null) {
+						return;
+					}
+					BiglyBTApp.getAppPreferences().importPrefs(
+							(AppCompatActivityM) requireActivity(), uri, null);
+				});
+
+		super.onCreate(savedInstanceState);
+	}
+
+	/** @noinspection MethodDoesntCallSuperMethod*/
 	@Nullable
 	@Override
 	public View onCreateView(@NonNull LayoutInflater inflater,
@@ -117,13 +150,15 @@ public class ProfileSelectorFragment
 
 		Button btnImport = activity.findViewById(R.id.button_profile_import);
 		if (btnImport != null) {
-			btnImport.setOnClickListener(v -> FileUtils.openFileChooser(activity,
-					this, "application/octet-stream",
-					TorrentViewActivity.FILECHOOSER_RESULTCODE));
+			btnImport.setOnClickListener(
+					v -> BiglyBTApp.getAppPreferences().importPrefs(activity,
+							launcherImport));
 		}
 		Button btnExport = activity.findViewById(R.id.button_profile_export);
 		if (btnExport != null) {
-			btnExport.setOnClickListener(v -> AppPreferences.exportPrefs(activity));
+			btnExport.setOnClickListener(
+					v -> BiglyBTApp.getAppPreferences().exportPrefs(activity,
+							launcherExport));
 		}
 		registerForContextMenu(listview);
 	}
@@ -193,12 +228,11 @@ public class ProfileSelectorFragment
 			return true;
 		}
 		if (itemId == R.id.action_export_prefs) {
-			AppPreferences.exportPrefs(activity);
+			BiglyBTApp.getAppPreferences().exportPrefs(activity, launcherExport);
 			return true;
 		}
 		if (itemId == R.id.action_import_prefs) {
-			FileUtils.openFileChooser(activity, this, "application/json",
-					TorrentViewActivity.FILECHOOSER_RESULTCODE);
+			BiglyBTApp.getAppPreferences().importPrefs(activity, launcherImport);
 			return true;
 		}
 
@@ -209,6 +243,10 @@ public class ProfileSelectorFragment
 	public boolean onContextItemSelected(MenuItem menuitem) {
 		ContextMenu.ContextMenuInfo menuInfo = menuitem.getMenuInfo();
 		AdapterView.AdapterContextMenuInfo adapterMenuInfo = (AdapterView.AdapterContextMenuInfo) menuInfo;
+
+		if (adapterMenuInfo == null) {
+			return super.onContextItemSelected(menuitem);
+		}
 
 		Object item = listview.getItemAtPosition(adapterMenuInfo.position);
 
@@ -239,23 +277,6 @@ public class ProfileSelectorFragment
 			return true;
 		}
 		return super.onContextItemSelected(menuitem);
-	}
-
-	@Override
-	public void onActivityResult(int requestCode, int resultCode, Intent intent) {
-		if (AndroidUtils.DEBUG) {
-			Log.d(TAG, "onActivityResult: " + requestCode + "/" + resultCode);
-		}
-		if (requestCode == TorrentViewActivity.FILECHOOSER_RESULTCODE) {
-			Uri uri = intent == null || resultCode != Activity.RESULT_OK ? null
-					: intent.getData();
-			if (uri == null) {
-				return;
-			}
-			AppPreferences.importPrefs((AppCompatActivityM) requireActivity(), uri);
-			return;
-		}
-		super.onActivityResult(requestCode, resultCode, intent);
 	}
 
 	@Override

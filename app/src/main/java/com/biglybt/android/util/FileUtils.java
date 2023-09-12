@@ -16,7 +16,6 @@
 
 package com.biglybt.android.util;
 
-import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.Context;
@@ -25,37 +24,37 @@ import android.content.pm.ComponentInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.database.Cursor;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Build.VERSION;
 import android.os.Build.VERSION_CODES;
 import android.os.Parcelable;
+import android.os.storage.StorageManager;
+import android.os.storage.StorageVolume;
 import android.provider.DocumentsContract;
 import android.provider.OpenableColumns;
 import android.util.Log;
-import android.widget.Button;
-import android.widget.Toast;
+import android.view.View;
+import android.view.ViewGroup;
+import android.webkit.MimeTypeMap;
+import android.widget.*;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.annotation.WorkerThread;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.annotation.*;
 import androidx.appcompat.app.AlertDialog;
 import androidx.documentfile.provider.DocumentFile;
-import androidx.fragment.app.DialogFragment;
-import androidx.fragment.app.Fragment;
 
-import com.biglybt.android.client.AndroidUtils;
-import com.biglybt.android.client.AndroidUtilsUI;
-import com.biglybt.android.client.R;
+import com.biglybt.android.client.*;
 import com.biglybt.android.client.activity.DirectoryChooserActivity;
-import com.biglybt.android.widget.CustomToast;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 import net.rdrei.android.dirchooser.DirectoryChooserConfig;
 
 import java.io.*;
-import java.util.ArrayList;
-import java.util.List;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.util.*;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
@@ -149,65 +148,121 @@ public class FileUtils
 	@NonNull
 	private static Intent buildOSFolderChooserIntent(Context context,
 			String initialDir) {
+
 		Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE);
+		intent.putExtra("android.provider.extra.SHOW_ADVANCED", true); // DocumentsContract.EXTRA_SHOW_ADVANCED
 		intent.putExtra("android.content.extra.SHOW_ADVANCED", true);
 		intent.putExtra("android.content.extra.FANCY", true);
 		intent.putExtra("android.content.extra.SHOW_FILESIZE", true);
 
 		if (initialDir != null && VERSION.SDK_INT >= VERSION_CODES.O) {
-			// Only works on >= 26 (Android O).  Not sure what format is acceptable
-			DocumentFile file = DocumentFile.fromFile(new File(initialDir));
-			intent.putExtra("android.provider.extra.INITIAL_URI", file.getUri());
+			// Only works on >= 26 (Android O)
+			DocumentFile docFile = guessDocumentFile(context, initialDir);
+
+			if (docFile != null) {
+				intent.putExtra(DocumentsContract.EXTRA_INITIAL_URI, docFile.getUri());
+			}
 		}
-		return intent;
+
+		Intent chooserIntent = Intent.createChooser(intent, "Choose Folder");
+		PackageManager pm = context.getPackageManager();
+		if (pm != null) {
+			// Build out own potential file browsing intents
+			// Without this on AndroidTV, the system one may auto-launch without
+			// ever asking the user.
+			List<Intent> targetedShareIntents = new ArrayList<>();
+
+			boolean modified = false;
+			List<ResolveInfo> infos = pm.queryIntentActivities(intent,
+					Build.VERSION.SDK_INT >= Build.VERSION_CODES.M
+							? PackageManager.MATCH_ALL : PackageManager.MATCH_DEFAULT_ONLY);
+			for (ResolveInfo info : infos) {
+
+				if (info.activityInfo.name.toLowerCase().contains("stub")) {
+					// com.google.android.tv.frameworkpackagestubs/.Stubs$DocumentsStub
+					if (AndroidUtils.DEBUG) {
+						Log.d(TAG, "openFileChooser: remove " + info);
+					}
+					modified = true;
+				} else {
+					Intent targetedShareIntent = (Intent) intent.clone();
+					targetedShareIntent.setPackage(info.activityInfo.packageName);
+					targetedShareIntent.setClassName(info.activityInfo.packageName,
+							info.activityInfo.name);
+					targetedShareIntents.add(targetedShareIntent);
+				}
+
+			}
+
+			if (modified && targetedShareIntents.size() > 0) {
+				chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS,
+						targetedShareIntents.toArray(new Parcelable[] {}));
+			}
+
+		}
+		return chooserIntent;
+	}
+
+	public static DocumentFile guessDocumentFile(@NonNull Context context,
+			@NonNull String path) {
+		if (path.startsWith("content://")) {
+			return DocumentFile.fromTreeUri(context, Uri.parse(path));
+		}
+
+		StorageManager sm = (StorageManager) context.getSystemService(
+				Context.STORAGE_SERVICE);
+		StorageVolume storageVolume = findStorageVolume(sm, new File(path));
+		String storageVolumePath = getStorageVolumePath(storageVolume);
+		if (storageVolumePath != null && path.startsWith(storageVolumePath)) {
+			String s = path.substring(storageVolumePath.length());
+			if (s.startsWith("/")) {
+				s = s.substring(1);
+			}
+			String uuid;
+			if (VERSION.SDK_INT >= VERSION_CODES.N && storageVolume.isPrimary()) {
+				uuid = "primary";
+			} else {
+				uuid = FileUtils.getStorageVolumeUuid(storageVolume);
+				if (uuid == null) {
+					uuid = "primary";
+				}
+			}
+			return DocumentFile.fromTreeUri(context,
+					Uri.parse("content://com.android.externalstorage.documents/tree/"
+							+ uuid + Uri.encode(":" + s)));
+		}
+
+		return null;
 	}
 
 	public static boolean canUseSAF(Context context) {
 		return numOSFolderChoosers(context) > 0;
 	}
 
-	public static void openFolderChooser(@NonNull DialogFragment fragment,
-			String initialDir, int requestCode) {
-		Context context = fragment.requireContext();
-
-		int numChoosers = numOSFolderChoosers(context);
+	public static void launchFolderChooser(@NonNull Activity activity,
+			String initialDir, @NonNull ActivityResultLauncher<Intent> launcher) {
+		int numChoosers = numOSFolderChoosers(activity);
 		if (numChoosers > 0) {
-			if (AndroidUtils.isTV(context)) {
+			if (AndroidUtils.isTV(activity)) {
 				MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(
-						context);
+						activity);
 				builder.setTitle(R.string.saf_warning_title);
 				builder.setMessage(R.string.saf_warning_text);
 				builder.setPositiveButton(R.string.saf_warning_useOS,
 						(dialog, which) -> {
-							Activity fragActivity = fragment.getActivity();
-							if (fragActivity == null || (fragActivity.isFinishing())) {
+							if (activity.isFinishing()) {
 								return;
 							}
 
-							fragment.startActivityForResult(
-									buildOSFolderChooserIntent(context, initialDir), requestCode);
+							launcher.launch(buildOSFolderChooserIntent(activity, initialDir));
 						});
 				builder.setNeutralButton(R.string.saf_warning_useInternal,
 						(dialog, which) -> {
-							Activity fragActivity = fragment.getActivity();
-							if (fragActivity == null || (fragActivity.isFinishing())) {
+							if (activity.isFinishing()) {
 								return;
 							}
 
-							DirectoryChooserConfig.Builder configBuilder = DirectoryChooserConfig.builder();
-							configBuilder.newDirectoryName("BiglyBT");
-							if (initialDir != null) {
-								configBuilder.initialDirectory(initialDir);
-							}
-							configBuilder.allowReadOnlyDirectory(false);
-							configBuilder.allowNewDirectoryNameModification(true);
-							DirectoryChooserConfig config = configBuilder.build();
-
-							fragment.startActivityForResult(
-									new Intent(context, DirectoryChooserActivity.class).putExtra(
-											DirectoryChooserActivity.EXTRA_CONFIG, config),
-									requestCode);
-
+							launchInternalFolderChooser(activity, initialDir, launcher);
 						});
 				AlertDialog dialog = builder.create();
 				dialog.setOnShowListener(di -> {
@@ -219,36 +274,44 @@ public class FileUtils
 
 				dialog.show();
 			} else {
-				fragment.startActivityForResult(
-						buildOSFolderChooserIntent(context, initialDir), requestCode);
+				launcher.launch(buildOSFolderChooserIntent(activity, initialDir));
 			}
 		} else {
-
-			DirectoryChooserConfig.Builder configBuilder = DirectoryChooserConfig.builder();
-			configBuilder.newDirectoryName("BiglyBT");
-			if (initialDir != null) {
-				configBuilder.initialDirectory(initialDir);
-			}
-			configBuilder.allowReadOnlyDirectory(false);
-			configBuilder.allowNewDirectoryNameModification(true);
-			DirectoryChooserConfig config = configBuilder.build();
-
-			fragment.startActivityForResult(
-					new Intent(context, DirectoryChooserActivity.class).putExtra(
-							DirectoryChooserActivity.EXTRA_CONFIG, config),
-					requestCode);
+			launchInternalFolderChooser(activity, initialDir, launcher);
 		}
 
 	}
 
+	private static void launchInternalFolderChooser(@NonNull Activity activity,
+			String initialDir, @NonNull ActivityResultLauncher<Intent> launcher) {
+		DirectoryChooserConfig.Builder configBuilder = DirectoryChooserConfig.builder();
+		configBuilder.newDirectoryName("BiglyBT");
+		if (initialDir != null) {
+			if (initialDir.startsWith("content://")) {
+				initialDir = PaulBurkeFileUtils.getPath(activity, Uri.parse(initialDir),
+						false);
+			}
+			configBuilder.initialDirectory(initialDir);
+		}
+		configBuilder.allowReadOnlyDirectory(false);
+		configBuilder.allowNewDirectoryNameModification(true);
+		DirectoryChooserConfig config = configBuilder.build();
+
+		Intent intent = new Intent(activity,
+				DirectoryChooserActivity.class).putExtra(
+						DirectoryChooserActivity.EXTRA_CONFIG, config);
+		launcher.launch(intent);
+	}
+
 	public static int numOSFolderChoosers(Context context) {
 		if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
+			// No SAF folder chooser until API 21
 			return -1;
 		}
 		Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE);
 		PackageManager manager = context.getPackageManager();
 		List<ResolveInfo> infos = manager.queryIntentActivities(intent, 0);
-		// MiBox3 will have empty list
+		// MiBox3 (API 28!) will have empty list
 		if (infos.size() == 0) {
 			return 0;
 		}
@@ -273,86 +336,167 @@ public class FileUtils
 		return numFound;
 	}
 
-	// From http://
-	public static void openFileChooser(@NonNull Activity activity,
-			String mimeType, int requestCode) {
+	public static class FileChooserItem
+	{
+		public final CharSequence text;
 
-		openFileChooser(activity, null, mimeType, requestCode);
+		public final Drawable icon;
+
+		public final Intent intent;
+
+		public final CharSequence subtext;
+
+		FileChooserItem(CharSequence text, CharSequence subtext, Drawable icon,
+				Intent intent) {
+			this.text = text;
+			this.icon = icon;
+			this.intent = intent;
+			this.subtext = subtext;
+		}
+
+		@NonNull
+		@Override
+		public String toString() {
+			return text.toString();
+		}
 	}
 
-	public static void openFileChooser(@NonNull Activity activity,
-			Fragment forFragment, String mimeType, int requestCode) {
-
+	public static void launchFileChooser(@NonNull Context context,
+			@NonNull String mimeType,
+			@NonNull ActivityResultLauncher<Intent> launcher) {
 		Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
 		intent.setType(mimeType);
 		intent.addCategory(Intent.CATEGORY_OPENABLE);
-
+/*
 		// special intent for Samsung file manager
+		// might be needed for older Samsung Android OS 
+		// (maybe queryIntentActivities doesn't return it or something.. need to check)
 		Intent sIntent = new Intent("com.sec.android.app.myfiles.PICK_DATA");
 
 		sIntent.putExtra("CONTENT_TYPE", mimeType);
 		sIntent.addCategory(Intent.CATEGORY_DEFAULT);
+		if (packageManager.resolveActivity(sIntent, 0) != null) {
+		  //use it
+		}  
+*/
+		String title = context.getString(R.string.open_file);
+		PackageManager pm = context.getPackageManager();
 
-		Intent chooserIntent;
-		String title = activity.getString(R.string.open_file);
-		PackageManager packageManager = activity.getPackageManager();
+		if (pm != null) {
+			List<FileChooserItem> items = new ArrayList<>();
 
-		if (packageManager != null
-				&& packageManager.resolveActivity(sIntent, 0) != null) {
-			chooserIntent = Intent.createChooser(sIntent, title);
-			chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, new Intent[] {
-				intent
-			});
-		} else {
-			chooserIntent = Intent.createChooser(intent, title);
+			List<ResolveInfo> infos = pm.queryIntentActivities(intent,
+					android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M
+							? PackageManager.MATCH_ALL : PackageManager.MATCH_DEFAULT_ONLY);
+			for (ResolveInfo info : infos) {
 
-			if (packageManager != null) {
-				List<Intent> targetedShareIntents = new ArrayList<>();
-
-				boolean modified = false;
-				List<ResolveInfo> infos = packageManager.queryIntentActivities(intent,
-						PackageManager.MATCH_DEFAULT_ONLY);
-				for (ResolveInfo info : infos) {
-
-					ComponentInfo componentInfo = AndroidUtils.getComponentInfo(info);
-					if (componentInfo != null && componentInfo.name != null
-							&& componentInfo.name.toLowerCase().contains("stub")) {
-						// com.google.android.tv.frameworkpackagestubs/.Stubs$DocumentsStub
-						if (AndroidUtils.DEBUG) {
-							Log.d(TAG, "openFileChooser: remove " + info.toString());
-						}
-						modified = true;
-					} else {
-						Intent targetedShareIntent = (Intent) intent.clone();
-						targetedShareIntent.setPackage(info.activityInfo.packageName);
-						targetedShareIntent.setClassName(info.activityInfo.packageName,
-								info.activityInfo.name);
-						targetedShareIntents.add(targetedShareIntent);
+				if (info.activityInfo.name != null
+						&& info.activityInfo.name.toLowerCase().contains("stub")) {
+					// com.google.android.tv.frameworkpackagestubs/.Stubs$DocumentsStub
+					if (AndroidUtils.DEBUG) {
+						Log.d(TAG, "openFileChooser: remove " + info);
 					}
-
-				}
-
-				if (modified && targetedShareIntents.size() > 0) {
-					chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS,
-							targetedShareIntents.toArray(new Parcelable[] {}));
-				}
-
-			}
-
-		}
-
-		if (chooserIntent != null) {
-			try {
-				if (forFragment == null) {
-					activity.startActivityForResult(chooserIntent, requestCode);
 				} else {
-					forFragment.startActivityForResult(chooserIntent, requestCode);
+					Intent matchingIntent = (Intent) intent.clone();
+					matchingIntent.setPackage(info.activityInfo.packageName);
+					matchingIntent.setClassName(info.activityInfo.packageName,
+							info.activityInfo.name);
+
+					CharSequence appName = info.activityInfo.loadLabel(pm);
+					Drawable icon = info.activityInfo.loadIcon(pm);
+					items.add(new FileChooserItem(appName, info.activityInfo.name, icon,
+							matchingIntent));
 				}
+
+			}
+
+			if (items.size() > 1) {
+				Set<CharSequence> names = new HashSet<>();
+				final Set<CharSequence> dupNames = new HashSet<>();
+				for (FileChooserItem item : items) {
+					if (!names.add(item.text)) {
+						dupNames.add(item.text);
+					}
+				}
+				ListAdapter adapter = new ArrayAdapter<FileChooserItem>(context,
+						R.layout.select_dialog_item_material, android.R.id.text1, items) {
+					@NonNull
+					@Override
+					public View getView(int position, @Nullable View convertView,
+							@NonNull ViewGroup parent) {
+						View v = super.getView(position, convertView, parent);
+						ImageView iv = (ImageView) v.findViewById(android.R.id.icon);
+						TextView tv = (TextView) v.findViewById(android.R.id.text2);
+
+						FileChooserItem item = items.get(position);
+
+						iv.setImageDrawable(item.icon);
+						if (tv != null) {
+							boolean showSubText = dupNames.contains(item.text);
+							tv.setVisibility(showSubText ? View.VISIBLE : View.GONE);
+							tv.setText(showSubText ? item.subtext : "");
+						}
+
+						return v;
+					}
+				};
+				AlertDialog.Builder builder = new MaterialAlertDialogBuilder(context);
+				builder.setTitle(title);
+				builder.setAdapter(adapter, (dialog, which) -> {
+					if (which >= 0 && which < items.size()) {
+						FileChooserItem item = items.get(which);
+						launcher.launch(item.intent);
+					}
+					dialog.dismiss();
+				});
+				builder.create().show();
 				return;
-			} catch (android.content.ActivityNotFoundException ignore) {
+			}
+
+		}
+
+		launcher.launch(Intent.createChooser(intent, title));
+	}
+
+	@Nullable
+	public static Intent createNewFileChooserIntent(@NonNull String mimeType,
+			@Nullable Uri pickerInitialUri, @NonNull String filename) {
+		if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) {
+			return null;
+		}
+
+		Intent intent = new Intent(Intent.ACTION_CREATE_DOCUMENT);
+
+		// 33 requires queryIntentActivities to define queries in AndroidManifest
+		// Skip need ACTION_CREATE_DOCUMENT query perms and assume there is one
+		if (Build.VERSION.SDK_INT < VERSION_CODES.TIRAMISU) {
+			PackageManager pm = BiglyBTApp.getContext().getPackageManager();
+			if (pm != null) {
+				List<ResolveInfo> infos = pm.queryIntentActivities(intent,
+						Build.VERSION.SDK_INT >= Build.VERSION_CODES.M
+								? PackageManager.MATCH_ALL : PackageManager.MATCH_DEFAULT_ONLY);
+				boolean found = false;
+				for (ResolveInfo info : infos) {
+					if (!info.activityInfo.name.toLowerCase().contains("stub")) {
+						found = true;
+						break;
+					}
+				}
+				
+				if (!found) {
+					return null;
+				}
 			}
 		}
-		CustomToast.showText(R.string.no_file_chooser, Toast.LENGTH_SHORT);
+
+		intent.addCategory(Intent.CATEGORY_OPENABLE);
+		intent.setType(mimeType);
+		intent.putExtra(Intent.EXTRA_TITLE, filename);
+
+		if (pickerInitialUri != null && VERSION.SDK_INT >= VERSION_CODES.O) {
+			intent.putExtra(DocumentsContract.EXTRA_INITIAL_URI, pickerInitialUri);
+		}
+		return intent;
 	}
 
 	public static @Nullable String getUriTitle(Context context, Uri uri) {
@@ -397,7 +541,7 @@ public class FileUtils
 		return result;
 	}
 
-	@TargetApi(Build.VERSION_CODES.LOLLIPOP)
+	@RequiresApi(Build.VERSION_CODES.LOLLIPOP)
 	public static String getVolumeIdFromTreeUri(final Uri treeUri) {
 		try {
 			final String docId = DocumentsContract.getTreeDocumentId(treeUri);
@@ -487,5 +631,231 @@ public class FileUtils
 		} catch (IOException e) {
 			return false;
 		}
+	}
+
+	@NonNull
+	public static String getMimeTypeForExt(String ext) {
+		// Older Android doesn't support opening application/json mime type
+		String mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(ext);
+		if (mimeType == null) {
+			mimeType = "application/octet-stream";
+		}
+		return mimeType;
+	}
+
+	@Nullable
+	public static String getStorageVolumePath(StorageVolume storageVolume) {
+		if (storageVolume == null) {
+			return null;
+		}
+
+		if (VERSION.SDK_INT >= VERSION_CODES.R) {
+			return storageVolume.getDirectory().toString();
+		}
+
+		Object oPath = null;
+		Class<? extends StorageVolume> storageVolumeClass = storageVolume.getClass();
+
+		try {
+			Field mPath = storageVolumeClass.getDeclaredField("mPath");
+			mPath.setAccessible(true);
+			oPath = mPath.get(storageVolume).toString();
+		} catch (Throwable ignore) {
+		}
+
+		// getPath is hidden, but present since at API 15, and is hidden in 33
+		// We could use getPathFile, but it's API 17, and is hidden in 33
+		if (oPath == null) {
+			try {
+				Method mGetPath = storageVolumeClass.getMethod("getPath");
+				oPath = mGetPath.invoke(storageVolume);
+			} catch (Throwable ignore) {
+			}
+		}
+		return (oPath instanceof String) ? (String) oPath : null;
+	}
+
+	public static boolean isStorageVolumeRemovable(StorageVolume storageVolume,
+			boolean defaultVal) {
+		if (VERSION.SDK_INT >= VERSION_CODES.N) {
+			return storageVolume.isRemovable();
+		}
+
+		try {
+			final Class<?> storageVolumeClazz = Class.forName(
+					"android.os.storage.StorageVolume");
+			Method isRemovable = storageVolumeClazz.getMethod("isRemovable");
+			return (boolean) isRemovable.invoke(storageVolume);
+		} catch (Throwable t) {
+			Log.e(TAG, "isStorageVolumeRemovable: ", t);
+		}
+
+		return defaultVal;
+	}
+
+	public static String getStorageVolumeDescription(Context context,
+			StorageVolume storageVolume, String defaultVal) {
+		if (VERSION.SDK_INT >= VERSION_CODES.N) {
+			return storageVolume.getDescription(context);
+		}
+
+		try {
+			final Class<?> storageVolumeClazz = Class.forName(
+					"android.os.storage.StorageVolume");
+			Method getDescription = storageVolumeClazz.getMethod("getDescription",
+					Context.class);
+			return (String) getDescription.invoke(storageVolume, context);
+		} catch (Throwable t) {
+			Log.e(TAG, "getStorageVolumeDescription: ", t);
+		}
+		return defaultVal;
+	}
+
+	public static StorageVolume findStorageVolume(Context context,
+			StorageManager sm, PathInfo pathInfo) {
+		// StorageVolume has been around for forever (at least API 15)
+
+		if (pathInfo.uri != null) {
+			StorageVolume sv = findStorageVolume(sm, pathInfo.uri);
+			if (sv != null) {
+				return sv;
+			}
+		}
+
+		if (pathInfo.file == null) {
+			String path = PaulBurkeFileUtils.getPath(context, pathInfo.uri, false);
+			if (path != null) {
+				pathInfo.file = new File(path);
+			}
+		}
+
+		return findStorageVolume(sm, pathInfo.file);
+	}
+
+	public static StorageVolume findStorageVolume(StorageManager sm, Uri uri) {
+		if (uri == null) {
+			return null;
+		}
+
+		if (VERSION.SDK_INT >= VERSION_CODES.Q) {
+			try {
+				return sm.getStorageVolume(uri);
+			} catch (Throwable e) {
+				// Used to throw IllegalArgumentException, but now throws
+				// IllegalStateException("Unknown volume for " + uri)
+			}
+		}
+
+		String volumeID = null;
+		if (VERSION.SDK_INT >= VERSION_CODES.LOLLIPOP) {
+			volumeID = getVolumeIdFromTreeUri(uri);
+		}
+		if (volumeID != null) {
+			List<StorageVolume> storageVolumes = getStorageVolumes(sm);
+
+			if (storageVolumes != null) {
+				for (StorageVolume volume : storageVolumes) {
+					String uuid = getStorageVolumeUuid(volume);
+					if (uuid != null && uuid.equals(volumeID)) {
+						return volume;
+					}
+				}
+			}
+		}
+
+		return null;
+	}
+
+	@Nullable
+	public static StorageVolume findStorageVolume(StorageManager sm, File file) {
+		if (file == null) {
+			return null;
+		}
+
+		if (VERSION.SDK_INT >= VERSION_CODES.N) {
+			return sm.getStorageVolume(file);
+		}
+
+		// API 23 confirmed
+		try {
+			Method getStorageVolume = sm.getClass().getMethod("getStorageVolume",
+					File.class);
+			//noinspection NewApi
+			return (StorageVolume) getStorageVolume.invoke(sm, file);
+		} catch (Throwable t) {
+		}
+
+		// API 14 (at least)
+		try {
+			String canonicalPath = file.getCanonicalPath();
+
+			Method getVolumeListMethod = StorageManager.class.getDeclaredMethod(
+					"getVolumeList");
+			StorageVolume[] sv = (StorageVolume[]) getVolumeListMethod.invoke(sm);
+
+			final Class<?> storageVolumeClazz = Class.forName(
+					"android.os.storage.StorageVolume");
+			Method getPathFileMethod = storageVolumeClazz.getMethod("getPathFile");
+			for (StorageVolume volume : sv) {
+				String volumeCanonicalPath = ((File) getPathFileMethod.invoke(
+						volume)).getCanonicalPath();
+				if (pathContains(volumeCanonicalPath, canonicalPath)) {
+					return volume;
+				}
+			}
+		} catch (Throwable t) {
+		}
+
+		return null;
+	}
+
+	@Nullable
+	public static String getStorageVolumeUuid(StorageVolume volume) {
+		if (VERSION.SDK_INT >= VERSION_CODES.N) {
+			return volume.getUuid();
+		}
+
+		try {
+			final Class<?> storageVolumeClazz = Class.forName(
+					"android.os.storage.StorageVolume");
+			final Method getUuid = storageVolumeClazz.getMethod("getUuid");
+			return (String) getUuid.invoke(volume);
+		} catch (Throwable t) {
+			Log.e(TAG, "getStorageVolumeUuid: ", t);
+		}
+
+		return null;
+	}
+
+	@Nullable
+	public static List<StorageVolume> getStorageVolumes(StorageManager sm) {
+		if (VERSION.SDK_INT >= VERSION_CODES.N) {
+			return sm.getStorageVolumes();
+		}
+
+		try {
+			// getVolumeList since API 13, hidden in 19 (K), replaced with getStorageVolumes in 24 (N)
+			Method getVolumeListMethod = StorageManager.class.getDeclaredMethod(
+					"getVolumeList");
+			StorageVolume[] sv = (StorageVolume[]) getVolumeListMethod.invoke(sm);
+
+			return sv == null ? null : Arrays.asList(sv);
+		} catch (Throwable t) {
+			Log.e(TAG, "findStorageVolume: ", t);
+		}
+
+		return null;
+
+	}
+
+	// From FileUtils (hidden on newer API)
+	private static boolean pathContains(String dirPath, String filePath) {
+		if (dirPath.equals(filePath)) {
+			return true;
+		}
+		if (!dirPath.endsWith("/")) {
+			dirPath += "/";
+		}
+		return filePath.startsWith(dirPath);
 	}
 }

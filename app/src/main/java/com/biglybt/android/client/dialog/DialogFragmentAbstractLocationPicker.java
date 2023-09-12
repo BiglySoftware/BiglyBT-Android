@@ -37,6 +37,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.*;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts.StartActivityForResult;
 import androidx.annotation.*;
 import androidx.appcompat.app.AlertDialog;
 import androidx.core.view.ViewCompat;
@@ -57,7 +59,6 @@ import com.biglybt.util.DisplayFormatters;
 import com.biglybt.util.Thunk;
 
 import java.io.File;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -72,9 +73,9 @@ public abstract class DialogFragmentAbstractLocationPicker
 
 	static final String KEY_CALLBACK_ID = "cb";
 
-	static final boolean DEBUG = false;
+	private static final String KEY_NEW_LOCATION = "new_location";
 
-	private static final int REQUEST_PATHCHOOSER = 3;
+	static final boolean DEBUG = false;
 
 	@Thunk
 	private EditText etLocation;
@@ -112,9 +113,59 @@ public abstract class DialogFragmentAbstractLocationPicker
 
 	private View dialogView;
 
+	private ActivityResultLauncher<Intent> launcher;
+
 	public DialogFragmentAbstractLocationPicker() {
 		setDialogWidthRes(R.dimen.dlg_movedata_width);
 		setDialogHeightRes(R.dimen.dlg_movedata_height);
+	}
+
+	@SuppressLint("WrongConstant")
+	@Override
+	public void onCreate(@Nullable Bundle savedInstanceState) {
+		launcher = registerForActivityResult(new StartActivityForResult(),
+				(result) -> {
+					String chosenPathString = null;
+					Intent data = result.getData();
+					if (result.getResultCode() == Activity.RESULT_OK && data != null) {
+						// Result from Android OS File Picker, which is only used on local core
+
+						Uri uri = data.getData();
+						if (uri != null) {
+							// Persist access permissions.
+							final int takeFlags = data.getFlags()
+									& (Intent.FLAG_GRANT_READ_URI_PERMISSION
+											| Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+							if (VERSION.SDK_INT >= VERSION_CODES.KITKAT) {
+								ContentResolver contentResolver = requireActivity().getContentResolver();
+								contentResolver.takePersistableUriPermission(uri, takeFlags);
+							}
+							chosenPathString = uri.toString();
+						}
+					}
+
+					// RESULT_CODE_DIR_SELECTED is from DirectoryChooser which only returns
+					// file paths (no "content://" strings)
+					if (result.getResultCode() == DirectoryChooserActivity.RESULT_CODE_DIR_SELECTED
+							&& data != null) {
+						chosenPathString = data.getStringExtra(
+								DirectoryChooserActivity.RESULT_SELECTED_DIR);
+					}
+
+					if (DEBUG) {
+						Log.d(TAG,
+								"ActivityResultCallback: " + chosenPathString + ";" + result);
+					}
+
+					if (chosenPathString == null) {
+						return;
+					}
+
+					String s = chosenPathString;
+					OffThread.runOffUIThread(() -> setChosenPathExternal(s));
+				});
+
+		super.onCreate(savedInstanceState);
 	}
 
 	@NonNull
@@ -126,6 +177,11 @@ public abstract class DialogFragmentAbstractLocationPicker
 		currentDir = args.getString(KEY_DEFAULT_DIR);
 		callbackID = args.getString(KEY_CALLBACK_ID);
 		history = args.getStringArrayList(KEY_HISTORY);
+
+		String savedNewLocation = null;
+		if (savedInstanceState != null) {
+			savedNewLocation = savedInstanceState.getString(KEY_NEW_LOCATION);
+		}
 
 		Session session = SessionManager.findOrCreateSession(this, null);
 		if (session == null) {
@@ -166,8 +222,7 @@ public abstract class DialogFragmentAbstractLocationPicker
 					initialPath = item.fullPath;
 				}
 			}
-			FileUtils.openFolderChooser(DialogFragmentAbstractLocationPicker.this,
-					initialPath, REQUEST_PATHCHOOSER);
+			FileUtils.launchFolderChooser(requireActivity(), initialPath, launcher);
 		};
 
 		btnBrowse = dialogView.findViewById(R.id.browse);
@@ -194,21 +249,33 @@ public abstract class DialogFragmentAbstractLocationPicker
 				}
 			});
 		}
-		setupWidgets(alertDialogBuilder.view);
+		setupWidgets(alertDialogBuilder.view, savedNewLocation);
 
 		return dialog;
 	}
 
+	@Override
+	public void onSaveInstanceState(@NonNull Bundle outState) {
+		PathInfo location = getLocation();
+		if (location != null) {
+			outState.putString(KEY_NEW_LOCATION, location.fullPath);
+		}
+		super.onSaveInstanceState(outState);
+	}
+
 	private void okClickedP() {
+		PathInfo location = getLocation();
+		if (location == null) {
+			return;
+		}
+
 		Session session = SessionManager.findOrCreateSession(this, null);
 		if (session == null) {
 			return;
 		}
 
-		PathInfo location = getLocation();
 		if (cbRememberLocation != null && cbRememberLocation.isChecked()) {
-			if (history != null && location != null
-					&& !history.contains(location.fullPath)) {
+			if (history != null && !history.contains(location.fullPath)) {
 				synchronized (history) {
 					history.add(0, location.fullPath);
 				}
@@ -277,7 +344,7 @@ public abstract class DialogFragmentAbstractLocationPicker
 	}
 
 	@UiThread
-	void setupWidgets(@NonNull View view) {
+	void setupWidgets(@NonNull View view, String savedNewLocation) {
 		Resources resources = getResources();
 		Context context = requireContext();
 
@@ -374,6 +441,10 @@ public abstract class DialogFragmentAbstractLocationPicker
 			lvAvailPaths.setAdapter(adapter);
 
 			OffThread.runOffUIThread(() -> {
+				if (savedNewLocation != null) {
+					newLocation = PathInfo.buildPathInfo(savedNewLocation);
+				}
+
 				List<PathInfo> list = buildFolderList(this);
 				Context offThreadContext = getContext();
 				if (offThreadContext == null) {
@@ -397,7 +468,7 @@ public abstract class DialogFragmentAbstractLocationPicker
 						}
 					}
 					int selectPos = -1;
-					if (list != null && newLocation != null) {
+					if (newLocation != null) {
 						for (int i = 0; i < list.size(); i++) {
 							PathInfo iterPathInfo = list.get(i);
 							// Unknown if File.equals takes time, but we can't calculate
@@ -485,6 +556,9 @@ public abstract class DialogFragmentAbstractLocationPicker
 		}
 
 		if (history != null && history.size() > 0) {
+			if (DEBUG) {
+				Log.d(TAG, "=== adding path history");
+			}
 			synchronized (history) {
 				for (String loc : history) {
 					addPath(list, PathInfo.buildPathInfo(loc));
@@ -495,6 +569,9 @@ public abstract class DialogFragmentAbstractLocationPicker
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
 			File[] externalFilesDirs = context.getExternalFilesDirs(null);
 			if (externalFilesDirs != null) {
+				if (DEBUG) {
+					Log.d(TAG, "=== adding getExternalFilesDirs");
+				}
 				for (File externalFilesDir : externalFilesDirs) {
 					if (externalFilesDir != null && externalFilesDir.exists()) {
 						addPath(list, PathInfo.buildPathInfo(externalFilesDir));
@@ -503,6 +580,9 @@ public abstract class DialogFragmentAbstractLocationPicker
 			}
 		}
 
+		if (DEBUG) {
+			Log.d(TAG, "=== adding getExternalStorageDirectory/SECONDARY_STORAGE");
+		}
 		File externalStorageDirectory = Environment.getExternalStorageDirectory();
 		if (externalStorageDirectory != null && externalStorageDirectory.exists()) {
 			addPath(list, PathInfo.buildPathInfo(externalStorageDirectory));
@@ -521,6 +601,10 @@ public abstract class DialogFragmentAbstractLocationPicker
 		if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.KITKAT) {
 			ContentResolver contentResolver = BiglyBTApp.getContext().getContentResolver();
 			List<UriPermission> persistedUriPermissions = contentResolver.getPersistedUriPermissions();
+			if (DEBUG) {
+				Log.d(TAG, "=== adding " + persistedUriPermissions.size()
+						+ " persistedUriPermissions");
+			}
 			for (UriPermission uriPermission : persistedUriPermissions) {
 				if (uriPermission.isWritePermission()
 						&& uriPermission.isReadPermission()) {
@@ -538,6 +622,9 @@ public abstract class DialogFragmentAbstractLocationPicker
 			Environment.DIRECTORY_PICTURES,
 			Environment.DIRECTORY_PODCASTS
 		};
+		if (DEBUG) {
+			Log.d(TAG, "=== adding ExternalStoragePublicDirectories");
+		}
 		for (String id : DIR_IDS) {
 			File directory = Environment.getExternalStoragePublicDirectory(id);
 			if (directory != null && directory.exists()) {
@@ -545,26 +632,28 @@ public abstract class DialogFragmentAbstractLocationPicker
 			}
 		}
 
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-			StorageManager sm = (StorageManager) context.getSystemService(
-					Context.STORAGE_SERVICE);
-			if (sm != null) {
-				List<StorageVolume> storageVolumes = sm.getStorageVolumes();
+		StorageManager sm = (StorageManager) context.getSystemService(
+				Context.STORAGE_SERVICE);
+		if (sm != null) {
+			List<StorageVolume> storageVolumes = FileUtils.getStorageVolumes(sm);
+			if (storageVolumes != null) {
+				if (DEBUG) {
+					Log.d(TAG, "=== adding " + storageVolumes.size() + " storageVolumes");
+				}
 				for (StorageVolume volume : storageVolumes) {
 					if (DEBUG) {
-						Log.d(TAG, "buildFolderList: volume = " + volume.toString()
-								+ "; state=" + volume.getState());
+						Log.d(TAG,
+								"buildFolderList: volume= " + volume + "; state="
+										+ (VERSION.SDK_INT >= VERSION_CODES.N ? volume.getState()
+												: "na"));
 					}
 					try {
-						// getPath is hidden, but present since at API 15, and is still present in 29
-						// We could use getPathFile, but it's API 17
-						//noinspection JavaReflectionMemberAccess
-						Method mGetPath = volume.getClass().getMethod("getPath");
-						Object oPath = mGetPath.invoke(volume);
-						if (oPath instanceof String) {
-							String path = (String) oPath;
-							PathInfo pathInfo = PathInfo.buildPathInfo(path);
-							addPath(list, pathInfo);
+						String storageVolumePath = FileUtils.getStorageVolumePath(volume);
+						if (storageVolumePath != null) {
+							PathInfo pathInfo = PathInfo.buildPathInfo(storageVolumePath);
+							// Starting with O, OS folder chooser can have initialURI
+							// Show RO volumes, allowing user to browse and get perms
+							addPath(list, pathInfo, VERSION.SDK_INT >= VERSION_CODES.O);
 						}
 					} catch (Exception e) {
 						e.printStackTrace();
@@ -591,64 +680,32 @@ public abstract class DialogFragmentAbstractLocationPicker
 	@WorkerThread
 	private void addPath(@NonNull List<PathInfo> list,
 			@NonNull PathInfo pathInfo) {
+		addPath(list, pathInfo, false);
+	}
+
+	@WorkerThread
+	private void addPath(@NonNull List<PathInfo> list, @NonNull PathInfo pathInfo,
+			boolean allowReadOnly) {
 		if (getContext() == null) {
 			// dialog detached, don't add or do disk IO
 			return;
 		}
 		boolean contains = list.contains(pathInfo);
 		if (DEBUG) {
-			Log.d(TAG, (contains ? "(skipped) " : "") + "addPath: " + pathInfo.file);
+			Log.d(TAG,
+					(contains ? "(skipped) "
+							: !pathInfo.exists() ? "(skipped: NF) "
+									: pathInfo.isReadOnly() ? "(skipped: RO) " : "")
+							+ "addPath: " + pathInfo.fullPath + " ; file: " + pathInfo.file);
 		}
 		if (contains || !pathInfo.exists()) {
 			return;
 		}
 		// Force isReadOnly check on worker thread. Subsequent calls will be cached
-		pathInfo.isReadOnly();
-		list.add(pathInfo);
-	}
-
-	@SuppressLint("WrongConstant")
-	@Override
-	public void onActivityResult(int requestCode, int resultCode, Intent data) {
-		String chosenPathString = null;
-		if (requestCode == REQUEST_PATHCHOOSER && resultCode == Activity.RESULT_OK
-				&& data != null) {
-			// Result from Android OS File Picker, which is only used on local core
-
-			Uri uri = data.getData();
-			if (uri != null) {
-				// Persist access permissions.
-				final int takeFlags = data.getFlags()
-						& (Intent.FLAG_GRANT_READ_URI_PERMISSION
-								| Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
-				if (VERSION.SDK_INT >= VERSION_CODES.KITKAT) {
-					ContentResolver contentResolver = requireActivity().getContentResolver();
-					contentResolver.takePersistableUriPermission(uri, takeFlags);
-				}
-				chosenPathString = uri.toString();
-			}
-		}
-
-		// RESULT_CODE_DIR_SELECTED is from DirectoryChooser which only returns
-		// file paths (no "content://" strings)
-		if (requestCode == REQUEST_PATHCHOOSER
-				&& resultCode == DirectoryChooserActivity.RESULT_CODE_DIR_SELECTED
-				&& data != null) {
-			chosenPathString = data.getStringExtra(
-					DirectoryChooserActivity.RESULT_SELECTED_DIR);
-		}
-
-		if (DEBUG) {
-			Log.d(TAG, "onActivityResult: " + chosenPathString);
-		}
-
-		if (chosenPathString == null) {
-			super.onActivityResult(requestCode, resultCode, data);
+		if (pathInfo.isReadOnly() && !allowReadOnly) {
 			return;
 		}
-
-		String s = chosenPathString;
-		OffThread.runOffUIThread(() -> setChosenPathExternal(s));
+		list.add(pathInfo);
 	}
 
 	@WorkerThread
@@ -656,7 +713,9 @@ public abstract class DialogFragmentAbstractLocationPicker
 
 		newLocation = PathInfo.buildPathInfo(path);
 
-		if (newLocation.isReadOnly() && !FileUtils.canUseSAF(requireContext())) {
+		// fragment might be destroyed (SAF auth reboots all views), can't use requireContext()
+		if (newLocation.isReadOnly()
+				&& !FileUtils.canUseSAF(BiglyBTApp.getContext())) {
 			// TODO: Warn
 			return;
 		}
@@ -694,7 +753,10 @@ public abstract class DialogFragmentAbstractLocationPicker
 						adapter.setItemSelected(i);
 						updateItemSelected(newLocation, true);
 					}
+
+					adapter.updateItem(i, newLocation);
 					exists = true;
+					break;
 				}
 			}
 			if (!exists) {
@@ -821,7 +883,12 @@ public abstract class DialogFragmentAbstractLocationPicker
 				}
 			}
 			if (AndroidUtils.DEBUG) {
-				sbLine2.append("\n").append(item.fullPath);
+				String debugPath = item.fullPath;
+				if (item.storagePath != null
+						&& debugPath.startsWith(item.storagePath)) {
+					debugPath = "." + debugPath.substring(item.storagePath.length());
+				}
+				sbLine2.append("\n").append(debugPath);
 			}
 			String text = sbLine2.toString();
 			SpannableStringBuilder ss = new SpannableStringBuilder(text);

@@ -38,6 +38,8 @@ import android.view.*;
 import android.view.View.OnLayoutChangeListener;
 import android.widget.*;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts.StartActivityForResult;
 import androidx.annotation.NonNull;
 import androidx.annotation.StringRes;
 import androidx.appcompat.app.ActionBar;
@@ -51,7 +53,6 @@ import com.biglybt.android.client.dialog.DialogFragmentGenericRemoteProfile.Gene
 import com.biglybt.android.client.session.RemoteProfile;
 import com.biglybt.android.client.session.RemoteProfileFactory;
 import com.biglybt.android.client.spanbubbles.SpanBubbles;
-import com.biglybt.android.util.FileUtils;
 import com.biglybt.util.Thunk;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
@@ -81,15 +82,18 @@ public class LoginActivity
 	@Thunk
 	ViewSwitcher viewSwitcher;
 
+	private ActivityResultLauncher<Intent> launcherImport;
+
 	public static void launch(@NonNull Activity activity) {
 		Intent myIntent = new Intent(activity.getIntent());
 		myIntent.setAction(Intent.ACTION_VIEW);
 		myIntent.setFlags(
-			myIntent.getFlags() & (Intent.FLAG_GRANT_READ_URI_PERMISSION
-				| Intent.FLAG_GRANT_WRITE_URI_PERMISSION
-				| Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION
-				| Intent.FLAG_GRANT_PREFIX_URI_PERMISSION));
-		myIntent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION | Intent.FLAG_ACTIVITY_PREVIOUS_IS_TOP);
+				myIntent.getFlags() & (Intent.FLAG_GRANT_READ_URI_PERMISSION
+						| Intent.FLAG_GRANT_WRITE_URI_PERMISSION
+						| Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION
+						| Intent.FLAG_GRANT_PREFIX_URI_PERMISSION));
+		myIntent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION
+				| Intent.FLAG_ACTIVITY_PREVIOUS_IS_TOP);
 		myIntent.setClass(activity, LoginActivity.class);
 
 		activity.startActivity(myIntent);
@@ -118,6 +122,22 @@ public class LoginActivity
 				}
 			}
 		}
+
+		launcherImport = registerForActivityResult(new StartActivityForResult(),
+				(result) -> {
+					Intent resultIntent = result.getData();
+					Uri uri = resultIntent == null
+							|| result.getResultCode() != Activity.RESULT_OK ? null
+									: resultIntent.getData();
+					if (uri == null) {
+						return;
+					}
+					BiglyBTApp.getAppPreferences().importPrefs(this, uri, () -> {
+						if (appPreferences.getNumRemotes() > 0) {
+							RemoteUtils.openRemoteList(this);
+						}
+					});
+				});
 
 		super.onCreate(savedInstanceState);
 
@@ -349,31 +369,11 @@ public class LoginActivity
 		}
 
 		if (itemId == R.id.action_import_prefs) {
-			FileUtils.openFileChooser(this, "application/octet-stream",
-					TorrentViewActivity.FILECHOOSER_RESULTCODE);
+			appPreferences.importPrefs(this, launcherImport);
 			return true;
 		}
 
 		return super.onOptionsItemSelected(item);
-	}
-
-	@Override
-	public void onActivityResult(int requestCode, int resultCode, Intent intent) {
-		super.onActivityResult(requestCode, resultCode, intent);
-		if (AndroidUtils.DEBUG) {
-			Log.d(TAG, "onActivityResult: " + requestCode + "/" + resultCode);
-		}
-		if (requestCode == TorrentViewActivity.FILECHOOSER_RESULTCODE) {
-			Uri uri = intent == null || resultCode != Activity.RESULT_OK ? null
-					: intent.getData();
-			if (uri == null) {
-				return;
-			}
-			AppPreferences.importPrefs(this, uri);
-			if (appPreferences.getNumRemotes() > 0) {
-				RemoteUtils.openRemoteList(this);
-			}
-		}
 	}
 
 	@SuppressWarnings("UnusedParameters")
