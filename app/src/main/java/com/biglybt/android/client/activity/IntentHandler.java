@@ -72,7 +72,8 @@ public class IntentHandler
 		boolean forceProfileListOpen = false;
 
 		if (AndroidUtils.DEBUG) {
-			Log.d(TAG, "IntentHandler intent.data = " + intent.getData());
+			Log.d(TAG, "IntentHandler intent.data=" + intent.getData() + "; mime="
+					+ intent.getType());
 		}
 
 		AppPreferences appPreferences = BiglyBTApp.getAppPreferences();
