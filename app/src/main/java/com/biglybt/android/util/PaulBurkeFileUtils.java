@@ -100,9 +100,10 @@ public class PaulBurkeFileUtils
 				if (isExternalStorageDocument(uri)) {
 					final String[] split = docId.split(":");
 					final String type = split[0];
+					final String split1 = split.length > 1 ? split[1] : "";
 
 					if ("primary".equalsIgnoreCase(type)) {
-						return Environment.getExternalStorageDirectory() + "/" + split[1];
+						return Environment.getExternalStorageDirectory() + "/" + split1;
 					}
 
 					File[] externalFilesDirs = context.getExternalFilesDirs(null);
@@ -118,14 +119,14 @@ public class PaulBurkeFileUtils
 								|| absolutePath.charAt(posType + typeLength + 1) == '/')) {
 							String storagePath = absolutePath.substring(0,
 									posType + typeLength + 1);
-							return storagePath + "/" + split[1];
+							return storagePath + "/" + split1;
 						}
 					}
 
 					// Not sure if all devices have /storage/xxx
 					File f = new File("/storage/" + type);
 					if (f.isDirectory()) {
-						return f.getAbsolutePath() + "/" + split[1];
+						return f.getAbsolutePath() + "/" + split1;
 					}
 					// TODO handle non-primary volumes
 				}
