@@ -941,7 +941,7 @@ public class BiglyBTManager
 		}
 
 		COConfigurationManager.setParameter(CoreParamKeys.SPARAM_XMWEBUI_BIND_IP,
-				raPrefs.allowLANAccess ? "" : "127.0.0.1");
+				raPrefs.allowLANAccess ? "0.0.0.0" : "127.0.0.1");
 		COConfigurationManager.setParameter(
 				CoreParamKeys.SPARAM_XMWEBUI_PW_DISABLED_WHITELIST,
 				raPrefs.allowLANAccess ? DEFAULT_WEBUI_PW_LAN_ONLY
