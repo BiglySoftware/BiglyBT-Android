@@ -50,6 +50,8 @@ public class CoreParamKeys
 	/** Same proxy settings (host/port/name/pw) as BPARAM_PROXY_ENABLE_TRACKERS */
 	public static final String BPARAM_PROXY_DATA_SAME = "Proxy.Data.Same";
 
+	public static final String SPARAM_XMWEBUI_ENABLE = "Plugin.xmwebui.Enable";
+
 	public static final String SPARAM_XMWEBUI_BIND_IP = "Plugin.xmwebui.Bind IP";
 
 	public static final String SPARAM_XMWEBUI_PW_DISABLED_WHITELIST = "Plugin.xmwebui.Password Disabled Whitelist";
