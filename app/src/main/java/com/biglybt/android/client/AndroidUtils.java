@@ -1491,4 +1491,27 @@ public class AndroidUtils
 		}
 		return packageManager;
 	}
+
+	@NonNull
+	public static String getDeviceNameForLogger(ContentResolver contentResolver) {
+		String deviceName = null;
+		if (VERSION.SDK_INT >= VERSION_CODES.JELLY_BEAN_MR1
+				&& contentResolver != null) {
+			deviceName = Settings.Global.getString(contentResolver,
+					"default_device_name");
+		}
+
+		if (deviceName == null) {
+			deviceName = Build.MODEL == null ? "" : Build.MODEL;
+			if (Build.BRAND != null
+					&& !deviceName.toLowerCase().startsWith(Build.BRAND.toLowerCase())) {
+				deviceName = Build.BRAND + ": " + deviceName;
+			}
+			if (deviceName.length() > 1) {
+				deviceName = deviceName.substring(0, 1).toUpperCase()
+						+ deviceName.substring(1);
+			}
+		}
+		return deviceName;
+	}
 }

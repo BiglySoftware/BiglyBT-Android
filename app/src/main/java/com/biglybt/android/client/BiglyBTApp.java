@@ -25,8 +25,6 @@ import android.content.pm.FeatureInfo;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
-import android.os.Build;
-import android.provider.Settings;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.ViewConfiguration;
@@ -232,23 +230,7 @@ public class BiglyBTApp
 			vet.setScreenInches(screenInches);
 
 			ContentResolver contentResolver = applicationContext.getContentResolver();
-			String deviceName = null;
-			if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.JELLY_BEAN_MR1) {
-				deviceName = Settings.Global.getString(contentResolver,
-						"default_device_name");
-			}
-
-			if (deviceName == null) {
-				deviceName = Build.MODEL == null ? "" : Build.MODEL;
-				if (Build.BRAND != null && !deviceName.toLowerCase().startsWith(
-						Build.BRAND.toLowerCase())) {
-					deviceName = Build.BRAND + ": " + deviceName;
-				}
-				if (deviceName.length() > 1) {
-					deviceName = deviceName.substring(0, 1).toUpperCase()
-							+ deviceName.substring(1);
-				}
-			}
+			String deviceName = AndroidUtils.getDeviceNameForLogger(contentResolver);
 			if (AndroidUtils.DEBUG && !isCoreProcess) {
 				Log.d(TAG, "deviceName: " + deviceName);
 			}
