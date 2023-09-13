@@ -481,6 +481,9 @@ public class BiglyBTManager
 
 			// Remote Access config not shown in "Full Settings", so we don't need to
 			// remember previous settings
+
+			// Always enable Web UI, otherwise our Android UI can't talk to core
+			writeLine(fw, paramToCustom(CoreParamKeys.SPARAM_XMWEBUI_ENABLE, true));
 			writeLine(fw,
 					paramToCustom("Plugin.xmwebui.Port", RPC.LOCAL_BIGLYBT_PORT));
 			CoreRemoteAccessPreferences raPrefs = corePrefs.getRemoteAccessPreferences();
