@@ -61,6 +61,8 @@ public class DialogFragmentBiglyBTCoreProfile
 
 	private CompoundButton switchCoreOnlyPluggedIn;
 
+	private CompoundButton switchUITheme;
+
 	@NonNull
 	@Override
 	public Dialog onCreateDialog(Bundle savedInstanceState) {
@@ -121,6 +123,21 @@ public class DialogFragmentBiglyBTCoreProfile
 		switchCoreStartup = view.findViewById(R.id.profile_core_startup);
 		boolean prefAutoStart = !alreadyExists || corePrefs.getPrefAutoStart();
 		switchCoreStartup.setChecked(prefAutoStart);
+
+		switchUITheme = view.findViewById(R.id.profile_theme);
+		if (AndroidUtils.isTV(requireContext())) {
+			switchUITheme.setVisibility(View.GONE);
+		} else {
+			boolean prefUITheme = appPreferences.isThemeDark();
+			switchUITheme.setChecked(prefUITheme);
+			switchUITheme.setOnCheckedChangeListener((buttonView, isChecked) -> {
+				if (appPreferences.isThemeDark() != isChecked) {
+					appPreferences.setThemeDark(isChecked);
+					activity.recreate();
+				}
+			});
+			switchUITheme.setVisibility(View.VISIBLE);
+		}
 
 		switchCoreAllowCellData = view.findViewById(
 				R.id.profile_core_allowcelldata);

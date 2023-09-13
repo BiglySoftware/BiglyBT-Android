@@ -22,6 +22,7 @@ import android.app.Application;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
+import android.content.res.Configuration;
 import android.net.Uri;
 import android.text.TextUtils;
 import android.text.format.DateUtils;
@@ -127,7 +128,10 @@ public class AppPreferences
 	private AppPreferences(Application applicationContext) {
 		this.applicationContext = applicationContext;
 		preferences = new ImportPreferences(applicationContext);
-		isThemeDark = preferences.getBoolean(KEY_IS_THEME_DARK, false);
+		int nightMode = applicationContext.getResources().getConfiguration().uiMode
+				& Configuration.UI_MODE_NIGHT_MASK;
+		isThemeDark = preferences.getBoolean(KEY_IS_THEME_DARK,
+				(nightMode & Configuration.UI_MODE_NIGHT_YES) > 0);
 	}
 
 	public boolean getBoolean(String s, boolean defaultValue) {
@@ -208,6 +212,10 @@ public class AppPreferences
 		return false;
 	}
 
+	/**
+	 * Get a RemoteProfile based on profileID.  Will create new RemoteProfile if
+	 * doesn't exist.
+	 */
 	public RemoteProfile getRemote(String profileID) {
 		try {
 			Map<String, Object> mapConfig = getPrefs();
@@ -256,6 +264,7 @@ public class AppPreferences
 		return false;
 	}
 
+	@NonNull
 	public RemoteProfile[] getRemotes() {
 		List<RemoteProfile> listRemotes = new ArrayList<>(1);
 		try {
@@ -711,7 +720,7 @@ public class AppPreferences
 			}
 		});
 	}
-	
+
 	@Thunk
 	void exportPrefs_withPerms(@NonNull Context context,
 			@NonNull ActivityResultLauncher<Intent> launcher) {

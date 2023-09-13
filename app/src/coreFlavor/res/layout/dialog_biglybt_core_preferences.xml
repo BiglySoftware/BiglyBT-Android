@@ -31,7 +31,6 @@
 		<com.google.android.material.textfield.TextInputLayout
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
-			android:layout_marginBottom="@dimen/profile_setting_spacer"
 			android:hint="@string/profile_nickname"
 			app:helperText="@string/profile_localnick_explain"
 			>
@@ -45,12 +44,25 @@
 				android:layout_height="wrap_content" />
 		</com.google.android.material.textfield.TextInputLayout>
 
-		<LinearLayout
+        <com.google.android.material.switchmaterial.SwitchMaterial
+            android:id="@+id/profile_theme"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/preftitle_ui_theme"
+            android:textOff="@string/prefswitch_theme_light"
+            android:textOn="@string/prefswitch_theme_dark"
+			android:visibility="gone"
+			tools:visibility="visible"
+            />
+
+
+        <LinearLayout
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
 			android:layout_marginBottom="@dimen/profile_setting_spacer"
 			android:background="@drawable/rounded_corner"
 			android:orientation="vertical"
+			android:layout_marginTop="@dimen/profile_setting_spacer"
 			android:padding="10dp">
 
 			<TextView
