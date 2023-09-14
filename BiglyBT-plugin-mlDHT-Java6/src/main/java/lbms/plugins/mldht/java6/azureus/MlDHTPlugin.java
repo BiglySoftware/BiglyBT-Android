@@ -450,7 +450,7 @@ public class MlDHTPlugin implements UnloadablePlugin, PluginListener, NetworkAdm
 			logChannel.removeListener(logListener);
 		}
 			
-		DHT.initStatics();	// reset in case plugin class isn't unloaded (happend when bundled)
+		//DHT.initStatics();	// reset in case plugin class isn't unloaded (happend when bundled)
 		
 		dhts 		= null;
 		
