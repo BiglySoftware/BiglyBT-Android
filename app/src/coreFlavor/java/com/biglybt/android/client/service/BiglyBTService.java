@@ -256,8 +256,7 @@ public class BiglyBTService
 			}
 			if (CorePrefs.DEBUG_CORE) {
 				logd("handleMessage: REMOVE_LISTENER(" + callback + ", " + binder + ") "
-						+ (removed ? "success" : "failure") + ". # clients "
-						+ mapListeners.size());
+						+ (removed ? "success" : "failure"));
 				if (!removed) {
 					loge("removeListener: callback=" + callback + "/binder=" + binder
 							+ "; list=" + mapListeners, null);
@@ -698,7 +697,7 @@ public class BiglyBTService
 		return (core == null ? "c" : "C") + (biglyBTManager == null ? "m" : "M")
 				+ (bindToLocalHost ? "L" : "l") + (restartService ? "R" : "r") + ","
 				+ (isServiceDestroyed ? "S:D" : isServiceStopping ? "S:S" : "S:A") + ","
-				+ (isCoreStopping ? "C:S" : "C:A") + ","
+				+ (isCoreStopping ? "C:S" : "C:A") + "," + mapListeners.size() + ","
 				+ Thread.currentThread().getName() + "] ";
 	}
 
@@ -796,21 +795,6 @@ public class BiglyBTService
 
 	}
 
-	private static boolean wouldBindToLocalHost(@NonNull CorePrefs corePrefs) {
-		NetworkState networkState = BiglyBTApp.getNetworkState();
-		if (corePrefs.getPrefOnlyPluggedIn()
-				&& !AndroidUtils.isPowerConnected(BiglyBTApp.getContext())) {
-			return true;
-		}
-		if (!corePrefs.getPrefAllowCellData() && networkState.isOnlineMobile()) {
-			return true;
-		}
-		if (!networkState.isOnline()) {
-			return true;
-		}
-		return false;
-	}
-
 	@Override
 	public void corePrefAutoStartChanged(@NonNull CorePrefs corePrefs,
 			boolean autoStart) {
@@ -821,7 +805,7 @@ public class BiglyBTService
 	public void corePrefAllowCellDataChanged(@NonNull CorePrefs corePrefs,
 			boolean allowCellData) {
 		if (biglyBTManager != null) {
-			sendRestartServiceIntent();
+			biglyBTManager.updateBindToLocalHost();
 		}
 	}
 
@@ -872,8 +856,7 @@ public class BiglyBTService
 		if (map != null) {
 			if (CorePrefs.DEBUG_CORE) {
 				logd("sendStuff: " + what + "; " + map.get("data") + ";state="
-						+ map.get("state") + " to " + mapListeners.size() + " clients, "
-						+ AndroidUtils.getCompressedStackTrace());
+						+ map.get("state") + ", " + AndroidUtils.getCompressedStackTrace());
 			}
 		}
 		synchronized (mapListeners) {
@@ -1002,25 +985,8 @@ public class BiglyBTService
 			SimpleTimer.addPeriodicEvent("Update Notification", 10000,
 					event -> updateNotification());
 
-			CorePrefs corePrefs = CorePrefs.getInstance();
-			if (corePrefs.getPrefOnlyPluggedIn()) {
-				boolean wasConnected = AndroidUtils.isPowerConnected(
-						BiglyBTApp.getContext());
-				boolean isConnected = AndroidUtils.isPowerConnected(
-						BiglyBTApp.getContext());
-
-				if (wasConnected != isConnected) {
-					if (CorePrefs.DEBUG_CORE) {
-						logd("state changed while starting up.. stop core and try again");
-					}
-
-					sendRestartServiceIntent();
-					return;
-				}
-			}
-
 			ServiceCoreLifecycleAdapter lifecycleAdapter = new ServiceCoreLifecycleAdapter(
-					corePrefs);
+					CorePrefs.getInstance());
 			core.addLifecycleListener(lifecycleAdapter);
 			if (core.isStarted()) {
 				// If core was already started before adding listener, we need to manually trigger started
@@ -1041,8 +1007,7 @@ public class BiglyBTService
 		}
 	}
 
-	@Thunk
-	void updateNotification() {
+	public void updateNotification() {
 		if (!canDisplayNotifications) {
 			return;
 		}
@@ -1064,26 +1029,23 @@ public class BiglyBTService
 		}
 	}
 
-	private static void sendRestartServiceIntent() {
+	/**
+	 * Sends a request to restart BiglyBT Core.
+	 * <p>
+	 * On API 25+ (N_MR1), we can only restart if initiated by user.
+	 *
+	 * @todo detect if we are allowed and warn dev. Maybe {@link #mapListeners}.size() > 0?
+	 */
+	private void sendRestartServiceIntent() {
 		if (CorePrefs.DEBUG_CORE) {
-			Log.d(TAG, "sendRestartServiceIntent via "
+			logd("sendRestartServiceIntent via "
 					+ AndroidUtils.getCompressedStackTrace());
 		}
-		Context context = BiglyBTApp.getContext();
-		Intent intentStop = new Intent(context, BiglyBTService.class);
-		intentStop.setAction(BiglyBTService.INTENT_ACTION_RESTART);
-
-		int flag = PendingIntent.FLAG_CANCEL_CURRENT;
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-			flag |= PendingIntent.FLAG_IMMUTABLE;
-		}
-		PendingIntent piRestart = PendingIntent.getService(context, 0, intentStop,
-				flag);
 
 		try {
-			piRestart.send();
+			BiglyCoreFlavorUtils.getRestartServiceIntent(this).send();
 		} catch (PendingIntent.CanceledException e) {
-			Log.e(TAG, "restartService", e);
+			loge("restartService", e);
 		}
 	}
 
@@ -1097,7 +1059,13 @@ public class BiglyBTService
 			return;
 		}
 		if (CorePrefs.DEBUG_CORE) {
-			logd("restartService: " + AndroidUtils.getCompressedStackTrace());
+			if (mapListeners.size() > 0) {
+				logd("restartService: " + mapListeners.size() + " clients; "
+						+ AndroidUtils.getCompressedStackTrace());
+			} else {
+				logw("restartService: NO clients; "
+						+ AndroidUtils.getCompressedStackTrace());
+			}
 		}
 		restartService = true;
 		stopSelfAndNotify();
@@ -1235,7 +1203,13 @@ public class BiglyBTService
 		 * that notifies the app onTaskRemoved.
 		 */
 		Notification notification = getNotificationBuilder().build();
-		startForeground(NOTIFICATION_ID, notification);
+		try {
+			startForeground(NOTIFICATION_ID, notification);
+		} catch (Throwable t) {
+			// java.lang.RuntimeException: Unable to start service com.biglybt.android.client.service.BiglyBTService@xx with Intent { act=com.biglybt.android.client.XX cmp=com.biglybt.android.client/.service.BiglyBTService } 
+			// Caused by: android.app.ForegroundServiceStartNotAllowedException: Service.startForeground() not allowed due to mAllowStartForeground false: service com.biglybt.android.client/.service.BiglyBTService
+			AnalyticsTracker.getInstance().logError(t);
+		}
 
 		if (CorePrefs.DEBUG_CORE) {
 			logd("onStartCommand: startForeground, Start Sticky; flags=" + flags
@@ -1338,57 +1312,29 @@ public class BiglyBTService
 		builder.setShowWhen(false);
 
 		if (!isCoreStopping && !isServiceStopping) {
-			Intent intentStop = new Intent(this, BiglyBTService.class);
-			intentStop.setAction(INTENT_ACTION_STOP);
-
-			flag = PendingIntent.FLAG_CANCEL_CURRENT;
-			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-				flag |= PendingIntent.FLAG_IMMUTABLE;
-			}
-			PendingIntent piStop = PendingIntent.getService(this, 0, intentStop,
-					flag);
-
 			builder.addAction(R.drawable.ic_power_settings_new_white_24dp,
-					resources.getString(R.string.core_noti_stop_button), piStop);
+					resources.getString(R.string.core_noti_stop_button),
+					BiglyCoreFlavorUtils.getStopServiceIntent(this));
 
 			if (core != null && core.isStarted()) {
 				try {
-					GlobalManager gm = core.getGlobalManager();
-					boolean canPause = gm.canPauseDownloads();
-					Intent intentPR = new Intent(this, BiglyBTService.class);
-					intentPR.setAction(
-							canPause ? INTENT_ACTION_PAUSE : INTENT_ACTION_RESUME);
-
-					flag = PendingIntent.FLAG_CANCEL_CURRENT;
-					if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-						flag |= PendingIntent.FLAG_IMMUTABLE;
-					}
-					PendingIntent piPR = PendingIntent.getService(this, 0, intentPR,
-							flag);
+					boolean canPause = core.getGlobalManager().canPauseDownloads();
 
 					builder.addAction(
 							canPause ? R.drawable.ic_playlist_pause_n
 									: R.drawable.ic_playlist_play_white_n,
 							resources.getString(canPause ? R.string.core_noti_pause_button
 									: R.string.core_noti_resume_button),
-							piPR);
+							BiglyCoreFlavorUtils.getServicePendingIntent(this,
+									canPause ? INTENT_ACTION_PAUSE : INTENT_ACTION_RESUME));
 				} catch (CoreException e) {
 					loge("getNotificationBuilder", e);
 				}
 			}
 
 			if (CorePrefs.DEBUG_CORE) {
-				Intent intentRestart = new Intent(this, BiglyBTService.class);
-				intentRestart.setAction(INTENT_ACTION_RESTART);
-
-				flag = PendingIntent.FLAG_CANCEL_CURRENT;
-				if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-					flag |= PendingIntent.FLAG_IMMUTABLE;
-				}
-				PendingIntent piRestart = PendingIntent.getService(this, 0,
-						intentRestart, flag);
 				builder.addAction(R.drawable.ic_notification_restart, "Restart",
-						piRestart);
+						BiglyCoreFlavorUtils.getRestartServiceIntent(this));
 			}
 
 		}
@@ -1548,6 +1494,9 @@ public class BiglyBTService
 					+ AndroidUtils.getCompressedStackTrace(3));
 		}
 
+		// Can't use BiglyCoreFlavorUtils.getServicePendingIntent()
+		// because we need (probably?) FLAG_ONE_SHOT and for some reason we
+		// set requestCode to 1
 		Intent intent = new Intent(this, BiglyBTService.class);
 		if (coreStarted) {
 			intent.setAction(INTENT_ACTION_START);
@@ -1613,13 +1562,13 @@ public class BiglyBTService
 
 	private void onlineStateChangedNoDelay(@NonNull CorePrefs corePrefs,
 			boolean isOnline, boolean isOnlineMobile) {
-		boolean requireRestart = false;
+		boolean onlineChanged = false;
 
 		if (lastOnline == null) {
 			lastOnline = isOnline;
 		} else if (lastOnline != isOnline) {
 			lastOnline = isOnline;
-			requireRestart = true;
+			onlineChanged = true;
 			if (CorePrefs.DEBUG_CORE) {
 				logd("onlineStateChanged: isOnline changed");
 			}
@@ -1630,33 +1579,28 @@ public class BiglyBTService
 				lastOnlineMobile = isOnlineMobile;
 			} else if (lastOnlineMobile != isOnlineMobile) {
 				lastOnlineMobile = isOnlineMobile;
-				requireRestart = true;
+				onlineChanged = true;
 				if (CorePrefs.DEBUG_CORE) {
 					logd("onlineStateChanged: isOnlineMobile changed");
 				}
 			}
 		}
 
-		boolean bindToLocalHost = biglyBTManager != null
-				&& biglyBTManager.isBindToLocalHost();
-		if (requireRestart && wouldBindToLocalHost(corePrefs) != bindToLocalHost) {
-			sendRestartServiceIntent();
+		if (biglyBTManager != null && onlineChanged) {
+			biglyBTManager.updateBindToLocalHost();
+		} else if (CorePrefs.DEBUG_CORE) {
+			logw(
+					"onlineStateChanged: Skipping updateBindToLocalHost: no biglyBTManager");
 		}
 	}
 
 	@Thunk
 	void checkForSleepModeChange(@NonNull CorePrefs corePrefs) {
-		boolean bindToLocalHost = biglyBTManager != null
-				&& biglyBTManager.isBindToLocalHost();
-		if (CorePrefs.DEBUG_CORE) {
-			logd("checkForSleepModeChange, currently "
-					+ (bindToLocalHost ? "sleeping" : "awake"));
-		}
-		if (wouldBindToLocalHost(corePrefs) != bindToLocalHost) {
-			if (CorePrefs.DEBUG_CORE) {
-				logd("Need to restart to " + (bindToLocalHost ? "unsleep" : "sleep"));
-			}
-			sendRestartServiceIntent();
+		if (biglyBTManager != null) {
+			biglyBTManager.updateBindToLocalHost();
+		} else if (CorePrefs.DEBUG_CORE) {
+			logw(
+					"checkForSleepModeChange: Skipping updateBindToLocalHost: no biglyBTManager");
 		}
 	}
 

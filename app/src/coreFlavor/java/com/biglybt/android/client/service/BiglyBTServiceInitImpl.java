@@ -139,19 +139,9 @@ public class BiglyBTServiceInitImpl
 		if (CorePrefs.DEBUG_CORE) {
 			Log.d(TAG, "StopService");
 		}
-		Context context = BiglyBTApp.getContext();
-		Intent intentStop = new Intent(context, BiglyBTService.class);
-		intentStop.setAction(BiglyBTService.INTENT_ACTION_STOP);
-
-		int flag = PendingIntent.FLAG_CANCEL_CURRENT;
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-			flag |= PendingIntent.FLAG_IMMUTABLE;
-		}
-		PendingIntent piStop = PendingIntent.getService(context, 0, intentStop,
-			flag);
 
 		try {
-			piStop.send();
+			BiglyCoreFlavorUtils.getStopServiceIntent(BiglyBTApp.getContext()).send();
 		} catch (PendingIntent.CanceledException e) {
 			Log.e(TAG, "stopService", e);
 		}
@@ -162,21 +152,12 @@ public class BiglyBTServiceInitImpl
 		if (CorePrefs.DEBUG_CORE) {
 			Log.d(TAG, "RestartService");
 		}
-		Context context = BiglyBTApp.getContext();
-		Intent intentRestart = new Intent(context, BiglyBTService.class);
-		intentRestart.setAction(BiglyBTService.INTENT_ACTION_RESTART);
-
-		int flag = PendingIntent.FLAG_CANCEL_CURRENT;
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-			flag |= PendingIntent.FLAG_IMMUTABLE;
-		}
-		PendingIntent piRestart = PendingIntent.getService(context, 0, intentRestart,
-			flag);
 
 		try {
-			piRestart.send();
+			BiglyCoreFlavorUtils.getRestartServiceIntent(
+					BiglyBTApp.getContext()).send();
 		} catch (PendingIntent.CanceledException e) {
-			Log.e(TAG, "stopService", e);
+			Log.e(TAG, "restartService", e);
 		}
 	}
 

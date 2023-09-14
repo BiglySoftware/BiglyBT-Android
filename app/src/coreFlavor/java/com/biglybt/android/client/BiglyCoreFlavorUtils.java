@@ -16,9 +16,14 @@
 
 package com.biglybt.android.client;
 
+import android.app.PendingIntent;
+import android.content.Context;
+import android.content.Intent;
+import android.os.Build;
 import android.os.IBinder;
 import android.util.Log;
 
+import com.biglybt.android.client.service.BiglyBTService;
 import com.biglybt.android.client.service.BiglyBTServiceCore;
 import com.biglybt.android.client.service.BiglyBTServiceInit;
 import com.biglybt.android.util.BiglyCoreUtils;
@@ -61,5 +66,26 @@ public class BiglyCoreFlavorUtils
 			}
 		}
 		return coreInterface;
+	}
+
+	public static PendingIntent getRestartServiceIntent(Context context) {
+		return getServicePendingIntent(context,
+				BiglyBTService.INTENT_ACTION_RESTART);
+	}
+
+	public static PendingIntent getStopServiceIntent(Context context) {
+		return getServicePendingIntent(context, BiglyBTService.INTENT_ACTION_STOP);
+	}
+
+	public static PendingIntent getServicePendingIntent(Context context,
+			String action) {
+		Intent intentRestart = new Intent(action, null, context,
+				BiglyBTService.class);
+
+		int flag = PendingIntent.FLAG_CANCEL_CURRENT;
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+			flag |= PendingIntent.FLAG_IMMUTABLE;
+		}
+		return PendingIntent.getService(context, 0, intentRestart, flag);
 	}
 }

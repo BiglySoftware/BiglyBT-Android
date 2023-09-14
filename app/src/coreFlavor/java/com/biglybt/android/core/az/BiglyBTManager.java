@@ -19,12 +19,14 @@ package com.biglybt.android.core.az;
 import android.annotation.SuppressLint;
 import android.content.res.AssetFileDescriptor;
 import android.content.res.AssetManager;
+import android.content.res.Resources;
 import android.os.Build;
 import android.os.Build.VERSION;
 import android.os.Build.VERSION_CODES;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.WorkerThread;
 
 import com.biglybt.android.client.*;
 import com.biglybt.android.client.rpc.RPC;
@@ -42,10 +44,8 @@ import com.biglybt.core.config.impl.TransferSpeedValidator;
 import com.biglybt.core.internat.MessageText;
 import com.biglybt.core.logging.*;
 import com.biglybt.core.logging.impl.LoggerImpl;
-import com.biglybt.core.security.SESecurityManager;
 import com.biglybt.core.util.*;
-import com.biglybt.pif.PluginManager;
-import com.biglybt.pif.PluginManagerDefaults;
+import com.biglybt.pif.*;
 import com.biglybt.ui.UIFunctionsManager;
 import com.biglybt.util.Thunk;
 
@@ -379,8 +379,9 @@ public class BiglyBTManager
 		core = CoreFactory.create();
 
 		coreInit();
-		// remove me
-		SESecurityManager.getAllTrustingTrustManager();
+
+		// state might have changed from preInit to postInit core
+		updateBindToLocalHost();
 	}
 
 	private void preCoreInit(@NonNull CorePrefs corePrefs,
@@ -514,12 +515,16 @@ public class BiglyBTManager
 			writeLine(fw,
 					paramToCustom(CoreParamKeys.BPARAM_XMWEBUI_PAIRING_AUTO_AUTH, false));
 
+			// We used to enabled extseed based on bindToLocalHost, but since
+			// the plugin obeys bind, it can be on all the time
+			// Ensure it's on in case user upgraded from verion that disabled it
+			writeLine(fw, paramToCustom("PluginInfo.azextseed.enabled", true));
+
 			if (bindToLocalHost) {
 				writeLine(fw, paramToCustom(Connection.BCFG_ENFORCE_BIND_IP, true));
 				writeLine(fw,
 						paramToCustom(Connection.BCFG_CHECK_BIND_IP_ON_START, true));
 				writeLine(fw, paramToCustom(Connection.SCFG_BIND_IP, "127.0.0.1"));
-				writeLine(fw, paramToCustom("PluginInfo.azextseed.enabled", false));
 				writeLine(fw, paramToCustom("PluginInfo.mldht.enabled", false));
 				if (CorePrefs.DEBUG_CORE) {
 					logd("buildCustomFile: setting binding to localhost only");
@@ -560,7 +565,6 @@ public class BiglyBTManager
 				writeLine(fw,
 						paramToCustom(Connection.SCFG_BIND_IP, MapUtils.getMapString(
 								mapCurrent, "android." + Connection.SCFG_BIND_IP, "")));
-				writeLine(fw, paramToCustom("PluginInfo.azextseed.enabled", true));
 				writeLine(fw, paramToCustom("PluginInfo.mldht.enabled", true));
 
 				TrayPreferences prefs = BiglyBTApp.getAppPreferences().getPreferences();
@@ -752,7 +756,7 @@ public class BiglyBTManager
 			}
 
 			if (!UPNPMS_ENABLE) {
-				removeDir(new File(destDir,  "azupnpav"));
+				removeDir(new File(destDir, "azupnpav"));
 			}
 			if (CorePrefs.DEBUG_CORE) {
 				Log.d("Core", "register plugins done");
@@ -1096,4 +1100,146 @@ public class BiglyBTManager
 		}
 	}
 
+	/** @noinspection deprecation*/
+	public void updateBindToLocalHost() {
+		if (core == null) {
+			loge("updateBindToLocalHost: core is null! "
+					+ AndroidUtils.getCompressedStackTrace(), null);
+			return;
+		}
+
+		int lastReasonID = bindToLocalHostReasonID;
+
+		CorePrefs corePrefs = CorePrefs.getInstance();
+		NetworkState networkState = BiglyBTApp.getNetworkState();
+		boolean shouldBindToLocalHost = false;
+		if (corePrefs.getPrefOnlyPluggedIn()
+				&& !AndroidUtils.isPowerConnected(BiglyBTApp.getContext())) {
+			shouldBindToLocalHost = true;
+			bindToLocalHostReasonID = R.string.core_noti_sleeping_battery;
+		} else if (!corePrefs.getPrefAllowCellData()
+				&& networkState.isOnlineMobile()) {
+			shouldBindToLocalHost = true;
+			bindToLocalHostReasonID = R.string.core_noti_sleeping_oncellular;
+		} else if (!networkState.isOnline()) {
+			shouldBindToLocalHost = true;
+			bindToLocalHostReasonID = R.string.core_noti_sleeping;
+		}
+
+		if (lastReasonID != bindToLocalHostReasonID
+				|| shouldBindToLocalHost != bindToLocalHost) {
+			service.updateNotification();
+		}
+
+		if (CorePrefs.DEBUG_CORE) {
+			Resources resources = BiglyBTApp.getContext().getResources();
+			String s = resources.getString(bindToLocalHostReasonID);
+			logd("updateBindToLocalHost: was "
+					+ (bindToLocalHost
+							? "sleeping" + resources.getString(lastReasonID) : "awake")
+					+ ", now "
+					+ (shouldBindToLocalHost
+							? "sleeping: " + resources.getString(bindToLocalHostReasonID)
+							: "awake"));
+		}
+
+		if (shouldBindToLocalHost == bindToLocalHost) {
+			return;
+		}
+
+		bindToLocalHost = shouldBindToLocalHost;
+
+		OffThread.runOffUIThread(this::updateBindToLocalHost_worker);
+	}
+
+	@WorkerThread
+	private void updateBindToLocalHost_worker() {
+
+		final String[] pluginsToSwitch = {
+			"lbms.plugins.mldht.java6.azureus.MlDHTPlugin",
+			"lbms.plugins.mldht.azureus.MlDHTPlugin",
+		};
+		PluginManager pm = core.getPluginManager();
+
+		if (bindToLocalHost) {
+			// IP must be set before enforce
+			COConfigurationManager.setParameter(Connection.SCFG_BIND_IP, "127.0.0.1");
+			COConfigurationManager.setParameter(Connection.BCFG_ENFORCE_BIND_IP,
+					true);
+			COConfigurationManager.setParameter(
+					Connection.BCFG_CHECK_BIND_IP_ON_START, true);
+
+			for (String pluginClass : pluginsToSwitch) {
+				PluginInterface pi = pm.getPluginInterfaceByClass(pluginClass, false);
+				if (pi == null) {
+					continue;
+				}
+				try {
+					PluginState pluginState = pi.getPluginState();
+					pluginState.unload();
+					pluginState.setLoadedAtStartup(false);
+
+					if (CorePrefs.DEBUG_CORE) {
+						logd("updateBindToLocalHost: unloaded plugin " + pluginClass);
+					}
+				} catch (PluginException e) {
+					loge("updateBindToLocalHost: unload plugin " + pluginClass, e);
+				}
+			}
+
+			if (CorePrefs.DEBUG_CORE) {
+				logd("updateBindToLocalHost: binding set to localhost only");
+			}
+		} else {
+			if (CorePrefs.DEBUG_CORE) {
+				logd("updateBindToLocalHost: clearing binding");
+			}
+
+			// Restore user-set bindings 
+
+			COConfigurationManager.setParameter(Connection.BCFG_ENFORCE_BIND_IP,
+					COConfigurationManager.getBooleanParameter(
+							"android." + Connection.BCFG_ENFORCE_BIND_IP, false));
+			COConfigurationManager.setParameter(
+					Connection.BCFG_CHECK_BIND_IP_ON_START,
+					COConfigurationManager.getBooleanParameter(
+							"android." + Connection.BCFG_CHECK_BIND_IP_ON_START, false));
+			COConfigurationManager.setParameter(Connection.SCFG_BIND_IP,
+					COConfigurationManager.getStringParameter(
+							"android." + Connection.SCFG_BIND_IP, ""));
+
+			// Enable mlDHT and initialize
+
+			// Case: plugin was disabled at start, which still gets loaded (but not started)
+			// we need to enable it and reload it
+			for (String pluginClass : pluginsToSwitch) {
+				PluginInterface pi = pm.getPluginInterfaceByClass(pluginClass, false);
+				if (pi == null) {
+					continue;
+				}
+
+				PluginState pluginState = pi.getPluginState();
+				pluginState.setLoadedAtStartup(true);
+
+				if (pluginState.isDisabled()) {
+					if (CorePrefs.DEBUG_CORE) {
+						logd("updateBindToLocalHost: re-enable plugin " + pluginClass);
+					}
+					pluginState.setDisabled(false);
+
+					try {
+						pluginState.reload();
+					} catch (PluginException e) {
+						loge("updateBindToLocalHost: reload plugin " + pluginClass, e);
+					}
+				}
+			}
+
+			// Case: we earlier unloaded the plugin, so it wasn't in the list
+			// this will load it
+			pm.refreshPluginList(true);
+		}
+
+		COConfigurationManager.save();
+	}
 }
