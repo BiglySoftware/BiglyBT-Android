@@ -751,7 +751,7 @@ public class BiglyBTManager
 			}
 
 			if (!UPNPMS_ENABLE) {
-				removeDir(new File(new File(destDir, "plugins"), "azupnpav"));
+				removeDir(new File(destDir,  "azupnpav"));
 			}
 			if (CorePrefs.DEBUG_CORE) {
 				Log.d("Core", "register plugins done");
