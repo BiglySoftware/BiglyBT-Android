@@ -56,17 +56,19 @@ public class BootCompleteReceiver
 		StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();
 		new Thread(() -> {
 			try {
-				if (!CorePrefs.getInstance().getPrefAutoStart()) {
-					pendingResult.finish();
+				if (RemoteUtils.getCoreProfile() == null
+						|| !CorePrefs.getInstance().getPrefAutoStart()) {
 					return;
 				}
 
-				if (coreSessionInfoExists()) {
-					Intent intent2 = new Intent(context, BiglyBTService.class);
-					intent2.setAction(BiglyBTService.INTENT_ACTION_START);
-					ContextCompat.startForegroundService(context, intent2);
-					//BiglyCoreUtils.startBiglyBTCoreService() does bindings which BroadcastReceviers shouldn't do
+				if (AndroidUtils.DEBUG) {
+					Log.d(TAG, "startForegroundService BiglyBTService");
 				}
+				
+				ContextCompat.startForegroundService(context,
+						new Intent(BiglyBTService.INTENT_ACTION_START, null, context,
+								BiglyBTService.class));
+				//BiglyCoreUtils.startBiglyBTCoreService() does bindings which BroadcastReceivers shouldn't do
 
 			} catch (Throwable t) {
 				// TODO: We get an IllegalAccessError on certain devices (Skyworth; Android 8.0)
@@ -74,35 +76,13 @@ public class BootCompleteReceiver
 				//       only been reported on one device on one OS version, it may not be
 				//       We could warn the user, provide a non-optimized apk for them
 				//       via non-Google Play
-				IAnalyticsTracker instance = AnalyticsTracker.getInstance();
-				String deviceName = Build.MODEL == null ? "" : Build.MODEL;
-				if (Build.BRAND != null
-					&& !deviceName.toLowerCase().startsWith(Build.BRAND.toLowerCase())) {
-					deviceName = Build.BRAND + ": " + deviceName;
-				}
-				if (deviceName.length() > 1) {
-					deviceName = deviceName.substring(0, 1).toUpperCase()
-						+ deviceName.substring(1);
-				}
-				instance.setDeviceName(deviceName);
-				instance.logError(t, stackTrace);
+				IAnalyticsTracker tracker = AnalyticsTracker.getInstance();
+				tracker.setDeviceName(
+						AndroidUtils.getDeviceNameForLogger(context.getContentResolver()));
+				tracker.logError(t, stackTrace);
+			} finally {
+				pendingResult.finish();
 			}
-			pendingResult.finish();
 		}, TAG).start();
-	}
-
-	@Thunk
-	static boolean coreSessionInfoExists() {
-		AppPreferences appPreferences = BiglyBTApp.getAppPreferences();
-		RemoteProfile[] remotes = appPreferences.getRemotes();
-		if (remotes == null || remotes.length == 0) {
-			return false;
-		}
-		for (RemoteProfile remote : remotes) {
-			if (remote.getRemoteType() == RemoteProfile.TYPE_CORE) {
-				return true;
-			}
-		}
-		return false;
 	}
 }

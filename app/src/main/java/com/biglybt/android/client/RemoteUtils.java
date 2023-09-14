@@ -217,7 +217,7 @@ public class RemoteUtils
 		}
 	}
 
-	private static RemoteProfile getCoreProfile() {
+	public static RemoteProfile getCoreProfile() {
 		AppPreferences appPreferences = BiglyBTApp.getAppPreferences();
 		RemoteProfile[] remotes = appPreferences.getRemotes();
 		RemoteProfile coreProfile = null;
