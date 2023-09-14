@@ -163,6 +163,7 @@ public class BiglyBTManager
 		mapForcedDefaultIDs.put("Plugin.DHT Tracker.dhttracker.enable_alt", false);
 		mapForcedDefaultIDs.put("Plugin.aercm.rcm.config.max_results", 100);
 		mapForcedDefaultIDs.put("Plugin.mlDHT.backupOnly", true);
+		mapForcedDefaultIDs.put("Plugin.mlDHT.autostart.IPv6", false);
 
 		CorePrefs corePrefs = CorePrefs.getInstance();
 		preCoreInit(corePrefs, core_root, mapForcedDefaultIDs);
