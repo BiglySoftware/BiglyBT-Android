@@ -1137,6 +1137,7 @@ public class BiglyBTService
 			}
 			try {
 				core.stop();
+				// We'll get a {@link CoreLifecycleListener#stopped(Core)} trigger 
 			} catch (Throwable t) {
 				AnalyticsTracker.getInstance().logError(t);
 				stopSelf();
@@ -1239,8 +1240,11 @@ public class BiglyBTService
 		if (CorePrefs.DEBUG_CORE) {
 			logd("onStartCommand: startForeground, Start Sticky; flags=" + flags
 					+ ";startID=" + startId + ";"
-					+ (intent == null ? "null intent" : intent.getAction() + ";"
-							+ intent.getExtras() + ";" + intent.getDataString())
+					+ (intent == null ? "null intent"
+							: intent.getAction()
+									+ (intent.getExtras() == null ? ""
+											: ";" + intent.getExtras().keySet())
+									+ ";" + intent.getDataString())
 					+ "; hadStaticVar=" + hadStaticVar);
 		}
 		return (START_STICKY);
