@@ -95,6 +95,8 @@ public class BiglyBTManager
 	private static final String DEFAULT_WEBUI_PW_LAN_ONLY = DEFAULT_WEBUI_PW_DISABLED_WHITELIST
 			+ ",192.168.0.0-192.168.255.255,10.0.0.0-10.255.255.255,172.16.0.0-172.31.255.255";
 
+	private static final String PREFIX_USER = "android.";
+
 	private static class MyOutputStream
 		extends OutputStream
 	{
@@ -146,6 +148,8 @@ public class BiglyBTManager
 
 	@NonNull
 	private final BiglyBTService service;
+
+	private boolean skipStoreUserParam = false;
 
 	private boolean bindToLocalHost = false;
 
@@ -282,7 +286,10 @@ public class BiglyBTManager
 			Connection.SCFG_BIND_IP
 		};
 		ParameterListener bindParamListener = parameterName -> {
-			String cachedParamName = "android." + parameterName;
+			if (skipStoreUserParam) {
+				return;
+			}
+			String cachedParamName = PREFIX_USER + parameterName;
 			Object o = COConfigurationManager.getParameter(parameterName);
 			if (o instanceof Boolean) {
 				COConfigurationManager.setParameter(cachedParamName, (boolean) o);
@@ -553,18 +560,35 @@ public class BiglyBTManager
 					fis.close();
 				}
 
+				boolean userEnforceBind = MapUtils.getMapBoolean(mapCurrent,
+						PREFIX_USER + Connection.BCFG_ENFORCE_BIND_IP, false);
+				boolean userBindOnStart = MapUtils.getMapBoolean(mapCurrent,
+						PREFIX_USER + Connection.BCFG_CHECK_BIND_IP_ON_START, false);
+				String userBind = MapUtils.getMapString(mapCurrent,
+						PREFIX_USER + Connection.SCFG_BIND_IP, "");
+
+				if (userBindOnStart && userEnforceBind
+						&& userBind.equals("127.0.0.1")) {
+					// most likely our settings got stored as userParam, so undo
+					userEnforceBind = false;
+					userBindOnStart = false;
+					userBind = "";
+					writeLine(fw, paramToCustom(
+							PREFIX_USER + Connection.BCFG_ENFORCE_BIND_IP, userEnforceBind));
+					writeLine(fw,
+							paramToCustom(
+									PREFIX_USER + Connection.BCFG_CHECK_BIND_IP_ON_START,
+									userBindOnStart));
+					writeLine(fw,
+							paramToCustom(PREFIX_USER + Connection.SCFG_BIND_IP, userBind));
+				}
+
 				writeLine(fw,
-						paramToCustom(Connection.BCFG_ENFORCE_BIND_IP,
-								MapUtils.getMapBoolean(mapCurrent,
-										"android." + Connection.BCFG_ENFORCE_BIND_IP, false)));
-				writeLine(fw,
-						paramToCustom(Connection.BCFG_CHECK_BIND_IP_ON_START,
-								MapUtils.getMapBoolean(mapCurrent,
-										"android." + Connection.BCFG_CHECK_BIND_IP_ON_START,
-										false)));
-				writeLine(fw,
-						paramToCustom(Connection.SCFG_BIND_IP, MapUtils.getMapString(
-								mapCurrent, "android." + Connection.SCFG_BIND_IP, "")));
+						paramToCustom(Connection.BCFG_ENFORCE_BIND_IP, userEnforceBind));
+				writeLine(fw, paramToCustom(Connection.BCFG_CHECK_BIND_IP_ON_START,
+						userBindOnStart));
+				writeLine(fw, paramToCustom(Connection.SCFG_BIND_IP, userBind));
+
 				writeLine(fw, paramToCustom("PluginInfo.mldht.enabled", true));
 
 				TrayPreferences prefs = BiglyBTApp.getAppPreferences().getPreferences();
@@ -758,6 +782,7 @@ public class BiglyBTManager
 			if (!UPNPMS_ENABLE) {
 				removeDir(new File(destDir, "azupnpav"));
 			}
+			removeDir(new File(destDir, "azupdater"));
 			if (CorePrefs.DEBUG_CORE) {
 				Log.d("Core", "register plugins done");
 			}
@@ -1162,12 +1187,18 @@ public class BiglyBTManager
 		PluginManager pm = core.getPluginManager();
 
 		if (bindToLocalHost) {
-			// IP must be set before enforce
-			COConfigurationManager.setParameter(Connection.SCFG_BIND_IP, "127.0.0.1");
-			COConfigurationManager.setParameter(Connection.BCFG_ENFORCE_BIND_IP,
-					true);
-			COConfigurationManager.setParameter(
-					Connection.BCFG_CHECK_BIND_IP_ON_START, true);
+			skipStoreUserParam = true;
+			try {
+				// IP must be set before enforce
+				COConfigurationManager.setParameter(Connection.SCFG_BIND_IP,
+						"127.0.0.1");
+				COConfigurationManager.setParameter(Connection.BCFG_ENFORCE_BIND_IP,
+						true);
+				COConfigurationManager.setParameter(
+						Connection.BCFG_CHECK_BIND_IP_ON_START, true);
+			} finally {
+				skipStoreUserParam = false;
+			}
 
 			for (String pluginClass : pluginsToSwitch) {
 				PluginInterface pi = pm.getPluginInterfaceByClass(pluginClass, false);
@@ -1197,16 +1228,21 @@ public class BiglyBTManager
 
 			// Restore user-set bindings 
 
-			COConfigurationManager.setParameter(Connection.BCFG_ENFORCE_BIND_IP,
-					COConfigurationManager.getBooleanParameter(
-							"android." + Connection.BCFG_ENFORCE_BIND_IP, false));
-			COConfigurationManager.setParameter(
-					Connection.BCFG_CHECK_BIND_IP_ON_START,
-					COConfigurationManager.getBooleanParameter(
-							"android." + Connection.BCFG_CHECK_BIND_IP_ON_START, false));
-			COConfigurationManager.setParameter(Connection.SCFG_BIND_IP,
-					COConfigurationManager.getStringParameter(
-							"android." + Connection.SCFG_BIND_IP, ""));
+			skipStoreUserParam = true;
+			try {
+				COConfigurationManager.setParameter(Connection.BCFG_ENFORCE_BIND_IP,
+						COConfigurationManager.getBooleanParameter(
+								PREFIX_USER + Connection.BCFG_ENFORCE_BIND_IP, false));
+				COConfigurationManager.setParameter(
+						Connection.BCFG_CHECK_BIND_IP_ON_START,
+						COConfigurationManager.getBooleanParameter(
+								PREFIX_USER + Connection.BCFG_CHECK_BIND_IP_ON_START, false));
+				COConfigurationManager.setParameter(Connection.SCFG_BIND_IP,
+						COConfigurationManager.getStringParameter(
+								PREFIX_USER + Connection.SCFG_BIND_IP, ""));
+			} finally {
+				skipStoreUserParam = false;
+			}
 
 			// Enable mlDHT and initialize
 
