@@ -53,7 +53,7 @@ public class NetworkState
 	private BroadcastReceiver mConnectivityReceiver;
 
 	private boolean isOnline;
-	
+
 	private boolean isOnlineMobile;
 
 	@Thunk
@@ -68,7 +68,6 @@ public class NetworkState
 		this.applicationContext = applicationContext;
 
 		try {
-			//noinspection ResourceType ETHERNET_SERVICE is real! :)
 			oEthernetManager = applicationContext.getSystemService(ETHERNET_SERVICE);
 		} catch (Throwable ignore) {
 		}
@@ -112,14 +111,12 @@ public class NetworkState
 									: null;
 					String extraInfo = intent.getStringExtra(
 							ConnectivityManager.EXTRA_EXTRA_INFO);
-					Log.d(TAG, (BiglyBTApp.isCoreProcess() ? "Core" : "App")
-							+ "] CONNECTIVITY_ACTION; networkInfo=" + networkInfo);
-					Log.d(TAG,
-							"otherNetworkInfo=" + otherNetworkInfo + "; reason="
-									+ onlineStateReason + "; isFailOver=" + isFailover
-									+ "; Online=" + online + "; noConnnectivity="
-									+ noConnnectivity + "; extra=" + extraInfo);
-					Log.d(TAG, "Active IP=" + getActiveIpAddress());
+					logd("CONNECTIVITY_ACTION; networkInfo=" + networkInfo);
+					logd("otherNetworkInfo=" + otherNetworkInfo + "; reason="
+							+ onlineStateReason + "; isFailOver=" + isFailover + "; Online="
+							+ online + "; noConnnectivity=" + noConnnectivity + "; extra="
+							+ extraInfo);
+					logd("Active IP=" + getActiveIpAddress());
 				}
 			}
 		};
@@ -130,10 +127,15 @@ public class NetworkState
 		applicationContext.registerReceiver(mConnectivityReceiver, mIFNetwork);
 	}
 
+	@SuppressLint("LogConditional")
+	private static void logd(String s) {
+		Log.d(TAG, (BiglyBTApp.isCoreProcess() ? "Core" : "App") + "] " + s);
+	}
+
 	@Thunk
 	void setOnline(boolean online, boolean onlineMobile) {
 		if (AndroidUtils.DEBUG) {
-			Log.d(TAG, "setOnline " + online);
+			logd("setOnline " + online);
 		}
 		if (isOnline == online && isOnlineMobile == onlineMobile) {
 			return;
@@ -197,12 +199,12 @@ public class NetworkState
 		}
 		if (netInfo == null) {
 			if (AndroidUtils.DEBUG) {
-				Log.d(TAG, "no active network");
+				logd("no active network");
 			}
 			netInfo = cm.getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
 			if (netInfo != null && netInfo.isConnected()) {
 				if (AndroidUtils.DEBUG) {
-					Log.d(TAG, "mobile network connected");
+					logd("mobile network connected");
 				}
 				return true;
 			}
