@@ -1343,7 +1343,7 @@ public class AndroidUtils
 	public static String decodeURL(String url) {
 		try {
 			return URLDecoder.decode(url, UTF_8);
-		} catch (UnsupportedEncodingException e) {
+		} catch (Throwable e) {
 			return url;
 		}
 	}
