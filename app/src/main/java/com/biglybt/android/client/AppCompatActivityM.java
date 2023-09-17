@@ -111,9 +111,11 @@ public class AppCompatActivityM
 		if (permissions.length > 0) {
 			PackageManager packageManager = getPackageManager();
 			for (String permission : permissions) {
-				if (VERSION.SDK_INT >= VERSION_CODES.R
+				if (VERSION.SDK_INT >= VERSION_CODES.TIRAMISU
 						&& permission.equals(Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
 					// targetApi >= Android 11,  WRITE_EXTERNAL_STORAGE no longer provide any additional access.
+					// Android Docs may say that, but they lie.
+					// Nvidia Shield API 30 requires it
 					continue;
 				}
 				if (VERSION.SDK_INT >= VERSION_CODES.TIRAMISU
