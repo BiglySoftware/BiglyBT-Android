@@ -1499,6 +1499,9 @@ public class AndroidUtils
 				&& contentResolver != null) {
 			deviceName = Settings.Global.getString(contentResolver,
 					"default_device_name");
+
+			// Although "device_name" might exist, it's often configurable by user
+			// and we don't want to know what they call their device
 		}
 
 		if (deviceName == null) {
