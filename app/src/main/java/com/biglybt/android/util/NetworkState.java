@@ -135,7 +135,8 @@ public class NetworkState
 	@Thunk
 	void setOnline(boolean online, boolean onlineMobile) {
 		if (AndroidUtils.DEBUG) {
-			logd("setOnline " + online);
+			logd("setOnline " + online + "; "
+					+ AndroidUtils.getCompressedStackTrace(2));
 		}
 		if (isOnline == online && isOnlineMobile == onlineMobile) {
 			return;
@@ -492,7 +493,8 @@ public class NetworkState
 			"en", // Some Android's Ethernet
 			"p2p", // Android
 			"net", // Windows, usually TAP
-			"ppp" // Windows
+			"ppp", // Windows
+			"tun" // VPN
 		};
 		for (String commonName : commonNames) {
 			try {
