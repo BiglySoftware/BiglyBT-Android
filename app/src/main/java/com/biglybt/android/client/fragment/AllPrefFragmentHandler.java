@@ -79,11 +79,13 @@ public class AllPrefFragmentHandler
 
 	// Keep Sorted
 	private final static String[] bannedLocalSectionIDs = {
+		"!Net Test!",
 		//"Search", Not in Android Core
 		// Backup would work probably, but no way to restore yet
 		"backuprestore",
 		"language",
 		"logging",
+		"plugins.azintsimpleapi",
 		"plugins.update",
 		"plugins.xmwebui",
 		// Our proxy section is better
