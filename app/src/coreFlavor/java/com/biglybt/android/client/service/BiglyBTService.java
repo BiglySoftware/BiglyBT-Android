@@ -1675,17 +1675,34 @@ public class BiglyBTService
 				if (CorePrefs.DEBUG_CORE) {
 					logd("Battery received " + intent.getAction());
 				}
-				Core core = BiglyBTService.this.core;
-				if (core == null) {
-					if (CorePrefs.DEBUG_CORE) {
-						logd("Battery changed, but core not initialized yet");
+
+				// checkForSleepModeChange checks batter state via 
+				// context.registerReceiver(null, IntentFilter(Intent.ACTION_BATTERY_CHANGED))
+				// which isn't always in sync right after an ACTION_POWER_CONNECTED
+				// or ACTION_POWER_DISCONNECTED/
+				// Issue seen on API 33. Could be on others, didn't test
+				//
+				// Sleep a bit before calling
+				new Thread(() -> {
+					try {
+						Thread.sleep(100);
+					} catch (InterruptedException ignore) {
 					}
 
-					return;
-				}
-				if (corePrefs.getPrefOnlyPluggedIn()) {
-					checkForSleepModeChange(corePrefs);
-				}
+					try {
+						if (BiglyBTService.this.core == null) {
+							if (CorePrefs.DEBUG_CORE) {
+								logd("Battery changed, but core not initialized yet");
+							}
+
+							return;
+						}
+						if (corePrefs.getPrefOnlyPluggedIn()) {
+							checkForSleepModeChange(corePrefs);
+						}
+					} catch (Throwable t) {
+					}
+				}, "BatteryChanged").start();
 			}
 		};
 		ContextCompat.registerReceiver(context, batteryReceiver, filter,
