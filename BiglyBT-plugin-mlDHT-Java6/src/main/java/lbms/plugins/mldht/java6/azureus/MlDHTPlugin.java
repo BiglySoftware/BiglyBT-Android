@@ -117,10 +117,12 @@ public class MlDHTPlugin implements UnloadablePlugin, PluginListener, NetworkAdm
 		config_model.addBooleanParameter2("enable", "mldht.enable", true);
 		config_model.addIntParameter2("port", "mldht.port", 49001);
 
+		/* Android: No Views
 		for (DHTtype type : DHTtype.values()) {
 			config_model.addBooleanParameter2("autoopen." + type.shortName,
 					("mldht.autoopen." + type.shortName).toLowerCase(), false);
 		}
+		*/
 		config_model.addBooleanParameter2("backupOnly", "mldht.backupOnly",
 				false);
 		config_model.addBooleanParameter2("onlyPeerBootstrap",
