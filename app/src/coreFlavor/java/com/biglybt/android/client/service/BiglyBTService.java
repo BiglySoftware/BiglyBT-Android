@@ -1306,9 +1306,7 @@ public class BiglyBTService
 			builder.setCategory(Notification.CATEGORY_SERVICE);
 		}
 		builder.setContentIntent(pi);
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-			builder.setPriority(Notification.PRIORITY_LOW);
-		}
+		builder.setPriority(Notification.PRIORITY_LOW);
 		builder.setShowWhen(false);
 
 		if (!isCoreStopping && !isServiceStopping) {

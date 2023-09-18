@@ -236,16 +236,14 @@ public class BiglyBTApp
 			}
 			vet.setDeviceName(deviceName);
 
-			if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.JELLY_BEAN) {
-				try {
-					ActivityManager actManager = (ActivityManager) applicationContext.getSystemService(
-							Context.ACTIVITY_SERVICE);
-					ActivityManager.MemoryInfo memInfo = new ActivityManager.MemoryInfo();
-					//noinspection ConstantConditions
-					actManager.getMemoryInfo(memInfo);
-					totalMemoryMB = memInfo.totalMem / 1024 / 1024; // M
-				} catch (Throwable ignore) {
-				}
+			try {
+				ActivityManager actManager = (ActivityManager) applicationContext.getSystemService(
+						Context.ACTIVITY_SERVICE);
+				ActivityManager.MemoryInfo memInfo = new ActivityManager.MemoryInfo();
+				//noinspection ConstantConditions
+				actManager.getMemoryInfo(memInfo);
+				totalMemoryMB = memInfo.totalMem / 1024 / 1024; // M
+			} catch (Throwable ignore) {
 			}
 
 			vet.logEvent("AppStart" + (isCoreProcess ? "Core" : ""));

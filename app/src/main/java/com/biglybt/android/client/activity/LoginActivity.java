@@ -295,16 +295,14 @@ public class LoginActivity
 		View viewCenterOn = findViewById(R.id.login_logo);
 		assert viewCenterOn != null;
 
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-			LayoutTransition layoutTransition = mainLayout.getLayoutTransition();
-			layoutTransition.enableTransitionType(LayoutTransition.CHANGING);
+		LayoutTransition layoutTransition = mainLayout.getLayoutTransition();
+		layoutTransition.enableTransitionType(LayoutTransition.CHANGING);
 
-			ViewGroup ll = findViewById(R.id.login_logo_layout);
-			if (ll != null) {
-				LayoutTransition layoutTransition1 = ll.getLayoutTransition();
-				if (layoutTransition1 != null) {
-					layoutTransition1.enableTransitionType(LayoutTransition.CHANGING);
-				}
+		ViewGroup ll = findViewById(R.id.login_logo_layout);
+		if (ll != null) {
+			LayoutTransition layoutTransition1 = ll.getLayoutTransition();
+			if (layoutTransition1 != null) {
+				layoutTransition1.enableTransitionType(LayoutTransition.CHANGING);
 			}
 		}
 

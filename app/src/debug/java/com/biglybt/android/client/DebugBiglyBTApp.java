@@ -55,9 +55,7 @@ public class DebugBiglyBTApp
 			builder.detectFileUriExposure();
 		}
 		builder.detectLeakedClosableObjects();
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-			builder.detectLeakedRegistrationObjects();
-		}
+		builder.detectLeakedRegistrationObjects();
 		builder.detectLeakedSqlLiteObjects();
 		StrictMode.setVmPolicy(builder.build());
 

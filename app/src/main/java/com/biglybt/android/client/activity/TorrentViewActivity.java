@@ -823,9 +823,7 @@ public class TorrentViewActivity
 		}
 
 		if (keyCode == KeyEvent.KEYCODE_PROG_RED) {
-			if (VERSION.SDK_INT >= VERSION_CODES.JELLY_BEAN) {
-				finishAffinity();
-			}
+			finishAffinity();
 		}
 		return super.onKeyUp(keyCode, event);
 	}

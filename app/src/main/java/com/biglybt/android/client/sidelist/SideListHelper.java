@@ -467,14 +467,8 @@ public class SideListHelper<ADAPTERITEM extends Comparable<ADAPTERITEM>>
 			return false;
 		}
 		boolean noExpanding = width < collapseUntilWidthPx;
-		// We have a Motorola Xoom on Android 4.0.4 that can't handle shrinking
-		// (torrent list view overlays)
-		boolean noShrinking = Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN;
 
 		if (expand == null) {
-			if (noExpanding && noShrinking) {
-				return false;
-			}
 			expand = width >= AndroidUtilsUI.dpToPx(keepExpandedAtParentWidthDp);
 		}
 		if (!userInitiated) {
@@ -487,19 +481,13 @@ public class SideListHelper<ADAPTERITEM extends Comparable<ADAPTERITEM>>
 
 		if (sidelistIsExpanded != null) {
 			// before listening to caller, do our checks
-			if (sidelistIsExpanded && noExpanding && !noShrinking) {
+			if (sidelistIsExpanded && noExpanding) {
 				expand = false;
-			}
-			if (!sidelistIsExpanded && noShrinking && !noExpanding) {
-				expand = true;
 			}
 		}
 
-		if (expand && noExpanding && !noShrinking) {
+		if (expand && noExpanding) {
 			expand = false;
-		}
-		if (!expand && noShrinking && !noExpanding) {
-			expand = true;
 		}
 
 		if (sidelistIsExpanded != null && expand == sidelistIsExpanded) {

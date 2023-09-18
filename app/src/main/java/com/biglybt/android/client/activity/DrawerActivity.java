@@ -147,13 +147,8 @@ public abstract class DrawerActivity
 				ViewParent parent = button.getParent();
 				if (parent instanceof ViewGroup) {
 					int minHeight = AndroidUtilsUI.dpToPx(48);
-					int curMinHeight;
-					if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.JELLY_BEAN) {
-						curMinHeight = ((ViewGroup) parent).getMinimumHeight();
-						if (curMinHeight <= 0 && minHeight > curMinHeight) {
-							((ViewGroup) parent).setMinimumHeight(minHeight);
-						}
-					} else {
+					int curMinHeight = ((ViewGroup) parent).getMinimumHeight();
+					if (curMinHeight <= 0 && minHeight > curMinHeight) {
 						((ViewGroup) parent).setMinimumHeight(minHeight);
 					}
 				}
