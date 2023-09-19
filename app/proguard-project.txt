@@ -47,6 +47,10 @@
 	*;
 }
 
+-keep class sun.security.x509.X509Key {
+    *;
+}
+
 #############
 # biglybt Core
 #############
