@@ -266,8 +266,9 @@ tasks.register('copyPluginFiles') {
 }
 
 def taskReq = getGradle().getStartParameter().getTaskRequests().toString()
-//println taskReq // [DefaultTaskExecutionRequest{args=[:app:assembleCoreFlavorGoogleFlavorDebug],projectPath='null'}]
-if (taskReq.contains(":assembleCoreFlavor")) {
+// println taskReq // [DefaultTaskExecutionRequest{args=[assembleCoreFlavorFossFlavorRelease],projectPath='null',rootDir='null'}] 
+if (taskReq.contains("assembleCoreFlavor")) {
+    println "adding copyPluginFiles to preBuild"
     preBuild.dependsOn(copyPluginFiles)
 }
 
