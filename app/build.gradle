@@ -208,61 +208,59 @@ dependencies {
     debugMinifyImplementation 'com.squareup.leakcanary:leakcanary-android:2.12'
 }
 
-task copyPluginFiles() {
+tasks.register('copyPluginFiles') {
+    def destDir = 'src/coreFlavor/assets/plugins'
+    def destDir14 = 'src/coreFlavor/assets/plugins-v14'
+    def destDir24 = 'src/coreFlavor/assets/plugins-v24'
+    def assetIndexFile = new File(projectDir, "src/coreFlavor/assets/assets.index")
+    outputs.dirs([destDir, destDir14, destDir24])
+    outputs.file(assetIndexFile)
+
+    def mapTrees14 = [
+            'aercm'  : fileTree('../BiglyBT-plugin-aercm').include('*.properties'),
+            'azutp'  : fileTree('../BiglyBT-plugin-azutp').include('*.properties'),
+            'mlDHT'  : fileTree('../BiglyBT-plugin-mlDHT-java6').include('*.properties'),
+            'xmwebui': fileTree('../BiglyBT-plugin-xmwebui').include(['transmission/**', '*.properties']),
+    ]
+
+    def mapTrees24 = [
+            'mlDHT': fileTree('../BiglyBT-plugin-mlDHT').include('*.properties')
+    ]
+    inputs.files(mapTrees14.values())
+    inputs.files(mapTrees24.values())
+
     doLast {
-        def destDir = 'src/coreFlavor/assets/plugins'
         delete destDir
+        delete destDir14
+        delete destDir24
 
-        destDir = 'src/coreFlavor/assets/plugins-v14'
-        delete destDir
-        copy {
-            from('../BiglyBT-plugin-aercm') {
-                include '*.properties'
+        mapTrees14.each { entry ->
+            copy {
+                from(entry.value)
+                into("$destDir14/${entry.key}")
             }
-            into "$destDir/aercm"
-        }
-        copy {
-            from('../BiglyBT-plugin-azutp') {
-                include '*.properties'
-            }
-            into "$destDir/azutp"
-        }
-        copy {
-            from('../BiglyBT-plugin-mlDHT-java6') {
-                include '*.properties'
-            }
-            into "$destDir/mlDHT"
-        }
-        copy {
-            from('../BiglyBT-plugin-xmwebui') {
-                include 'transmission/**'
-                include '*.properties'
-            }
-            into "$destDir/xmwebui"
-        }
-        
-        destDir = 'src/coreFlavor/assets/plugins-v24'
-        delete destDir
-        copy {
-            from('../BiglyBT-plugin-mlDHT') {
-                include '*.properties'
-            }
-            into "$destDir/mlDHT"
         }
 
-        def assetIndexFile = new File("${projectDir.name}/src/coreFlavor/assets/assets.index")
+        mapTrees24.each { entry ->
+            copy {
+                from(entry.value)
+                into("$destDir24/${entry.key}")
+            }
+        }
+
+        // Create assets.index containing all files copied
+        // We will move these into their proper plugins dir at runtime to ensure
+        // we always have access to them
         def contents = ""
         def tree = fileTree(
-                dir: 'src/coreFlavor/assets', 
-                include: ['plugins-*/**'], 
+                dir: 'src/coreFlavor/assets',
+                include: ['plugins-*/**'],
                 exclude: ['assets.index'])
 
         tree.visit { fileDetails ->
             if (fileDetails.file.isFile())
-               contents += "${fileDetails.relativePath}" + "\n"
+                contents += "${fileDetails.relativePath}" + "\n"
         }
-        //println "Contents to {$assetIndexFile}:"
-        //println contents
         assetIndexFile.write contents
     }
 }
