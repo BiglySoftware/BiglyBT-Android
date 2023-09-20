@@ -56,6 +56,8 @@
 
 	<string name="fileaccess_saf">SAF Access</string>
 	<string name="fileaccess_direct">Direct Access</string>
+	<string name="fileaccess_saf_short" translatable="false">SAF</string>
+	<string name="fileaccess_direct_short">Direct</string>
 	<string name="saf_warning_title">Folder Chooser</string>
 	<string name="saf_warning_text">Some Android TV manufacturers have broken or disabled folder browsers.
 		\n\nIf you have problems with the OS Folder Chooser, you may use the internal chooser.

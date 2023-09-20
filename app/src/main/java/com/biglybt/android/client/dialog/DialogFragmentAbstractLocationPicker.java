@@ -29,8 +29,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.storage.StorageManager;
 import android.os.storage.StorageVolume;
-import android.text.SpannableStringBuilder;
-import android.text.TextPaint;
+import android.text.*;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -367,19 +366,45 @@ public abstract class DialogFragmentAbstractLocationPicker
 
 		cbRememberLocation = view.findViewById(R.id.movedata_remember);
 
-		TextView tv = view.findViewById(R.id.movedata_currentlocation);
+		TextView tv = view.findViewById(R.id.movedata_currentlocation_pre);
 		// Only exists in view for local core 
 		if (tv != null) {
+			TextView tvCurLocation = view.findViewById(R.id.movedata_currentlocation);
+
 			if (currentDir == null || currentDir.isEmpty()) {
 				tv.setText("");
+				if (tvCurLocation != null) {
+					tvCurLocation.setText("");
+				}
 			} else {
 				OffThread.runOffUIThread(() -> {
 					PathInfo pathInfo = PathInfo.buildPathInfo(currentDir);
-					CharSequence s = pathInfo.getFriendlyName();
 
-					OffThread.runOnUIThread(this, false,
-							a -> tv.setText(AndroidUtils.fromHTML(resources,
-									R.string.movedata_currentlocation, s)));
+					OffThread.runOnUIThread(this, false, a -> {
+
+						CharSequence friendlyName = pathInfo.getFriendlyName();
+						if (tvCurLocation != null) {
+							String accessType = getString(
+									pathInfo.isSAF ? R.string.fileaccess_saf_short
+											: R.string.fileaccess_direct_short);
+
+							friendlyName = "|" + accessType + "| " + friendlyName;
+							SpannableStringBuilder ssPath = new SpannableStringBuilder(
+									friendlyName);
+							TextPaint paintPath = new TextPaint(tv.getPaint());
+							paintPath.setTextSize(paintPath.getTextSize() * 0.7f);
+							int pathTextColor = tv.getCurrentTextColor();
+							SpanBubbles.setSpanBubbles(ssPath, friendlyName.toString(), "|",
+									paintPath, pathTextColor, pathTextColor, 0, null);
+
+							tvCurLocation.setText(ssPath);
+							tv.setText(AndroidUtils.fromHTML(resources,
+									R.string.movedata_currentlocation, ""));
+						} else {
+							tv.setText(AndroidUtils.fromHTML(resources,
+									R.string.movedata_currentlocation, friendlyName));
+						}
+					});
 				});
 			}
 		}

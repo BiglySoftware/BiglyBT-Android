@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout
 	xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:app="http://schemas.android.com/apk/res-auto"
 	xmlns:tools="http://schemas.android.com/tools"
 	android:layout_width="fill_parent"
 	android:layout_height="fill_parent"
@@ -20,12 +21,30 @@
 		android:paddingRight="8dp"
 		tools:ignore="UselessParent">
 
-		<TextView
-			android:id="@+id/movedata_currentlocation"
-			android:layout_width="wrap_content"
+		<com.google.android.flexbox.FlexboxLayout
+			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
-			android:text="@string/movedata_currentlocation"
-			android:textAppearance="?android:attr/textAppearanceSmall"/>
+			app:flexDirection="row"
+			app:flexWrap="wrap"
+			>
+
+			<TextView
+				android:id="@+id/movedata_currentlocation_pre"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:text="@string/movedata_currentlocation"
+				android:textAppearance="?android:attr/textAppearanceSmall"
+				/>
+
+			<TextView
+				android:id="@+id/movedata_currentlocation"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:textAppearance="?android:attr/textAppearanceSmall"
+				android:textStyle="bold"
+				tools:text="|SAF| Internal shared storage, Download/BiglyBT"
+				/>
+		</com.google.android.flexbox.FlexboxLayout>
 
 		<TextView
 			android:layout_width="wrap_content"

@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:orientation="vertical"
@@ -8,13 +9,30 @@
     android:paddingEnd="@dimen/activity_horizontal_margin"
     >
 
-    <TextView
-        android:id="@+id/movedata_currentlocation"
-        android:layout_width="wrap_content"
+    <com.google.android.flexbox.FlexboxLayout
+        app:flexDirection="row"
+        app:flexWrap="wrap"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/movedata_currentlocation"
-        android:textAppearance="?android:attr/textAppearanceSmall"
-        />
+        >
+
+        <TextView
+            android:id="@+id/movedata_currentlocation_pre"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/movedata_currentlocation"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            />
+
+        <TextView
+            android:id="@+id/movedata_currentlocation"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:textStyle="bold"
+            tools:text="|SAF| Internal shared storage, Download/BiglyBT"
+            />
+    </com.google.android.flexbox.FlexboxLayout>
 
     <CheckBox
         android:id="@+id/movedata_appendname"
