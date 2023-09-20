@@ -219,6 +219,8 @@ public abstract class DialogFragmentAbstractLocationPicker
 				PathInfo item = adapter.getSelectedItem();
 				if (item != null) {
 					initialPath = item.fullPath;
+				} else {
+					initialPath = currentDir;
 				}
 			}
 			FileUtils.launchFolderChooser(requireActivity(), initialPath, launcher);
