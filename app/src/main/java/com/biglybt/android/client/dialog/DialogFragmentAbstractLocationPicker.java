@@ -236,7 +236,9 @@ public abstract class DialogFragmentAbstractLocationPicker
 					(dialog, id) -> okClickedP());
 			builder.setNegativeButton(android.R.string.cancel,
 					(dialog, id) -> dialog.cancel());
-			builder.setNeutralButton(R.string.button_browse, null);
+			if (isLocalCore) {
+				builder.setNeutralButton(R.string.button_browse, null);
+			}
 		}
 
 		dialog = builder.create();
