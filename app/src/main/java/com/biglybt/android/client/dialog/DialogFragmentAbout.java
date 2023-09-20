@@ -16,6 +16,10 @@
 
 package com.biglybt.android.client.dialog;
 
+import static com.biglybt.android.client.BuildConfig.FLAVOR;
+import static com.biglybt.android.client.BuildConfig.FLAVOR_coreD;
+import static com.biglybt.android.client.BuildConfig.FLAVOR_gaD;
+
 import android.app.Dialog;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
@@ -69,8 +73,12 @@ public class DialogFragmentAbout
 			PackageManager manager = activity.getPackageManager();
 			PackageInfo info = manager.getPackageInfo(activity.getPackageName(), 0);
 			if (info != null && tvLicense != null) {
+				String flavorLC = FLAVOR.toLowerCase();
+				boolean isCoreBuild = flavorLC.contains(FLAVOR_coreD.toLowerCase());
+				boolean isGoogleBuild = flavorLC.contains(FLAVOR_gaD.toLowerCase());
 				String license = getResources().getString(R.string.about_version,
-						info.versionName, Integer.toString(info.versionCode));
+						info.versionName, info.versionCode
+								+ (isGoogleBuild ? "" : isCoreBuild ? " FOSS+Core" : " FOSS"));
 
 				tvLicense.setText(license);
 			}
