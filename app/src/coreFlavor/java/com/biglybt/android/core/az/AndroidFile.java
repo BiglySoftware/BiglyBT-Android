@@ -254,6 +254,12 @@ public class AndroidFile
 		if (needsBuilding) {
 			build(false);
 		}
+		/* throws if we don't have perms
+		if (uri != null) {
+			final ContentResolver resolver = BiglyBTApp.getContext().getContentResolver();
+			return resolver.canonicalize(uri).toString();
+		}
+		 */
 		return path;
 	}
 
@@ -527,7 +533,7 @@ public class AndroidFile
 	public boolean mkdir() {
 		if (exists()) {
 			log("mkdir(exists)");
-			return true;
+			return false;
 		}
 		AndroidFile parentFile = getParentFile();
 		if (parentFile == null) {
@@ -541,10 +547,6 @@ public class AndroidFile
 
 	@Override
 	public boolean mkdirs() {
-		if (exists()) {
-			log("mkdirs(exist)");
-			return false;
-		}
 		if (mkdir()) {
 			log("mkdirs=true");
 			return true;
