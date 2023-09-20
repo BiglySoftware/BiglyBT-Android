@@ -40,6 +40,7 @@
 	<string name="pref_conn_trans_encryption_RC4">RC4 (CPU Intensivo)</string>
 	<string name="fileaccess_saf">Acesso SAF</string>
 	<string name="fileaccess_direct">Acesso Direto</string>
+	<string name="fileaccess_direct_short">Direto</string>
 	<string name="saf_warning_title">Seletor de Pasta</string>
 	<string name="saf_warning_text">Alguns fabricantes de Android TV quebraram ou desativaram os navegadores de pastas.
 		\n\nSe você tiver problemas com o seletor de pastas do sistema operacional, poderá usar o seletor interno.
