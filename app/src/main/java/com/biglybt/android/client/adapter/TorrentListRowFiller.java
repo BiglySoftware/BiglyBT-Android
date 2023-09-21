@@ -58,6 +58,8 @@ public class TorrentListRowFiller
 	@NonNull
 	private final TextViewFlipper flipper;
 
+	private AuthRequestListener authRequestListener;
+
 	private TorrentListHolderItem viewHolder;
 
 	private final boolean showTags;
@@ -69,16 +71,19 @@ public class TorrentListRowFiller
 	}
 
 	public TorrentListRowFiller(@NonNull Context context,
-			@NonNull View parentView, boolean showTags) {
-		this(context, showTags);
+			@NonNull View parentView, boolean showTags,
+			AuthRequestListener authRequestListener) {
+		this(context, showTags, authRequestListener);
 		this.viewHolder = new TorrentListHolderItem(null, parentView, false);
 	}
 
-	TorrentListRowFiller(Context context, boolean showTags) {
+	TorrentListRowFiller(Context context, boolean showTags,
+			AuthRequestListener authRequestListener) {
 		colorBGTagState = AndroidUtilsUI.getStyleColor(context,
 				R.attr.bg_tag_type_2);
 		colorFGTagState = AndroidUtilsUI.getStyleColor(context,
 				R.attr.fg_tag_type_2);
+		this.authRequestListener = authRequestListener;
 
 		flipper = TextViewFlipper.create();
 		this.showTags = showTags;
@@ -445,6 +450,16 @@ public class TorrentListRowFiller
 			} else {
 				//flipper.changeText(holder.tvTags, "", false, validator);
 				holder.tvTags.setText("");
+			}
+		}
+
+		if (holder.btnAuth != null) {
+			boolean needsAuth = authRequestListener != null && MapUtils.getMapBoolean(
+					item, TransmissionVars.FIELD_TORRENT_NEEDSAUTH, false);
+			holder.btnAuth.setVisibility(needsAuth ? View.VISIBLE : View.INVISIBLE);
+			if (needsAuth) {
+				holder.btnAuth.setOnClickListener(
+						v -> authRequestListener.askForAuth(torrentID));
 			}
 		}
 	}

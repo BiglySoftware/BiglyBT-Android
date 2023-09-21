@@ -373,6 +373,10 @@ public class TransmissionVars
 	/** BiglyBT **/
 	public static final String FIELD_TORRENT_SEQUENTIAL = "sequential";
 
+	public static final String FIELD_TORRENT_NEEDSAUTH = "needsAuth";
+
+	public static final String FIELD_TORRENT_RECHECKAUTH = "recheckAuth";
+
 	//////////////////////////////////////////////////////////////////////////////
 
 	public static final String TR_SESSION_STATS_ACTIVE_TORRENT_COUNT = "activeTorrentCount";

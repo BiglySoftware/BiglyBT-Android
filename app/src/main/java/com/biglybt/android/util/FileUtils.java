@@ -17,12 +17,11 @@
 package com.biglybt.android.util;
 
 import android.app.Activity;
-import android.content.ContentResolver;
-import android.content.Context;
-import android.content.Intent;
+import android.content.*;
 import android.content.pm.ComponentInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
+import android.content.res.Resources;
 import android.database.Cursor;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
@@ -43,6 +42,7 @@ import android.widget.*;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.annotation.*;
 import androidx.appcompat.app.AlertDialog;
+import androidx.core.provider.DocumentsContractCompat;
 import androidx.documentfile.provider.DocumentFile;
 
 import com.biglybt.android.client.*;
@@ -286,13 +286,13 @@ public class FileUtils
 
 	}
 
-	private static void launchInternalFolderChooser(@NonNull Activity activity,
+	private static void launchInternalFolderChooser(@NonNull Context context,
 			String initialDir, @NonNull ActivityResultLauncher<Intent> launcher) {
 		DirectoryChooserConfig.Builder configBuilder = DirectoryChooserConfig.builder();
 		configBuilder.newDirectoryName("BiglyBT");
 		if (initialDir != null) {
-			if (initialDir.startsWith("content://")) {
-				initialDir = PaulBurkeFileUtils.getPath(activity, Uri.parse(initialDir),
+			if (FileUtils.isContentPath(initialDir)) {
+				initialDir = PaulBurkeFileUtils.getPath(context, Uri.parse(initialDir),
 						false);
 			}
 			configBuilder.initialDirectory(initialDir);
@@ -301,7 +301,7 @@ public class FileUtils
 		configBuilder.allowNewDirectoryNameModification(true);
 		DirectoryChooserConfig config = configBuilder.build();
 
-		Intent intent = new Intent(activity,
+		Intent intent = new Intent(context,
 				DirectoryChooserActivity.class).putExtra(
 						DirectoryChooserActivity.EXTRA_CONFIG, config);
 		launcher.launch(intent);
@@ -486,7 +486,7 @@ public class FileUtils
 						break;
 					}
 				}
-				
+
 				if (!found) {
 					return null;
 				}
@@ -861,5 +861,71 @@ public class FileUtils
 			dirPath += "/";
 		}
 		return filePath.startsWith(dirPath);
+	}
+
+	public static boolean hasFileAuth(ContentResolver contentResolver, Uri uri) {
+		if (VERSION.SDK_INT < VERSION_CODES.KITKAT) {
+			return true;
+		}
+
+		try {
+			// Will do perms check, child check, and exists check
+			contentResolver.canonicalize(uri);
+			return true;
+		} catch (IllegalArgumentException iae) {
+			// likely "Failed to determine if xxx is child of yyy: java.io.FileNotFoundException: Missing file for zzz"
+
+			try {
+				DocumentFile testdocFile = DocumentFile.fromTreeUri(
+						BiglyBTApp.getContext(), uri);
+				if (!testdocFile.exists()) {
+					Uri strippedUri = DocumentsContractCompat.buildTreeDocumentUri(
+							uri.getAuthority(),
+							DocumentsContractCompat.getTreeDocumentId(uri));
+					return hasFileAuth(contentResolver, strippedUri);
+				}
+			} catch (Throwable t) {
+				Log.e(TAG, "hasFileAuth: stripping " + uri, t);
+			}
+
+		} catch (Throwable t) {
+			if (AndroidUtils.DEBUG) {
+				Log.e(TAG, "hasFileAuth: " + uri + "\n" + t.getMessage());
+				List<UriPermission> persistedUriPermissions = contentResolver.getPersistedUriPermissions();
+				Log.d(TAG, "hasFileAuth: persisted " + persistedUriPermissions);
+			}
+		}
+
+		return false;
+	}
+
+	public static void askForPathPerms(@NonNull Context context, @NonNull Uri uri,
+			String names, @NonNull ActivityResultLauncher<Intent> launcher) {
+		OffThread.runOffUIThread(() -> {
+			PathInfo pathInfo = PathInfo.buildPathInfo(uri.toString());
+
+			OffThread.runOnUIThread(() -> {
+				MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(
+						context);
+				builder.setTitle(R.string.folder_permission_missing);
+				boolean canHaveInitialDir = VERSION.SDK_INT >= VERSION_CODES.O;
+				Resources resources = context.getResources();
+				String s = resources.getString(R.string.ask_for_folder_auth,
+						pathInfo.getFriendlyName(), names)
+						+ "\n"
+						+ resources.getString(
+								canHaveInitialDir ? R.string.ask_for_folder_auth_new
+										: R.string.ask_for_folder_auth_old,
+								resources.getString(
+										VERSION.SDK_INT >= 30 ? R.string.os_select_button_new
+												: R.string.os_select_button_old));
+				builder.setMessage(AndroidUtils.fromHTML(s));
+				builder.setPositiveButton(R.string.authorize,
+						(dialog, which) -> launcher.launch(
+								buildOSFolderChooserIntent(context, pathInfo.fullPath)));
+				AlertDialog dialog = builder.create();
+				dialog.show();
+			});
+		});
 	}
 }

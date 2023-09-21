@@ -30,13 +30,13 @@ import java.util.Map;
 public class TorrentListAdapterTorrentItem
 	extends TorrentListAdapterItem
 {
-	final long torrentID;
+	final public long torrentID;
 
 	TorrentListAdapterTorrentItem(long torrentID) {
 		this.torrentID = torrentID;
 	}
 
-	Map<String, Object> getTorrentMap(@NonNull Session session) {
+	public Map<String, Object> getTorrentMap(@NonNull Session session) {
 		return session.torrent.getCachedTorrent(torrentID);
 	}
 

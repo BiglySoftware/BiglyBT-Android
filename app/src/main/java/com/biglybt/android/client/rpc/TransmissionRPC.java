@@ -866,6 +866,11 @@ public class TransmissionRPC
 					TransmissionVars.FIELD_TORRENT_PEERS_GETTING_FROM_US);
 			basicTorrentFieldIDs.add(
 					TransmissionVars.FIELD_TORRENT_PEERS_SENDING_TO_US);
+
+			RemoteProfile remoteProfile = session.getRemoteProfile();
+			if (remoteProfile.getRemoteType() == RemoteProfile.TYPE_CORE) {
+				basicTorrentFieldIDs.add(TransmissionVars.FIELD_TORRENT_DOWNLOAD_DIR);
+			}
 		}
 
 		List<String> fields = new ArrayList<>(basicTorrentFieldIDs);

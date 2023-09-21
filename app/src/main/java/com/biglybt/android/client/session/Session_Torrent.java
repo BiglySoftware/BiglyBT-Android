@@ -17,6 +17,7 @@
 package com.biglybt.android.client.session;
 
 import android.Manifest;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
@@ -169,6 +170,10 @@ public class Session_Torrent
 				List<String> listOpenOptionHashes = addTorrentSilently ? null
 						: session.remoteProfile.getOpenOptionsWaiterList();
 
+				boolean isCore = session.remoteProfile.getRemoteType() == RemoteProfile.TYPE_CORE;
+				ContentResolver contentResolver = isCore
+						? BiglyBTApp.getContext().getContentResolver() : null;
+
 				for (Object item : addedTorrentIDs) {
 					if (!(item instanceof Map)) {
 						continue;
@@ -199,6 +204,43 @@ public class Session_Torrent
 							if (o instanceof String) {
 								mapUpdatedTorrent.put(torrentKey,
 										AndroidUtils.unescapeXML((String) o));
+							}
+						}
+					}
+
+					// Check path perms when dlDir changes
+					if (isCore) {
+						boolean needRecheck = MapUtils.getMapBoolean(old,
+								TransmissionVars.FIELD_TORRENT_RECHECKAUTH, false);
+
+						String newdlDir = MapUtils.getMapString(mapUpdatedTorrent,
+								TransmissionVars.FIELD_TORRENT_DOWNLOAD_DIR, null);
+
+						if (!needRecheck && FileUtils.isContentPath(newdlDir)) {
+							String olddlDir = MapUtils.getMapString(old,
+									TransmissionVars.FIELD_TORRENT_DOWNLOAD_DIR, "");
+							needRecheck = !newdlDir.equals(olddlDir);
+						}
+
+						if (needRecheck) {
+							String dlDir = newdlDir == null
+									? MapUtils.getMapString(old,
+											TransmissionVars.FIELD_TORRENT_DOWNLOAD_DIR, null)
+									: newdlDir;
+							if (dlDir != null) {
+								if (old != null) {
+									old.remove(TransmissionVars.FIELD_TORRENT_RECHECKAUTH);
+								}
+
+								// DL Dir changed
+								Uri uri = Uri.parse(dlDir);
+								boolean hasAuth = FileUtils.hasFileAuth(contentResolver, uri);
+								mapUpdatedTorrent.put(TransmissionVars.FIELD_TORRENT_NEEDSAUTH,
+										!hasAuth);
+								if (AndroidUtils.DEBUG_RPC) {
+									Log.d(TAG,
+											"getTorrents: new " + dlDir + " hasAuth? " + hasAuth);
+								}
 							}
 						}
 					}

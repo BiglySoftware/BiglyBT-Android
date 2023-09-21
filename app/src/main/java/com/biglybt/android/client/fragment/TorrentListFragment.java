@@ -17,14 +17,22 @@
 package com.biglybt.android.client.fragment;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
+import android.os.Build.VERSION;
+import android.os.Build.VERSION_CODES;
 import android.os.Bundle;
 import android.text.format.DateUtils;
 import android.util.Log;
 import android.view.*;
 import android.widget.TextView;
 
+import androidx.activity.result.ActivityResult;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts.StartActivityForResult;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.UiThread;
@@ -34,6 +42,8 @@ import androidx.appcompat.view.ActionMode;
 import androidx.appcompat.view.ActionMode.Callback;
 import androidx.appcompat.view.menu.MenuBuilder;
 import androidx.appcompat.widget.Toolbar;
+import androidx.collection.LongSparseArray;
+import androidx.core.provider.DocumentsContractCompat;
 import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -51,8 +61,7 @@ import com.biglybt.android.client.rpc.*;
 import com.biglybt.android.client.session.*;
 import com.biglybt.android.client.sidelist.*;
 import com.biglybt.android.client.spanbubbles.SpanTags;
-import com.biglybt.android.util.MapUtils;
-import com.biglybt.android.util.NetworkState;
+import com.biglybt.android.util.*;
 import com.biglybt.android.widget.PreCachingLayoutManager;
 import com.biglybt.android.widget.SwipeRefreshLayoutExtra;
 import com.biglybt.android.widget.SwipeRefreshLayoutExtra.SwipeTextUpdater;
@@ -135,6 +144,18 @@ public class TorrentListFragment
 	@Thunk
 	TextView tvEmpty;
 
+	private ActivityResultLauncher<Intent> permsAuthLauncher;
+
+	// Need to store this in instancestate when dialog is up, cuz it gets restored
+	private HashSet<Long> isAskingForPermsFor = null;
+
+	@Override
+	public void onCreate(@Nullable Bundle savedInstanceState) {
+		permsAuthLauncher = registerForActivityResult(new StartActivityForResult(),
+				this::permsAuthReceived);
+		super.onCreate(savedInstanceState);
+	}
+
 	@Override
 	public void onStart() {
 		super.onStart();
@@ -191,6 +212,23 @@ public class TorrentListFragment
 				if (adapter.isMultiCheckMode()) {
 					updateActionModeText(mActionMode);
 				}
+
+				if (AndroidUtils.usesNavigationControl() && isChecked) {
+					if (item instanceof TorrentListAdapterTorrentItem) {
+						TorrentListAdapterTorrentItem torrentItem = (TorrentListAdapterTorrentItem) item;
+						Map<String, Object> torrent = torrentItem.getTorrentMap(session);
+						boolean needsAuth = MapUtils.getMapBoolean(torrent,
+								TransmissionVars.FIELD_TORRENT_NEEDSAUTH, false);
+						if (needsAuth) {
+							askForPerms(torrentItem.torrentID);
+							AndroidUtilsUI.invalidateOptionsMenuHC(getActivity(),
+									mActionMode);
+							adapter.setItemChecked(item, false);
+							return;
+						}
+					}
+				}
+
 				updateCheckedIDs();
 
 				AndroidUtilsUI.invalidateOptionsMenuHC(getActivity(), mActionMode);
@@ -198,7 +236,8 @@ public class TorrentListFragment
 		};
 
 		isSmall = session.getRemoteProfile().useSmallLists();
-		torrentListAdapter = new TorrentListAdapter(context, this, rs, isSmall);
+		torrentListAdapter = new TorrentListAdapter(context, this, rs, isSmall,
+				this::askForPerms);
 		torrentListAdapter.addOnSetItemsCompleteListener(
 				adapter -> updateTorrentCount());
 		torrentListAdapter.setMultiCheckModeAllowed(
@@ -577,12 +616,6 @@ public class TorrentListFragment
 		}
 		listSideTags.setAdapter(sideTagAdapter);
 
-		if (DEBUG) {
-			List<Map<?, ?>> tags = session.tag.getTags();
-			log(TAG, "setupSideTags: supportsTag? "
-					+ session.getSupports(RPCSupports.SUPPORTS_TAGS) + "/" + (tags == null
-							? "null" : tags.size() > 20 ? tags.size() : tags.toString()));
-		}
 		if (!session.getSupports(RPCSupports.SUPPORTS_TAGS)) {
 			// TRANSMISSION
 			AndroidUtils.ValueStringArray filterByList = AndroidUtils.getValueStringArray(
@@ -738,6 +771,9 @@ public class TorrentListFragment
 		if (torrentListAdapter != null) {
 			torrentListAdapter.onSaveInstanceState(outState);
 		}
+		if (isAskingForPermsFor != null) {
+			outState.putSerializable("isAskingForPermsFor", isAskingForPermsFor);
+		}
 		super.onSaveInstanceState(outState);
 	}
 
@@ -747,8 +783,19 @@ public class TorrentListFragment
 			log(TAG, "onViewStateRestored");
 		}
 		super.onViewStateRestored(savedInstanceState);
-		if (torrentListAdapter != null && savedInstanceState != null) {
-			torrentListAdapter.onRestoreInstanceState(savedInstanceState);
+		if (savedInstanceState != null) {
+			try {
+				isAskingForPermsFor = (HashSet<Long>) savedInstanceState.getSerializable(
+						"isAskingForPermsFor");
+			} catch (Throwable t) {
+				if (DEBUG) {
+					Log.e(TAG, "onViewStateRestored: ", t);
+				}
+			}
+
+			if (torrentListAdapter != null) {
+				torrentListAdapter.onRestoreInstanceState(savedInstanceState);
+			}
 		}
 		if (listview != null) {
 			updateCheckedIDs();
@@ -1539,5 +1586,141 @@ public class TorrentListFragment
 			}
 			tvFilteringBy.invalidate();
 		});
+	}
+
+	private void askForPerms(long torrentId) {
+		Map<?, ?> torrentItem = session.torrent.getCachedTorrent(torrentId);
+		String dlDir = MapUtils.getMapString(torrentItem,
+				TransmissionVars.FIELD_TORRENT_DOWNLOAD_DIR, null);
+
+		if (!FileUtils.isContentPath(dlDir)) {
+			return;
+		}
+
+		Context context = requireContext();
+
+		Uri uri = Uri.parse(dlDir);
+		// strip the documentId off the uri, leaving the original document uri that was originally authorized
+		uri = DocumentsContractCompat.buildTreeDocumentUri(uri.getAuthority(),
+				DocumentsContractCompat.getTreeDocumentId(uri));
+
+		LongSparseArray<Map<?, ?>> torrentList = session.torrent.getListAsSparseArray();
+		int size = torrentList.size();
+		isAskingForPermsFor = new HashSet<>();
+		isAskingForPermsFor.add(torrentId);
+		String names = "";
+
+		for (int i = 0; i < size; i++) {
+			Map<?, ?> item = torrentList.get(torrentList.keyAt(i));
+			String walkdlDir = MapUtils.getMapString(item,
+					TransmissionVars.FIELD_TORRENT_DOWNLOAD_DIR, null);
+
+			if (!FileUtils.isContentPath(walkdlDir)) {
+				continue;
+			}
+
+			Uri walkUri = Uri.parse(walkdlDir);
+			// strip the documentId off the uri, leaving the original document uri that was originally authorized
+			walkUri = DocumentsContractCompat.buildTreeDocumentUri(
+					walkUri.getAuthority(),
+					DocumentsContractCompat.getTreeDocumentId(walkUri));
+			if (walkUri.equals(uri)) {
+				isAskingForPermsFor.add(
+						MapUtils.getMapLong(item, TransmissionVars.FIELD_TORRENT_ID, -1));
+				names += MapUtils.getMapString(item,
+						TransmissionVars.FIELD_TORRENT_NAME, "??") + "\n";
+			}
+		}
+
+		FileUtils.askForPathPerms(context, uri, names, permsAuthLauncher);
+	}
+
+	private void permsAuthReceived(ActivityResult result) {
+		if (VERSION.SDK_INT < VERSION_CODES.KITKAT) {
+			return;
+		}
+
+		if (isAskingForPermsFor == null) {
+			return;
+		}
+
+		Intent resultIntent = result.getData();
+		Uri uri = resultIntent == null
+				|| result.getResultCode() != Activity.RESULT_OK ? null
+						: resultIntent.getData();
+		if (uri == null) {
+			return;
+		}
+
+		ContentResolver contentResolver = requireContext().getContentResolver();
+		contentResolver.takePersistableUriPermission(uri,
+				Intent.FLAG_GRANT_READ_URI_PERMISSION
+						| Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+
+		List<Long> idsToStart = new ArrayList<>();
+		for (Long torrentId : isAskingForPermsFor) {
+			Map<String, Object> item = session.torrent.getCachedTorrent(torrentId);
+			if (item != null) {
+				item.put(TransmissionVars.FIELD_TORRENT_RECHECKAUTH, true);
+
+				long errorStat = MapUtils.getMapLong(item,
+						TransmissionVars.FIELD_TORRENT_ERROR, TransmissionVars.TR_STAT_OK);
+				int status = MapUtils.getMapInt(item,
+						TransmissionVars.FIELD_TORRENT_STATUS,
+						TransmissionVars.TR_STATUS_STOPPED);
+				if (DEBUG) {
+					log(TAG,
+							"permsAuthReceived: "
+									+ item.get(TransmissionVars.FIELD_TORRENT_NAME)
+									+ " errorStat=" + errorStat + "; status=" + status);
+				}
+
+				if (status == TransmissionVars.TR_STATUS_STOPPED
+						&& errorStat == TransmissionVars.TR_STAT_LOCAL_ERROR) {
+					idsToStart.add(
+							MapUtils.getMapLong(item, TransmissionVars.FIELD_TORRENT_ID, -1));
+				}
+			}
+		}
+
+		if (!idsToStart.isEmpty()) {
+			long[] ids = idsToStart.stream().mapToLong(l -> l).toArray();
+			if (DEBUG) {
+				log(TAG, "permsAuthReceived: Starting " + Arrays.toString(ids)
+						+ " after perms auth");
+			}
+			session.torrent.startTorrents(ids, false);
+		}
+
+		session.triggerRefresh(false);
+
+		try {
+			long id = isAskingForPermsFor.iterator().next();
+			Map<String, Object> item = session.torrent.getCachedTorrent(id);
+			String dlDir = MapUtils.getMapString(item,
+					TransmissionVars.FIELD_TORRENT_DOWNLOAD_DIR, null);
+			Uri firstUri = Uri.parse(dlDir);
+			// strip the documentId off the uri, leaving the original document uri that was originally authorized
+			firstUri = DocumentsContractCompat.buildTreeDocumentUri(
+					firstUri.getAuthority(),
+					DocumentsContractCompat.getTreeDocumentId(firstUri));
+			Uri strippedUri = DocumentsContractCompat.buildTreeDocumentUri(
+					uri.getAuthority(), DocumentsContractCompat.getTreeDocumentId(uri));
+			if (!firstUri.equals(strippedUri)) {
+
+				PathInfo pathInfoWanted = PathInfo.buildPathInfo(firstUri.toString());
+				PathInfo pathInfoAuthed = PathInfo.buildPathInfo(
+						strippedUri.toString());
+
+				AndroidUtilsUI.showDialog(requireActivity(),
+						R.string.authorized_wrong_path_title,
+						R.string.authorized_wrong_path, pathInfoAuthed.getFriendlyName(),
+						pathInfoWanted.getFriendlyName());
+			}
+		} catch (Throwable t) {
+			Log.e(TAG, "permsAuthReceived", t);
+		}
+
+		isAskingForPermsFor = null;
 	}
 }

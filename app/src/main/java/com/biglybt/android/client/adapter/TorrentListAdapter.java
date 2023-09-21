@@ -102,11 +102,11 @@ public class TorrentListAdapter
 	public TorrentListAdapter(@NonNull Context context,
 			@NonNull SessionGetter sessionGetter,
 			FlexibleRecyclerSelectionListener<TorrentListAdapter, TorrentListHolder, TorrentListAdapterItem> selector,
-			boolean smallView) {
+			boolean smallView, AuthRequestListener authReq) {
 		super(TAG, selector);
 		this.context = context;
 
-		torrentListRowFiller = new TorrentListRowFiller(context, true);
+		torrentListRowFiller = new TorrentListRowFiller(context, true, authReq);
 		this.sessionGetter = sessionGetter;
 		this.smallView = smallView;
 

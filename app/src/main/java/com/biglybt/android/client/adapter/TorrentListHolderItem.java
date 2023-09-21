@@ -63,6 +63,8 @@ class TorrentListHolderItem
 
 	final ImageView ivChecked;
 
+	final Button btnAuth;
+
 	boolean animateFlip;
 
 	private final ViewGroup topRightArea;
@@ -93,6 +95,7 @@ class TorrentListHolderItem
 		ivChecked = rowView.findViewById(R.id.torrentrow_checked);
 		topRightArea = rowView.findViewById(R.id.torrentrow_topright);
 		leftArea = rowView.findViewById(R.id.torrentrow_leftArea);
+		btnAuth = rowView.findViewById(R.id.torrentrow_folderauth);
 
 		if (tvTags != null && topRightArea != null && leftArea != null) {
 			OnLayoutChangeListener onLayoutChangeListener = (v, left, top, right,

@@ -220,4 +220,20 @@
         android:visibility="gone"
         />
 
+    <Button
+        android:id="@+id/torrentrow_folderauth"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="32dp"
+        android:layout_marginRight="32dp"
+        android:backgroundTint="#d44"
+        android:elevation="16dp"
+        android:maxWidth="450dp"
+        android:paddingLeft="8dp"
+        android:paddingRight="8dp"
+        android:text="@string/folder_permissions_needed"
+        />
+
 </com.biglybt.android.widget.RecyclerRelativeLayout>

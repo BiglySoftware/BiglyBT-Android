@@ -93,7 +93,8 @@ public class TorrentDetailsFragment
 
 		Context context = requireContext();
 		torrentListRowFiller = new TorrentListRowFiller(context, viewTorrentRow,
-				AndroidUtilsUI.getScreenHeightDp(context) > TOPAREA_SHOWTAGS_AFTER_DP);
+				AndroidUtilsUI.getScreenHeightDp(context) > TOPAREA_SHOWTAGS_AFTER_DP,
+				null);
 		viewTorrentRow.setFocusable(false);
 	}
 
