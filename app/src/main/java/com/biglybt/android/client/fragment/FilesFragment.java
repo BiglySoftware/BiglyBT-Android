@@ -54,6 +54,7 @@ import com.biglybt.android.client.dialog.DialogFragmentSizeRange;
 import com.biglybt.android.client.rpc.ReplyMapReceivedListener;
 import com.biglybt.android.client.session.Session;
 import com.biglybt.android.client.sidelist.SideListActivity;
+import com.biglybt.android.util.FileUtils;
 import com.biglybt.android.util.MapUtils;
 import com.biglybt.android.widget.CustomToast;
 import com.biglybt.android.widget.PreCachingLayoutManager;
@@ -1153,7 +1154,7 @@ public class FilesFragment
 				TransmissionVars.FIELD_FILES_FULL_PATH, null);
 		if (fullPath != null && fullPath.length() > 0) {
 			Uri uri = null;
-			if (fullPath.startsWith("content://")) {
+			if (FileUtils.isContentPath(fullPath)) {
 				uri = Uri.parse(fullPath);
 			} else {
 				File file = new File(fullPath);

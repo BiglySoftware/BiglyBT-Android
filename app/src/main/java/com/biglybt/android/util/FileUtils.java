@@ -205,7 +205,7 @@ public class FileUtils
 
 	public static DocumentFile guessDocumentFile(@NonNull Context context,
 			@NonNull String path) {
-		if (path.startsWith("content://")) {
+		if (isContentPath(path)) {
 			return DocumentFile.fromTreeUri(context, Uri.parse(path));
 		}
 
@@ -233,6 +233,10 @@ public class FileUtils
 		}
 
 		return null;
+	}
+
+	public static boolean isContentPath(String s) {
+		return s != null && s.startsWith("content://");
 	}
 
 	public static boolean canUseSAF(Context context) {

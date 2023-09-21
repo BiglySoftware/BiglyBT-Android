@@ -70,13 +70,13 @@ public class PathInfo
 
 	public PathInfo(@NonNull String fullPath) {
 		this.fullPath = fullPath;
-		isSAF = fullPath.startsWith("content://");
+		isSAF = FileUtils.isContentPath(fullPath);
 	}
 
 	@WorkerThread
 	@NonNull
 	public static PathInfo buildPathInfo(@NonNull String fileOrUri) {
-		if (!fileOrUri.startsWith("content://")) {
+		if (!FileUtils.isContentPath(fileOrUri)) {
 			// file:// will typically have an extra / for root
 			String fileName = fileOrUri.startsWith("file://")
 					? Uri.decode(fileOrUri.substring(7)) : fileOrUri;
