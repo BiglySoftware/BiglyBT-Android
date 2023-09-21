@@ -595,6 +595,16 @@ public abstract class DialogFragmentAbstractLocationPicker
 			}
 		}
 
+		// Always show Download/BiglyBT if it's there
+		File dlDir = Environment.getExternalStoragePublicDirectory(
+				Environment.DIRECTORY_DOWNLOADS);
+		if (dlDir.exists()) {
+			File defaultDLDir = new File(dlDir, "BiglyBT");
+			if (defaultDLDir.exists() && defaultDLDir.canWrite()) {
+				addPath(list, PathInfo.buildPathInfo(defaultDLDir));
+			}
+		}
+
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
 			File[] externalFilesDirs = context.getExternalFilesDirs(null);
 			if (externalFilesDirs != null) {
