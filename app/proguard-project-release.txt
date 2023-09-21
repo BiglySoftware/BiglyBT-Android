@@ -91,13 +91,6 @@
     void preInitialise();
 }
 
--assumenosideeffects class  com.biglybt.core.util.Constants {
-    boolean FORCE_NON_CVS return true;
-    boolean IS_CVS_VERSION return false;
-    boolean isWindows return false;
-    boolean isOSX return false;
-}
-
 # This removes com.biglybt.activities.ActivitiesManager
 -assumenosideeffects class com.biglybt.activities.LocalActivityManager {
     public static *;

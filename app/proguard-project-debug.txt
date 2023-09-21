@@ -2,7 +2,6 @@
 
 -dontoptimize
 -dontobfuscate
--dontpreverify
 #-printusage
 
 -keepclassmembers class * {
