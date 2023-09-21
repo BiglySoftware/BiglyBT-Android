@@ -103,6 +103,11 @@ class TorrentListHolderItem
 			topRightArea.addOnLayoutChangeListener(onLayoutChangeListener);
 			leftArea.addOnLayoutChangeListener(onLayoutChangeListener);
 		}
+
+		if (VERSION.SDK_INT >= VERSION_CODES.N && pb != null) {
+			// quirk seen: new rows with 0 progress have weirdly random progress visual display
+			pb.setProgress(1, false);
+		}
 	}
 
 	private void recalcLayout(View view) {
