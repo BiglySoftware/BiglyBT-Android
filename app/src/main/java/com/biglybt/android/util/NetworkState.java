@@ -128,7 +128,8 @@ public class NetworkState
 	}
 
 	@SuppressLint("LogConditional")
-	private static void logd(String s) {
+	@Thunk
+	static void logd(String s) {
 		Log.d(TAG, (BiglyBTApp.isCoreProcess() ? "Core" : "App") + "] " + s);
 	}
 

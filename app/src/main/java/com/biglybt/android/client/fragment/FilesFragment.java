@@ -150,7 +150,8 @@ public class FilesFragment
 
 	private BroadcastReceiver onDownloadComplete = null;
 
-	private Map<Long, String> queuedDownloads = new HashMap<>();
+	@Thunk
+	Map<Long, String> queuedDownloads = new HashMap<>();
 
 	public FilesFragment() {
 		super();

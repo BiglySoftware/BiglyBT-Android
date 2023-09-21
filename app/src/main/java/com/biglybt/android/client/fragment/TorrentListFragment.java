@@ -1588,7 +1588,8 @@ public class TorrentListFragment
 		});
 	}
 
-	private void askForPerms(long torrentId) {
+	@Thunk
+	void askForPerms(long torrentId) {
 		Map<?, ?> torrentItem = session.torrent.getCachedTorrent(torrentId);
 		String dlDir = MapUtils.getMapString(torrentItem,
 				TransmissionVars.FIELD_TORRENT_DOWNLOAD_DIR, null);
