@@ -1,2 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources xmlns:tools="http://schemas.android.com/tools" tools:keep="@string/contribute_monthly,@string/contribute_yearly,@string/contribute_onetime,@string/contribute_monthly_description,@string/contribute_yearly_description,@string/contribute_onetime_description"></resources>
+<resources xmlns:tools="http://schemas.android.com/tools" tools:keep="@string/contribute_monthly,@string/contribute_yearly,@string/contribute_onetime,@string/contribute_monthly_description,@string/contribute_yearly_description,@string/contribute_onetime_description">
+    <string name="contribute_monthly">月度 BiglyBT捐赠</string>
+    <string name="contribute_yearly">年度 BiglyBT捐赠</string>
+    <string name="contribute_onetime">一次性捐赠</string>
+    <string name="contribute_monthly_description">您将被按月收取费用，可以随时在谷歌支付中停止订阅</string>
+    <string name="contribute_yearly_description">您将被按年收取费用，可以随时在谷歌支付中停止订阅</string>
+    <string name="contribute_onetime_description">就一次，却难以忘怀. ;)</string>
+</resources>

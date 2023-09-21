@@ -582,4 +582,14 @@ Os dados enviados são os seguintes:</string>
 	<string name="settings_no_value">&lt;Não Definido&gt;</string>
 	<string name="AskResetToDefault">Redefinir a configuração para o valor padrão?</string>
 	<string name="AlreadyDefault">Configuração já está no valor padrão</string>
+	<string name="folder_permissions_needed">Permissões de Pasta Necessárias</string>
+	<string name="ask_for_folder_auth">BiglyBT precisa de permissões para\n\n&lt;b&gt;%1$s&lt;/b&gt; para\n\n%2$s</string>
+	<string name="ask_for_folder_auth_old">Você verá o aplicativo de seleção de pastas do Android. Você deve navegar até o caminho e clicar em \'%1$s\' para autorizar</string>
+	<string name="ask_for_folder_auth_new">Será mostrado o aplicativo de seleção de pasta do Android com a pasta necessária. Clique em \'%1$s\' para autorizar</string>
+	<string name="os_select_button_old">SELECIONAR</string>
+	<string name="os_select_button_new">USAR ESTA PASTA</string>
+	<string name="folder_permission_missing">Permissão de Pasta Ausente</string>
+	<string name="authorize">Autorizar</string>
+	<string name="authorized_wrong_path_title">Aviso de Autorização</string>
+	<string name="authorized_wrong_path">Parece que você autorizou &lt;b&gt;%1$s&lt;/b&gt; ao invés de &lt;b&gt;%2$s&lt;/b&gt;</string>
 </resources>
