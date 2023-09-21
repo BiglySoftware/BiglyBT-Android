@@ -661,4 +661,14 @@ The data sent is as follows:</string>
 	<string name="settings_no_value">&lt;Not Set&gt;</string>
 	<string name="AskResetToDefault">Reset setting to default value?</string>
 	<string name="AlreadyDefault">Setting is already at default value</string>
+	<string name="folder_permissions_needed">Folder Permissions Needed</string>
+	<string name="ask_for_folder_auth">BiglyBT needs permissions to\n\n&lt;b>%1$s&lt;/b> for\n\n%2$s</string>
+	<string name="ask_for_folder_auth_old">You will be shown Android\'s folder selection app. You must navigate to the path and click "%1$s" to authorize</string>
+	<string name="ask_for_folder_auth_new">You will be shown Android\'s folder selection app with the folder needed. Click "%1$s" to authorize</string>
+	<string name="os_select_button_old">SELECT</string>
+	<string name="os_select_button_new">USE THIS FOLDER</string>
+	<string name="folder_permission_missing">Folder Permission Missing</string>
+	<string name="authorize">Authorize</string>
+	<string name="authorized_wrong_path_title">Authorization Warning</string>
+	<string name="authorized_wrong_path">It appears you authorized &lt;b>%1$s&lt;/b> instead of &lt;b>%2$s&lt;/b></string>
 </resources>
