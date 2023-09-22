@@ -35,6 +35,8 @@
 
 	<color name="dark_list_bg_fep">#ff00ff80</color>
 
+	<color name="dark_button_primaryColor">#6EA3D8</color>
+
 	<!-- Focused and Pressed -->
 	<color name="dark_list_bg_f__p">#214F7D</color>
 	<!-- Pressed Row BG COlor -->

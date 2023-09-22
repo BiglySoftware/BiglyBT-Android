@@ -4,6 +4,8 @@
 	<color name="light_primaryColorDark">#2b68a3</color>
 	<color name="light_colorAccent">#0088ff</color>
 
+	<color name="light_button_primaryColor">#3278bc</color>
+
 	<color name="black">#000000</color>
 
 	<color name="login_grad_color_1">#404040</color>

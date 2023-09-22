@@ -70,6 +70,8 @@
 		<item name="colorControlHighlight">@color/light_primaryColorDark</item>
 		<item name="colorAccent">@color/light_colorAccent</item>
 
+		<item name="brand_buttonColor">@color/light_button_primaryColor</item>
+
 		<item name="login_grad_color_1">@color/login_grad_color_1</item>
 		<item name="login_grad_color_2">@color/login_grad_color_2</item>
 		<item name="login_line_color">@color/login_line_color</item>
@@ -145,6 +147,7 @@
 			@dimen/abc_list_item_padding_horizontal_material
 		</item>
 
+		<item name="brand_buttonColor">@color/dark_button_primaryColor</item>
 
 		<item name="login_grad_color_1">@color/login_grad_color_1</item>
 		<item name="login_grad_color_2">@color/login_grad_color_2</item>
@@ -441,6 +444,8 @@
 	</style>
 
 	<style name="MyMaterialAlertDialogTheme" parent="ThemeOverlay.MaterialComponents.MaterialAlertDialog">
+		<item name="colorPrimary">?brand_buttonColor</item>
+
 		<item name="alertDialogStyle">@style/MyAlertDialogStyle</item>
 		<item name="switchStyle">@style/MySwitchStyle</item>
 	</style>
