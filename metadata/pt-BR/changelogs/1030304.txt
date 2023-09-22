@@ -1,0 +1,6 @@
+1.3.3
+★ Atualizado para o Android 13 (Tiramisu) 
+★ A permissão "Postar Notificações" agora é necessária no Android 13 para mostrar o ícone do serviço de torrent na barra de status do Android. O serviço torrent ainda pode ser executado sem permissão, se você preferir.
+★ Corrigida a configuração do arquivo como Indesejado que nem sempre funciona quando o torrent está ativo
+★ Verifica o acesso aos dados do torrent e avisa quando a autorização foi perdida
+★ Atualizado o núcleo BigyBT para v3.4.0.0 (versão estável de maio de 2023)
