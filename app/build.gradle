@@ -9,7 +9,7 @@ android {
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionName "1.3.3"
         // a.b.c -> aabbccdd, where dd = build #
-        versionCode 1030303
+        versionCode 1030304
         multiDexEnabled true
         vectorDrawables.useSupportLibrary = true
     }
