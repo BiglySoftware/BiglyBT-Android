@@ -628,13 +628,18 @@ public class FileUtils
 		if (f == null || !f.canWrite()) {
 			return false;
 		}
-		try {
-			File tempFile = File.createTempFile("tmp", "B", f);
-			tempFile.delete();
+
+		if (!f.isDirectory()) {
 			return true;
-		} catch (IOException e) {
-			return false;
 		}
+
+		try {
+			File tempFile = new File(f, "BiglyBT-OkToDelete.tmp");
+			// There are cases where createNewFile creates the file, but delete fails
+			return tempFile.createNewFile() && tempFile.delete();
+		} catch (IOException e) {
+		}
+		return false;
 	}
 
 	@NonNull
