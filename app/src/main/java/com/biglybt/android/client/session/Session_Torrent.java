@@ -210,39 +210,7 @@ public class Session_Torrent
 
 					// Check path perms when dlDir changes
 					if (isCore) {
-						boolean needRecheck = MapUtils.getMapBoolean(old,
-								TransmissionVars.FIELD_TORRENT_RECHECKAUTH, false);
-
-						String newdlDir = MapUtils.getMapString(mapUpdatedTorrent,
-								TransmissionVars.FIELD_TORRENT_DOWNLOAD_DIR, null);
-
-						if (!needRecheck && FileUtils.isContentPath(newdlDir)) {
-							String olddlDir = MapUtils.getMapString(old,
-									TransmissionVars.FIELD_TORRENT_DOWNLOAD_DIR, "");
-							needRecheck = !newdlDir.equals(olddlDir);
-						}
-
-						if (needRecheck) {
-							String dlDir = newdlDir == null
-									? MapUtils.getMapString(old,
-											TransmissionVars.FIELD_TORRENT_DOWNLOAD_DIR, null)
-									: newdlDir;
-							if (dlDir != null) {
-								if (old != null) {
-									old.remove(TransmissionVars.FIELD_TORRENT_RECHECKAUTH);
-								}
-
-								// DL Dir changed
-								Uri uri = Uri.parse(dlDir);
-								boolean hasAuth = FileUtils.hasFileAuth(contentResolver, uri);
-								mapUpdatedTorrent.put(TransmissionVars.FIELD_TORRENT_NEEDSAUTH,
-										!hasAuth);
-								if (AndroidUtils.DEBUG_RPC) {
-									Log.d(TAG,
-											"getTorrents: new " + dlDir + " hasAuth? " + hasAuth);
-								}
-							}
-						}
+						coreAuthCheck(contentResolver, old, mapUpdatedTorrent);
 					}
 
 					if (old != null) {
@@ -302,6 +270,61 @@ public class Session_Torrent
 			l.rpcTorrentListReceived(callID, addedTorrentIDs, fields, fileIndexes,
 					removedTorrentIDs);
 		}
+	}
+
+	private static void coreAuthCheck(ContentResolver contentResolver,
+			Map<?, ?> old, Map mapUpdatedTorrent) {
+
+		if (MapUtils.getMapBoolean(old, TransmissionVars.FIELD_TORRENT_NEEDSAUTH,
+				false)) {
+			return;
+		}
+
+		String newDlDir = MapUtils.getMapString(mapUpdatedTorrent,
+				TransmissionVars.FIELD_TORRENT_DOWNLOAD_DIR, null);
+		String oldDlDir = MapUtils.getMapString(old,
+				TransmissionVars.FIELD_TORRENT_DOWNLOAD_DIR, null);
+
+		boolean needRecheck = MapUtils.getMapBoolean(old,
+				TransmissionVars.FIELD_TORRENT_RECHECKAUTH, false);
+
+		if (!needRecheck && newDlDir != null) {
+			needRecheck = !newDlDir.equals(oldDlDir);
+		}
+
+		if (!needRecheck) {
+			return;
+		}
+
+		if (AndroidUtils.DEBUG) {
+			Log.d(TAG, "addRemoveTorrents: coreAuthCheck; old=" + oldDlDir
+					+ "; new=" + newDlDir);
+		}
+
+		String authCheckDir = newDlDir == null ? oldDlDir : newDlDir;
+		if (authCheckDir == null) {
+			return;
+		}
+
+		if (old != null) {
+			old.remove(TransmissionVars.FIELD_TORRENT_RECHECKAUTH);
+		}
+
+		boolean hasAuth;
+		if (FileUtils.isContentPath(authCheckDir)) {
+			// DL Dir changed
+			Uri uri = Uri.parse(authCheckDir);
+			hasAuth = FileUtils.hasFileAuth(contentResolver, uri);
+		} else {
+			File f = new File(authCheckDir);
+			hasAuth = FileUtils.canWrite(f);
+		}
+
+		if (AndroidUtils.DEBUG) {
+			Log.d(TAG, "addRemoveTorrents: " + authCheckDir + " hasAuth? " + hasAuth);
+		}
+
+		mapUpdatedTorrent.put(TransmissionVars.FIELD_TORRENT_NEEDSAUTH, !hasAuth);
 	}
 
 	private static void mergeFiles(Map mapUpdatedTorrent, Map old,
@@ -554,15 +577,12 @@ public class Session_Torrent
 		return refreshingList;
 	}
 
-	public void moveDataTo(final long id, final String s) {
+	public void moveDataTo(final long id, final String newLocation,
+			final boolean assumeExists) {
 		session.ensureNotDestroyed();
 
-		session._executeRpc(rpc -> {
-			rpc.moveTorrent(id, s, null);
-
-			AnalyticsTracker.getInstance().sendEvent("RemoteAction", "MoveData", null,
-					null);
-		});
+		session._executeRpc(
+				rpc -> rpc.moveTorrent(id, newLocation, assumeExists, null));
 	}
 
 	public void openTorrent(final FragmentActivity activity,

@@ -1220,6 +1220,7 @@ public class TransmissionRPC
 	}
 
 	public void moveTorrent(long id, String newLocation,
+			boolean assumeDataExistsAtNewLoc,
 			@Nullable ReplyMapReceivedListener listener) {
 		Map<String, Object> map = new HashMap<>();
 		map.put(RPCKEY_METHOD, TransmissionVars.METHOD_TORRENT_SET_LOCATION);
@@ -1231,7 +1232,7 @@ public class TransmissionRPC
 			id
 		};
 		mapArguments.put(TransmissionVars.ARG_IDS, ids);
-		mapArguments.put("move", true);
+		mapArguments.put("move", !assumeDataExistsAtNewLoc);
 		mapArguments.put("location", newLocation);
 
 		ReplyMapReceivedListenerWithRefresh l = new ReplyMapReceivedListenerWithRefresh(

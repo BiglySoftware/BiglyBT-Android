@@ -11,10 +11,9 @@ import androidx.fragment.app.FragmentManager;
 
 import com.biglybt.android.client.*;
 import com.biglybt.android.client.AndroidUtilsUI.AlertDialogBuilder;
-import com.biglybt.android.client.session.Session;
-import com.biglybt.android.client.session.SessionManager;
-import com.biglybt.android.client.session.SessionSettings;
+import com.biglybt.android.client.session.*;
 import com.biglybt.android.core.az.AndroidFileHandler;
+import com.biglybt.android.util.MapUtils;
 import com.biglybt.android.util.PathInfo;
 import com.biglybt.util.Thunk;
 
@@ -155,6 +154,27 @@ public class DialogFragmentMoveData
 			return;
 		}
 
+		boolean sameDestDiffNames = false;
+		if (session.getRemoteProfile().getRemoteType() == RemoteProfile.TYPE_CORE) {
+			Map<String, Object> mapTorrent = session.torrent.getCachedTorrent(
+					torrentId);
+			String dlDir = MapUtils.getMapString(mapTorrent,
+					TransmissionVars.FIELD_TORRENT_DOWNLOAD_DIR, null);
+			if (dlDir != null) {
+				PathInfo dlPathInfo = PathInfo.buildPathInfo(dlDir);
+				if (dlPathInfo.isSAF || pathInfo.isSAF) {
+					File dlDlDirFile = dlPathInfo.getFile();
+					File newDlDirFile = pathInfo.getFile();
+					if (newDlDirFile != null && allowAppendName && appendName) {
+						newDlDirFile = new AndroidFileHandler().newFile(newDlDirFile,
+								torrentName);
+					}
+
+					sameDestDiffNames = Objects.equals(dlDlDirFile, newDlDirFile);
+				}
+			}
+		}
+
 		// Move on Remote will have null uri
 		if (pathInfo.uri == null) {
 			String moveTo = pathInfo.file == null ? pathInfo.fullPath
@@ -163,14 +183,14 @@ public class DialogFragmentMoveData
 				char sep = moveTo.length() > 2 && moveTo.charAt(2) == '\\' ? '\\' : '/';
 				moveTo += sep + torrentName;
 			}
-			session.torrent.moveDataTo(torrentId, moveTo);
+			session.torrent.moveDataTo(torrentId, moveTo, sameDestDiffNames);
 		} else {
 			AndroidFileHandler fileHandler = new AndroidFileHandler();
 			File file = fileHandler.newFile(pathInfo.fullPath);
 			if (allowAppendName && appendName) {
 				file = fileHandler.newFile(file, torrentName);
 			}
-			session.torrent.moveDataTo(torrentId, file.toString());
+			session.torrent.moveDataTo(torrentId, file.toString(), sameDestDiffNames);
 		}
 
 		OffThread.runOnUIThread(() -> {

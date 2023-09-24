@@ -61,6 +61,7 @@ import com.biglybt.android.client.rpc.*;
 import com.biglybt.android.client.session.*;
 import com.biglybt.android.client.sidelist.*;
 import com.biglybt.android.client.spanbubbles.SpanTags;
+import com.biglybt.android.core.az.AndroidFileHandler;
 import com.biglybt.android.util.*;
 import com.biglybt.android.widget.PreCachingLayoutManager;
 import com.biglybt.android.widget.SwipeRefreshLayoutExtra;
@@ -68,6 +69,7 @@ import com.biglybt.android.widget.SwipeRefreshLayoutExtra.SwipeTextUpdater;
 import com.biglybt.util.Thunk;
 import com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView;
 
+import java.io.File;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -1590,46 +1592,61 @@ public class TorrentListFragment
 
 	@Thunk
 	void askForPerms(long torrentId) {
+		Context context = requireContext();
+
 		Map<?, ?> torrentItem = session.torrent.getCachedTorrent(torrentId);
 		String dlDir = MapUtils.getMapString(torrentItem,
 				TransmissionVars.FIELD_TORRENT_DOWNLOAD_DIR, null);
 
-		if (!FileUtils.isContentPath(dlDir)) {
+		boolean isContentUri = FileUtils.isContentPath(dlDir);
+
+		if (!isContentUri) {
+			if (!TorrentUtils.isSimpleTorrent(torrentItem)) {
+				dlDir = new File(dlDir).getParent();
+			}
+		}
+
+		String names = "";
+		Uri uri = FileUtils.guessTreeUri(context, dlDir, false);
+		if (uri == null) {
+			torrentItem.remove(TransmissionVars.FIELD_TORRENT_NEEDSAUTH);
 			return;
 		}
 
-		Context context = requireContext();
-
-		Uri uri = Uri.parse(dlDir);
-		// strip the documentId off the uri, leaving the original document uri that was originally authorized
-		uri = DocumentsContractCompat.buildTreeDocumentUri(uri.getAuthority(),
-				DocumentsContractCompat.getTreeDocumentId(uri));
+		isAskingForPermsFor = new HashSet<>();
+		isAskingForPermsFor.add(torrentId);
 
 		LongSparseArray<Map<?, ?>> torrentList = session.torrent.getListAsSparseArray();
 		int size = torrentList.size();
-		isAskingForPermsFor = new HashSet<>();
-		isAskingForPermsFor.add(torrentId);
-		String names = "";
-
 		for (int i = 0; i < size; i++) {
 			Map<?, ?> item = torrentList.get(torrentList.keyAt(i));
-			String walkdlDir = MapUtils.getMapString(item,
-					TransmissionVars.FIELD_TORRENT_DOWNLOAD_DIR, null);
 
-			if (!FileUtils.isContentPath(walkdlDir)) {
+			if (!MapUtils.getMapBoolean(item,
+					TransmissionVars.FIELD_TORRENT_NEEDSAUTH, false)) {
 				continue;
 			}
 
-			Uri walkUri = Uri.parse(walkdlDir);
-			// strip the documentId off the uri, leaving the original document uri that was originally authorized
-			walkUri = DocumentsContractCompat.buildTreeDocumentUri(
-					walkUri.getAuthority(),
-					DocumentsContractCompat.getTreeDocumentId(walkUri));
-			if (walkUri.equals(uri)) {
+			String walkdlDir = MapUtils.getMapString(item,
+					TransmissionVars.FIELD_TORRENT_DOWNLOAD_DIR, null);
+
+			if (isContentUri != FileUtils.isContentPath(walkdlDir)) {
+				continue;
+			}
+
+			if (!isContentUri) {
+				if (!TorrentUtils.isSimpleTorrent(item)) {
+					walkdlDir = new File(walkdlDir).getParent();
+				}
+			}
+
+			Uri walkUri = FileUtils.guessTreeUri(context, walkdlDir, false);
+			if (uri.equals(walkUri)) {
 				isAskingForPermsFor.add(
 						MapUtils.getMapLong(item, TransmissionVars.FIELD_TORRENT_ID, -1));
-				names += MapUtils.getMapString(item,
-						TransmissionVars.FIELD_TORRENT_NAME, "??") + "\n";
+				if (isAskingForPermsFor.size() < 5) {
+					names += MapUtils.getMapString(item,
+							TransmissionVars.FIELD_TORRENT_NAME, "??") + "\n";
+				}
 			}
 		}
 
@@ -1653,15 +1670,52 @@ public class TorrentListFragment
 			return;
 		}
 
-		ContentResolver contentResolver = requireContext().getContentResolver();
+		Context context = requireContext();
+		ContentResolver contentResolver = context.getContentResolver();
 		contentResolver.takePersistableUriPermission(uri,
 				Intent.FLAG_GRANT_READ_URI_PERMISSION
 						| Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
 
 		List<Long> idsToStart = new ArrayList<>();
+		boolean shownWarning = false;
 		for (Long torrentId : isAskingForPermsFor) {
 			Map<String, Object> item = session.torrent.getCachedTorrent(torrentId);
-			if (item != null) {
+			if (item == null) {
+				continue;
+			}
+
+			String dlDir = MapUtils.getMapString(item,
+					TransmissionVars.FIELD_TORRENT_DOWNLOAD_DIR, null);
+
+			if (FileUtils.isContentPath(dlDir)) {
+
+				if (!shownWarning) {
+					// Compare first torrent's dlDir with the one selected.  Warn if different
+					try {
+						Uri firstUri = FileUtils.guessTreeUri(context, dlDir, false);
+						Uri strippedUri = DocumentsContractCompat.buildTreeDocumentUri(
+								uri.getAuthority(),
+								DocumentsContractCompat.getTreeDocumentId(uri));
+
+						if (!firstUri.equals(strippedUri)) {
+
+							PathInfo pathInfoWanted = PathInfo.buildPathInfo(
+									firstUri.toString());
+							PathInfo pathInfoAuthed = PathInfo.buildPathInfo(
+									strippedUri.toString());
+
+							AndroidUtilsUI.showDialog(requireActivity(),
+									R.string.authorized_wrong_path_title,
+									R.string.authorized_wrong_path,
+									pathInfoAuthed.getFriendlyName(),
+									pathInfoWanted.getFriendlyName());
+							shownWarning = true;
+						}
+					} catch (Throwable t) {
+						Log.e(TAG, "permsAuthReceived", t);
+					}
+				}
+
 				item.put(TransmissionVars.FIELD_TORRENT_RECHECKAUTH, true);
 
 				long errorStat = MapUtils.getMapLong(item,
@@ -1681,6 +1735,54 @@ public class TorrentListFragment
 					idsToStart.add(
 							MapUtils.getMapLong(item, TransmissionVars.FIELD_TORRENT_ID, -1));
 				}
+			} else {
+				// Direct -- change path to authorized content uri
+
+				String path;
+				if (TorrentUtils.isSimpleTorrent(item)) {
+					path = uri.toString();
+				} else {
+					// uri is a document
+					// For non-simple torrents, we've authorized the parent path
+					// Get that last bit (usually the name of the torrent, but may not be)
+					File dlDirFile = new File(dlDir);
+					File file = new AndroidFileHandler().newFile(uri.toString(),
+							dlDirFile.getName());
+					path = file.toString();
+
+					// For comparison with authorized uri, dlDir must not include last bit
+					dlDir = dlDirFile.getParent();
+				}
+
+				if (DEBUG) {
+					log(TAG,
+							"permsAuthReceived: "
+									+ item.get(TransmissionVars.FIELD_TORRENT_NAME)
+									+ " moving to " + path);
+				}
+
+				// check if new uri path represents old direct path
+				Uri dlUri = FileUtils.guessTreeUri(context, dlDir, false);
+				if (!uri.equals(dlUri)) {
+					log(Log.WARN, TAG, "permsAuthReceived: new path isn't same as "
+							+ dlDir + " aka " + dlUri);
+
+					if (!shownWarning) {
+						shownWarning = true;
+
+						PathInfo pathInfoWanted = PathInfo.buildPathInfo(dlUri.toString());
+						PathInfo pathInfoAuthed = PathInfo.buildPathInfo(uri.toString());
+
+						AndroidUtilsUI.showDialog(requireActivity(),
+								R.string.authorized_wrong_path_title,
+								R.string.authorized_wrong_path,
+								pathInfoAuthed.getFriendlyName(),
+								pathInfoWanted.getFriendlyName());
+					}
+					continue;
+				}
+
+				session.torrent.moveDataTo(torrentId, path, true);
 			}
 		}
 
@@ -1694,34 +1796,6 @@ public class TorrentListFragment
 		}
 
 		session.triggerRefresh(false);
-
-		try {
-			long id = isAskingForPermsFor.iterator().next();
-			Map<String, Object> item = session.torrent.getCachedTorrent(id);
-			String dlDir = MapUtils.getMapString(item,
-					TransmissionVars.FIELD_TORRENT_DOWNLOAD_DIR, null);
-			Uri firstUri = Uri.parse(dlDir);
-			// strip the documentId off the uri, leaving the original document uri that was originally authorized
-			firstUri = DocumentsContractCompat.buildTreeDocumentUri(
-					firstUri.getAuthority(),
-					DocumentsContractCompat.getTreeDocumentId(firstUri));
-			Uri strippedUri = DocumentsContractCompat.buildTreeDocumentUri(
-					uri.getAuthority(), DocumentsContractCompat.getTreeDocumentId(uri));
-			if (!firstUri.equals(strippedUri)) {
-
-				PathInfo pathInfoWanted = PathInfo.buildPathInfo(firstUri.toString());
-				PathInfo pathInfoAuthed = PathInfo.buildPathInfo(
-						strippedUri.toString());
-
-				AndroidUtilsUI.showDialog(requireActivity(),
-						R.string.authorized_wrong_path_title,
-						R.string.authorized_wrong_path, pathInfoAuthed.getFriendlyName(),
-						pathInfoWanted.getFriendlyName());
-			}
-		} catch (Throwable t) {
-			Log.e(TAG, "permsAuthReceived", t);
-		}
-
 		isAskingForPermsFor = null;
 	}
 }
