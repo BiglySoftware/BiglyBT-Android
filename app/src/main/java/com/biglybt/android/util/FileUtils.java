@@ -25,6 +25,7 @@ import android.content.res.Resources;
 import android.database.Cursor;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
+import android.net.Uri.Builder;
 import android.os.Build;
 import android.os.Build.VERSION;
 import android.os.Build.VERSION_CODES;
@@ -156,11 +157,14 @@ public class FileUtils
 		intent.putExtra("android.content.extra.SHOW_FILESIZE", true);
 
 		if (initialDir != null && VERSION.SDK_INT >= VERSION_CODES.O) {
-			// Only works on >= 26 (Android O)
-			DocumentFile docFile = guessDocumentFile(context, initialDir);
+			// EXTRA_INITIAL_URI only works on >= 26 (Android O)
+			Uri uri = guessTreeUri(context, initialDir, false);
 
-			if (docFile != null) {
-				intent.putExtra(DocumentsContract.EXTRA_INITIAL_URI, docFile.getUri());
+			if (uri != null) {
+				uri = DocumentsContractCompat.buildDocumentUriUsingTree(uri,
+						DocumentsContractCompat.getTreeDocumentId(uri));
+				// EXTRA_INITIAL_URI needs Document Uri.  
+				intent.putExtra(DocumentsContract.EXTRA_INITIAL_URI, uri);
 			}
 		}
 
@@ -203,23 +207,51 @@ public class FileUtils
 		return chooserIntent;
 	}
 
-	public static DocumentFile guessDocumentFile(@NonNull Context context,
-			@NonNull String path) {
+	/**
+	 * Returns a clean TreeUri.
+	 * <p></p>
+	 * If the path contains a document, it is stripped.
+	 * <br>
+	 * If the path is native, a tree content uri will be built if SAF location
+	 * is found. Otherwise, null will return.
+	 *
+	 * @param useDocumentId true : If the path has a document, return that as the tree uri
+	 */
+	@Nullable
+	public static Uri guessTreeUri(@NonNull Context context, @NonNull String path,
+			boolean useDocumentId) {
 		if (isContentPath(path)) {
-			return DocumentFile.fromTreeUri(context, Uri.parse(path));
+			Uri uri = Uri.parse(path);
+			if (VERSION.SDK_INT < VERSION_CODES.LOLLIPOP) {
+				return uri;
+			}
+
+			if (useDocumentId
+					&& DocumentsContractCompat.isDocumentUri(context, uri)) {
+				return DocumentsContract.buildTreeDocumentUri(uri.getAuthority(),
+						DocumentsContract.getDocumentId(uri));
+			}
+			if (DocumentsContractCompat.isTreeUri(uri)) {
+				return DocumentsContract.buildTreeDocumentUri(uri.getAuthority(),
+						DocumentsContract.getTreeDocumentId(uri));
+			}
+			return uri;
 		}
 
 		StorageManager sm = (StorageManager) context.getSystemService(
 				Context.STORAGE_SERVICE);
 		StorageVolume storageVolume = findStorageVolume(sm, new File(path));
 		String storageVolumePath = getStorageVolumePath(storageVolume);
+
 		if (storageVolumePath != null && path.startsWith(storageVolumePath)) {
 			String s = path.substring(storageVolumePath.length());
 			if (s.startsWith("/")) {
 				s = s.substring(1);
 			}
+
 			String uuid;
 			if (VERSION.SDK_INT >= VERSION_CODES.N && storageVolume.isPrimary()) {
+				// XXX is it always primary? getStorageVolumeUuid (usually) returns null
 				uuid = "primary";
 			} else {
 				uuid = FileUtils.getStorageVolumeUuid(storageVolume);
@@ -227,9 +259,9 @@ public class FileUtils
 					uuid = "primary";
 				}
 			}
-			return DocumentFile.fromTreeUri(context,
-					Uri.parse("content://com.android.externalstorage.documents/tree/"
-							+ uuid + Uri.encode(":" + s)));
+			return new Builder().scheme(ContentResolver.SCHEME_CONTENT).authority(
+					"com.android.externalstorage.documents").appendPath(
+							"tree").appendPath(uuid + ":" + s).build();
 		}
 
 		return null;
