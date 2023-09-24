@@ -386,25 +386,13 @@ public abstract class DialogFragmentAbstractLocationPicker
 
 					OffThread.runOnUIThread(this, false, a -> {
 
-						CharSequence friendlyName = pathInfo.getFriendlyName();
 						if (tvCurLocation != null) {
-							String accessType = getString(
-									pathInfo.isSAF ? R.string.fileaccess_saf_short
-											: R.string.fileaccess_direct_short);
+							AndroidUtilsUI.setText(getResources(), tvCurLocation, pathInfo);
 
-							friendlyName = "|" + accessType + "| " + friendlyName;
-							SpannableStringBuilder ssPath = new SpannableStringBuilder(
-									friendlyName);
-							TextPaint paintPath = new TextPaint(tv.getPaint());
-							paintPath.setTextSize(paintPath.getTextSize() * 0.7f);
-							int pathTextColor = tv.getCurrentTextColor();
-							SpanBubbles.setSpanBubbles(ssPath, friendlyName.toString(), "|",
-									paintPath, pathTextColor, pathTextColor, 0, null);
-
-							tvCurLocation.setText(ssPath);
 							tv.setText(AndroidUtils.fromHTML(resources,
 									R.string.movedata_currentlocation, ""));
 						} else {
+							CharSequence friendlyName = pathInfo.getFriendlyName();
 							tv.setText(AndroidUtils.fromHTML(resources,
 									R.string.movedata_currentlocation, friendlyName));
 						}

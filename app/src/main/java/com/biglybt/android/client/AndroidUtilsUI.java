@@ -16,6 +16,9 @@
 
 package com.biglybt.android.client;
 
+import static com.biglybt.android.client.AndroidUtils.requirePackageManager;
+import static com.biglybt.android.client.AndroidUtils.requireResources;
+
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.*;
@@ -35,9 +38,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.provider.Browser;
 import android.speech.RecognizerIntent;
-import android.text.InputType;
-import android.text.SpannableStringBuilder;
-import android.text.Spanned;
+import android.text.*;
 import android.text.method.LinkMovementMethod;
 import android.text.style.ClickableSpan;
 import android.text.style.URLSpan;
@@ -63,8 +64,9 @@ import com.biglybt.android.client.dialog.DialogFragmentNoBrowser;
 import com.biglybt.android.client.rpc.RPC;
 import com.biglybt.android.client.rpc.RPCException;
 import com.biglybt.android.client.session.SessionManager;
+import com.biglybt.android.client.spanbubbles.SpanBubbles;
+import com.biglybt.android.util.PathInfo;
 import com.biglybt.util.RunnableUIThread;
-import com.biglybt.util.RunnableWorkerThread;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.progressindicator.BaseProgressIndicator;
 import com.google.android.material.tabs.TabLayout;
@@ -78,9 +80,6 @@ import java.lang.reflect.Method;
 import java.net.ConnectException;
 import java.net.UnknownHostException;
 import java.util.*;
-
-import static com.biglybt.android.client.AndroidUtils.requirePackageManager;
-import static com.biglybt.android.client.AndroidUtils.requireResources;
 
 @SuppressWarnings("WeakerAccess")
 public class AndroidUtilsUI
@@ -1588,5 +1587,23 @@ public class AndroidUtilsUI
 		// widget visible (probably only when showAnimation is running)
 		pb.setVisibility(View.GONE);
 		pb.hide();
+	}
+
+	public static void setText(@NonNull Resources resources, @NonNull TextView tv,
+			@NonNull PathInfo pathInfo) {
+
+		CharSequence friendlyName = pathInfo.getFriendlyName();
+		String accessType = resources.getString(pathInfo.isSAF
+				? R.string.fileaccess_saf_short : R.string.fileaccess_direct_short);
+		friendlyName = "|" + accessType + "| " + friendlyName;
+
+		SpannableStringBuilder ssPath = new SpannableStringBuilder(friendlyName);
+		TextPaint paintPath = new TextPaint(tv.getPaint());
+		paintPath.setTextSize(paintPath.getTextSize() * 0.7f);
+		int pathTextColor = tv.getCurrentTextColor();
+		SpanBubbles.setSpanBubbles(ssPath, friendlyName.toString(), "|", paintPath,
+				pathTextColor, pathTextColor, 0, null);
+
+		tv.setText(ssPath);
 	}
 }

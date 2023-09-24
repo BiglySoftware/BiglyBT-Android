@@ -170,14 +170,17 @@ public class OpenOptionsGeneralFragment
 		}
 		final String saveLocation = TorrentUtils.getSaveLocation(session, torrent);
 		if (tvSaveLocation != null) {
-			OffThread.runOffUIThread(() -> {
-				CharSequence s = session.getRemoteProfile().getRemoteType() == RemoteProfile.TYPE_CORE
-						? PathInfo.buildPathInfo(saveLocation).getFriendlyName()
-						: saveLocation;
+			if (session.getRemoteProfile().getRemoteType() == RemoteProfile.TYPE_CORE) {
+				OffThread.runOffUIThread(() -> {
+					PathInfo pathInfo = PathInfo.buildPathInfo(saveLocation);
 
-				OffThread.runOnUIThread(this, false,
-						activity -> tvSaveLocation.setText(s));
-			});
+					OffThread.runOnUIThread(this, false,
+							activity -> AndroidUtilsUI.setText(getResources(), tvSaveLocation,
+									pathInfo));
+				});
+			} else {
+				tvSaveLocation.setText(saveLocation);
+			}
 
 		}
 		if (tvFreeSpace != null) {

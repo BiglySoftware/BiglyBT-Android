@@ -262,9 +262,18 @@ public class TorrentInfoFragment
 		if (isCoreSession) {
 			OffThread.runOffUIThread(() -> {
 				final PathInfo pathInfo = PathInfo.buildPathInfo(saveLocation);
-				OffThread.runOnUIThread(a, false,
-						activity -> fillRow(a, R.id.torrentInfo_row_saveLocation,
-								R.id.torrentInfo_val_saveLocation, pathInfo.getFriendlyName()));
+
+				OffThread.runOnUIThread(a, false, activity -> {
+					View viewRow = a.findViewById(R.id.torrentInfo_row_saveLocation);
+					if (viewRow.getVisibility() != View.VISIBLE) {
+						viewRow.setVisibility(View.VISIBLE);
+					}
+
+					TextView tv = a.findViewById(R.id.torrentInfo_val_saveLocation);
+
+					AndroidUtilsUI.setText(getResources(), tv, pathInfo);
+
+				});
 			});
 		} else {
 			fillRow(a, R.id.torrentInfo_row_saveLocation,
