@@ -20,11 +20,8 @@ import android.content.Intent;
 import android.content.res.Resources;
 import android.net.Uri;
 import android.os.Build;
-import android.os.Build.VERSION;
-import android.os.Build.VERSION_CODES;
 import android.os.Bundle;
 import android.os.Handler;
-import android.util.Log;
 import android.view.*;
 import android.widget.TextView;
 
@@ -37,7 +34,6 @@ import androidx.core.app.NavUtils;
 import androidx.core.app.TaskStackBuilder;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentActivity;
 import androidx.lifecycle.Lifecycle;
 
 import com.biglybt.android.adapter.SortableRecyclerAdapter;
@@ -82,8 +78,6 @@ public class TorrentViewActivity
 		R.id.frag_torrent_details
 	};
 
-	public final static int FILECHOOSER_RESULTCODE = 1;
-
 	private static final boolean DEBUG = AndroidUtils.DEBUG && false;
 
 	@SuppressWarnings("hiding")
@@ -106,45 +100,6 @@ public class TorrentViewActivity
 
 	@Thunk
 	BaseProgressIndicator progressBar;
-
-	/**
-	 * Used to capture the File Chooser results from {@link
-	 * DialogFragmentOpenTorrent}
-	 *
-	 * @see FragmentActivity#onActivityResult(int, int,
-	 * android.content.Intent)
-	 */
-	@Override
-	protected void onActivityResult(int requestCode, int resultCode,
-			Intent intent) {
-		if (DEBUG) {
-			Log.d(TAG,
-					"ActivityResult!! " + requestCode + "/" + resultCode + ";" + intent);
-		}
-
-		int filteredRequestCode = requestCode & 0xFFFF;
-
-		if (filteredRequestCode == FILECHOOSER_RESULTCODE) {
-			Uri result = intent == null || resultCode != RESULT_OK ? null
-					: intent.getData();
-			if (DEBUG) {
-				Log.d(TAG, "result = " + result);
-			}
-			if (result == null) {
-				return;
-			}
-
-			String remoteProfileID = getRemoteProfileID();
-			if (session.isDestroyed() && remoteProfileID != null) {
-				// onActivityResult seems to get called before onRestart.  Haven't confirmed
-				SessionManager.getSession(remoteProfileID, null);
-			}
-			session.torrent.openTorrent(this, result);
-			return;
-		}
-
-		super.onActivityResult(requestCode, resultCode, intent);
-	}
 
 	@Override
 	protected void onCreateWithSession(Bundle savedInstanceState) {
