@@ -28,6 +28,8 @@ import android.database.DatabaseUtils;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
+import android.os.storage.StorageManager;
+import android.os.storage.StorageVolume;
 import android.provider.DocumentsContract;
 import android.provider.MediaStore;
 import androidx.annotation.Nullable;
@@ -123,12 +125,22 @@ public class PaulBurkeFileUtils
 						}
 					}
 
+					// handle non-primary volumes
+					StorageManager sm = (StorageManager) context.getSystemService(
+							Context.STORAGE_SERVICE);
+					StorageVolume sv = FileUtils.findStorageVolume(sm, uri);
+					if (sv != null) {
+						String svPath = FileUtils.getStorageVolumePath(sv);
+						if (svPath != null) {
+							return new File(svPath, split1).getAbsolutePath();
+						}
+					}
+
 					// Not sure if all devices have /storage/xxx
 					File f = new File("/storage/" + type);
 					if (f.isDirectory()) {
 						return f.getAbsolutePath() + "/" + split1;
 					}
-					// TODO handle non-primary volumes
 				}
 
 				// DownloadsProvider
