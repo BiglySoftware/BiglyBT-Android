@@ -76,6 +76,8 @@ public abstract class DialogFragmentAbstractLocationPicker
 
 	static final boolean DEBUG = false;
 
+	private static final boolean DEBUG_ALWAYS_ALLOW_RO = false;
+
 	@Thunk
 	private EditText etLocation;
 
@@ -533,7 +535,7 @@ public abstract class DialogFragmentAbstractLocationPicker
 		OffThread.runOffUIThread(() -> {
 			boolean isReadOnly = pathInfo.isReadOnly();
 			OffThread.runOnUIThread(this, false, a -> {
-				if (isReadOnly) {
+				if (!DEBUG_ALWAYS_ALLOW_RO && isReadOnly) {
 					getPositiveButton().setEnabled(false);
 					if (setFocus) {
 						getBrowseButton().requestFocus();
@@ -729,7 +731,7 @@ public abstract class DialogFragmentAbstractLocationPicker
 			return;
 		}
 		// Force isReadOnly check on worker thread. Subsequent calls will be cached
-		if (pathInfo.isReadOnly() && !allowReadOnly) {
+		if (!DEBUG_ALWAYS_ALLOW_RO && pathInfo.isReadOnly() && !allowReadOnly) {
 			return;
 		}
 		list.add(pathInfo);
@@ -741,7 +743,7 @@ public abstract class DialogFragmentAbstractLocationPicker
 		newLocation = PathInfo.buildPathInfo(path);
 
 		// fragment might be destroyed (SAF auth reboots all views), can't use requireContext()
-		if (newLocation.isReadOnly()
+		if (!DEBUG_ALWAYS_ALLOW_RO && newLocation.isReadOnly()
 				&& !FileUtils.canUseSAF(BiglyBTApp.getContext())) {
 			// TODO: Warn
 			return;
