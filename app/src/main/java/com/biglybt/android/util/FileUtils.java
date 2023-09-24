@@ -667,6 +667,9 @@ public class FileUtils
 
 		try {
 			File tempFile = new File(f, "BiglyBT-OkToDelete.tmp");
+			if (tempFile.exists()) {
+				return tempFile.delete();
+			}
 			// There are cases where createNewFile creates the file, but delete fails
 			return tempFile.createNewFile() && tempFile.delete();
 		} catch (IOException e) {
