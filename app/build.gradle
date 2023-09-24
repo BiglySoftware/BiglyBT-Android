@@ -7,9 +7,9 @@ android {
         applicationId "com.biglybt.android.client"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionName "1.3.3"
+        versionName "1.3.3.5"
         // a.b.c -> aabbccdd, where dd = build #
-        versionCode 1030304
+        versionCode 1030305
         multiDexEnabled true
         vectorDrawables.useSupportLibrary = true
     }
