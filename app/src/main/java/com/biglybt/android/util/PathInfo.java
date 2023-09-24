@@ -57,6 +57,8 @@ public class PathInfo
 
 	public File file;
 
+	private boolean triedToGetRealFile = false;
+
 	public String storagePath;
 
 	public String storageVolumeName;
@@ -146,12 +148,12 @@ public class PathInfo
 				Context.STORAGE_SERVICE);
 
 		if (sm != null) {
-			StorageVolume storageVolume = FileUtils.findStorageVolume(context, sm, pathInfo);
+			StorageVolume sv = FileUtils.findStorageVolume(context, sm, pathInfo);
 
-			if (storageVolume != null) {
+			if (sv != null) {
 				if (VERSION.SDK_INT >= VERSION_CODES.O) {
 					try {
-						String uuid = storageVolume.getUuid();
+						String uuid = sv.getUuid();
 						if (uuid != null) {
 							pathInfo.freeBytes = sm.getAllocatableBytes(
 									UUID.fromString(uuid));
@@ -164,7 +166,7 @@ public class PathInfo
 					}
 				}
 
-				String storageVolumePath = FileUtils.getStorageVolumePath(storageVolume);
+				String storageVolumePath = FileUtils.getStorageVolumePath(sv);
 
 				if (storageVolumePath != null) {
 					pathInfo.storagePath = storageVolumePath;
@@ -176,21 +178,15 @@ public class PathInfo
 					}
 				}
 
-				pathInfo.storageVolumeName = FileUtils.getStorageVolumeDescription(context,
-						storageVolume, pathInfo.storageVolumeName);
-				pathInfo.isRemovable = FileUtils.isStorageVolumeRemovable(storageVolume,
+				pathInfo.storageVolumeName = FileUtils.getStorageVolumeDescription(
+						context, sv, pathInfo.storageVolumeName);
+				pathInfo.isRemovable = FileUtils.isStorageVolumeRemovable(sv,
 						pathInfo.isRemovable);
 			}
 		}
 
 		if (pathInfo.shortName == null) {
-			if (pathInfo.file == null) {
-				String path = PaulBurkeFileUtils.getPath(context, pathInfo.uri, false);
-				if (path != null) {
-					pathInfo.file = new File(path);
-				}
-			}
-			if (pathInfo.file != null) {
+			if (pathInfo.getFile() != null) {
 				String path = pathInfo.file.toString();
 				if (pathInfo.storagePath != null
 						&& path.startsWith(pathInfo.storagePath)) {
@@ -249,13 +245,14 @@ public class PathInfo
 					StorageManager sm = (StorageManager) context.getSystemService(
 							Context.STORAGE_SERVICE);
 					if (sm != null) {
-						StorageVolume storageVolume = FileUtils.findStorageVolume(context, sm, pathInfo);
+						StorageVolume sv = FileUtils.findStorageVolume(context, sm,
+								pathInfo);
 						String storageVolumeDescription = FileUtils.getStorageVolumeDescription(
-								context, storageVolume, pathInfo.shortName);
+								context, sv, pathInfo.shortName);
 						if (storageVolumeDescription != null) {
-							pathInfo.shortName = pathInfo.shortName.isEmpty() ?
-									storageVolumeDescription :
-									storageVolumeDescription + ", " + pathInfo.shortName;
+							pathInfo.shortName = pathInfo.shortName.isEmpty()
+									? storageVolumeDescription
+									: storageVolumeDescription + ", " + pathInfo.shortName;
 						}
 					}
 
@@ -310,18 +307,17 @@ public class PathInfo
 
 			try {
 				assert sm != null;
-				StorageVolume storageVolume = FileUtils.findStorageVolume(context, sm, pathInfo);
+				StorageVolume sv = FileUtils.findStorageVolume(context, sm, pathInfo);
 
-				String storageVolumePath = FileUtils.getStorageVolumePath(storageVolume);
+				String svPath = FileUtils.getStorageVolumePath(sv);
 
-				if (storageVolumePath != null) {
-					if (absolutePath.startsWith(storageVolumePath)) {
-						pathInfo.storageVolumeName = FileUtils.getStorageVolumeDescription(context,
-								storageVolume, pathInfo.storageVolumeName);
-						pathInfo.storagePath = storageVolumePath;
-						pathInfo.shortName = absolutePath.substring(
-								storageVolumePath.length());
-						pathInfo.isRemovable = FileUtils.isStorageVolumeRemovable(storageVolume,
+				if (svPath != null) {
+					if (absolutePath.startsWith(svPath)) {
+						pathInfo.storageVolumeName = FileUtils.getStorageVolumeDescription(
+								context, sv, pathInfo.storageVolumeName);
+						pathInfo.storagePath = svPath;
+						pathInfo.shortName = absolutePath.substring(svPath.length());
+						pathInfo.isRemovable = FileUtils.isStorageVolumeRemovable(sv,
 								pathInfo.isRemovable);
 					}
 				}
@@ -388,5 +384,17 @@ public class PathInfo
 			return Objects.equals(fullPath, other.fullPath);
 		}
 		return file.equals(other.file);
+	}
+
+	public File getFile() {
+		if (file == null && !triedToGetRealFile) {
+			triedToGetRealFile = true;
+			String fileString = PaulBurkeFileUtils.getPath(BiglyBTApp.getContext(),
+					uri, false);
+			if (fileString != null) {
+				file = new File(fileString);
+			}
+		}
+		return file;
 	}
 }
