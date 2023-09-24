@@ -30,6 +30,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.WorkerThread;
 import androidx.core.content.ContextCompat;
+import androidx.documentfile.provider.DocumentFile;
 
 import com.biglybt.android.client.AndroidUtils;
 import com.biglybt.android.client.BiglyBTApp;
@@ -118,6 +119,15 @@ public class PathInfo
 				if (i > 0) {
 					String beforeColon = pathInfo.shortName.substring(0, i);
 					pathInfo.shortName = pathInfo.shortName.substring(i + 1);
+
+					if (pathInfo.shortName.isEmpty()) {
+						// example: content://com.android.externalstorage.documents/tree/home%3A
+						// -> "Documents" folder
+						DocumentFile docFile = DocumentFile.fromTreeUri(context,
+								pathInfo.uri);
+						pathInfo.shortName = docFile == null ? beforeColon
+								: docFile.getName();
+					}
 
 					if (beforeColon.equals("raw")) {
 						File f = new File(pathInfo.shortName);
