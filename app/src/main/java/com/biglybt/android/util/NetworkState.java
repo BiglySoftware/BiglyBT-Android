@@ -22,6 +22,7 @@ import java.util.*;
 
 import com.biglybt.android.client.AndroidUtils;
 import com.biglybt.android.client.BiglyBTApp;
+import com.biglybt.android.client.OffThread;
 import com.biglybt.util.Thunk;
 
 import android.annotation.SuppressLint;
@@ -144,11 +145,14 @@ public class NetworkState
 		}
 		isOnline = online;
 		isOnlineMobile = onlineMobile;
-		synchronized (listeners) {
-			for (NetworkStateListener l : listeners) {
-				l.onlineStateChanged(online, onlineMobile);
+
+		OffThread.runOffUIThread(() -> {
+			synchronized (listeners) {
+				for (NetworkStateListener l : listeners) {
+					l.onlineStateChanged(online, onlineMobile);
+				}
 			}
-		}
+		});
 	}
 
 	public boolean isOnline() {
