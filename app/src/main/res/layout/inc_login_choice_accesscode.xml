@@ -65,6 +65,7 @@
 			android:imeActionLabel="@string/btnLoginLabel"
 			android:imeOptions="actionGo"
 			android:inputType="textCapCharacters"
+			android:minHeight="48dp"
 			android:textColor="@android:color/primary_text_light"
 			android:textColorHint="@android:color/secondary_text_light"
 			/>
@@ -80,7 +81,7 @@
 			android:layout_marginLeft="8dp"
 			android:layout_marginStart="8dp"
 			android:background="@drawable/button_blue"
-			android:minHeight="35dp"
+			android:minHeight="48dp"
 			android:text="@string/btnLoginLabel"
 			android:textColor="@color/login_text_color"/>
 	</RelativeLayout>
