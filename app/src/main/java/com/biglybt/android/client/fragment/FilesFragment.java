@@ -622,7 +622,8 @@ public class FilesFragment
 			}
 		}
 
-		if (isTorrentOpenOptions) {
+		if (isTorrentOpenOptions
+				|| requireActivity().findViewById(R.id.actionbar) != null) {
 			MenuItem menuTorrentGroup = menu.findItem(R.id.menu_group_torrent);
 			if (menuTorrentGroup != null) {
 				menuTorrentGroup.setVisible(false);
@@ -1720,9 +1721,6 @@ public class FilesFragment
 
 	@Override
 	protected boolean hasSideActons() {
-		if (isTorrentOpenOptions) {
-			return true;
-		}
-		return super.hasSideActons();
+		return true;
 	}
 }
