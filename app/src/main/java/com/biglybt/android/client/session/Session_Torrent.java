@@ -321,6 +321,21 @@ public class Session_Torrent
 			Uri uri = Uri.parse(authCheckDir);
 			hasAuth = FileUtils.hasFileAuth(contentResolver, uri);
 		} else {
+			// OMG HACK. Android can have a bunch of files in a folder,
+			// but File.list() returns blank, or only the files you just created.
+			// If you access a "hidden" file in that folder that does exist,
+			// it has file.exists() and file.canWrite() as true, but you can't
+			// actually open a stream to it. (Throws EACCES Permission denied)
+			// The kicker is you can create new files in the folder and write to them,
+			// so checking for folder perms returns true. Thus FileUtils.canWrite
+			// says it's ok.  We gotta hack :(
+			String errorString = MapUtils.getMapString(mapUpdatedTorrent,
+					TransmissionVars.FIELD_TORRENT_ERROR_STRING, "");
+			if (errorString.contains("EACCES") || errorString.contains("Permission denied")) {
+				mapUpdatedTorrent.put(TransmissionVars.FIELD_TORRENT_NEEDSAUTH, true);
+				return;
+			}
+
 			File f = new File(authCheckDir);
 			while (f != null && !f.exists()) {
 				f = f.getParentFile();
