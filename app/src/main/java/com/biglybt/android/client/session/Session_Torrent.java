@@ -288,7 +288,17 @@ public class Session_Torrent
 		}
 
 		if (!needRecheck) {
-			return;
+			long newErrorStat = MapUtils.getMapLong(mapUpdatedTorrent,
+					TransmissionVars.FIELD_TORRENT_ERROR, TransmissionVars.TR_STAT_OK);
+			if (newErrorStat != TransmissionVars.TR_STAT_LOCAL_ERROR) {
+				return;
+			}
+			long oldErrorStat = MapUtils.getMapLong(old,
+					TransmissionVars.FIELD_TORRENT_ERROR, TransmissionVars.TR_STAT_OK);
+			if (oldErrorStat == newErrorStat) {
+				return;
+			}
+			// new = Local Error; old = not Local error; needs recheck
 		}
 
 		if (AndroidUtils.DEBUG) {
@@ -312,7 +322,10 @@ public class Session_Torrent
 			hasAuth = FileUtils.hasFileAuth(contentResolver, uri);
 		} else {
 			File f = new File(authCheckDir);
-			hasAuth = FileUtils.canWrite(f);
+			while (f != null && !f.exists()) {
+				f = f.getParentFile();
+			}
+			hasAuth = f != null && FileUtils.canWrite(f);
 		}
 
 		if (AndroidUtils.DEBUG) {
