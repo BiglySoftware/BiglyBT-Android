@@ -586,6 +586,7 @@ Os dados enviados são os seguintes:</string>
 	<string name="ask_for_folder_auth">BiglyBT precisa de permissões para\n\n&lt;b&gt;%1$s&lt;/b&gt; para\n\n%2$s</string>
 	<string name="ask_for_folder_auth_old">Você verá o aplicativo de seleção de pastas do Android. Você deve navegar até o caminho e clicar em \'%1$s\' para autorizar</string>
 	<string name="ask_for_folder_auth_new">Será mostrado o aplicativo de seleção de pasta do Android com a pasta necessária. Clique em \'%1$s\' para autorizar</string>
+	<string name="folder_auth_shieldtv">Para &lt;b&gt; usuários do Shield TV&lt;/b&gt; tendo dificuldade com o botão de seleção: mova uma pasta para cima e retorne à pasta para destacar automaticamente o botão. Alternativamente, você pode usar o trackpad do aplicativo SHIELD TV REMOTE.</string>
 	<string name="os_select_button_old">SELECIONAR</string>
 	<string name="os_select_button_new">USAR ESTA PASTA</string>
 	<string name="folder_permission_missing">Permissão de Pasta Ausente</string>
