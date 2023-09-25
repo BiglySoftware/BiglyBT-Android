@@ -132,7 +132,8 @@ public class AnalyticsTrackerBare
 
 	@Override
 	public void fragmentResume(@NonNull Fragment fragment) {
-		lastViewName = fragment.getClass().getSimpleName();
+		lastViewName = fragment.getClass().getSimpleName().replace("DialogFragment",
+				"DF.");
 		if (fragment instanceof DialogFragment) {
 			FragmentActivity activity = fragment.getActivity();
 
