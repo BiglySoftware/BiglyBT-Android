@@ -44,9 +44,7 @@ import com.biglybt.util.DisplayFormatters;
 import com.biglybt.util.Thunk;
 
 import java.text.NumberFormat;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.regex.Pattern;
 
 public class FilesTreeAdapter
@@ -629,18 +627,15 @@ public class FilesTreeAdapter
 	}
 
 	public FilesAdapterItemFile[] getFilteredFileItems() {
-		FilesTreeFilter filter = getFilter();
-		int filteredCount = filter.getFilteredFileCount();
-		FilesAdapterItemFile[] array = new FilesAdapterItemFile[filteredCount];
-
 		List<FilesAdapterItem> allItems = getAllItems();
-		int i = 0;
+		List<FilesAdapterItemFile> list = new ArrayList<>();
+
 		for (FilesAdapterItem item : allItems) {
 			if (item instanceof FilesAdapterItemFile) {
-				array[i++] = (FilesAdapterItemFile) item;
+				list.add((FilesAdapterItemFile) item);
 			}
 		}
-		return array;
+		return list.toArray(new FilesAdapterItemFile[0]);
 	}
 
 	public int[] getFilteredFileIndexes() {
@@ -659,6 +654,14 @@ public class FilesTreeAdapter
 				if (item instanceof FilesAdapterItemFile) {
 					array[i++] = ((FilesAdapterItemFile) item).fileIndex;
 				}
+			}
+
+			if (array.length > i) {
+				int[] newArray = new int[i];
+				if (i > 0) {
+					System.arraycopy(array, 0, newArray, 0, i);
+				}
+				return newArray;
 			}
 		}
 		return array;
