@@ -98,14 +98,13 @@
 				android:layout_height="wrap_content"
 				android:layout_alignParentEnd="true"
 				android:layout_alignParentRight="true"
-				android:paddingEnd="8dp"
 				android:layout_marginLeft="8dp"
 				android:layout_marginStart="8dp"
 				android:contentDescription="@string/openoptions_btn_editdir"
 				app:iconTint="?android:textColorPrimary"
 				app:icon="@drawable/ic_folder_white_24dp"
-				tools:ignore="MissingPrefix"
-				android:paddingRight="8dp"
+				app:iconGravity="textStart"
+				app:iconPadding="0dp"
 				/>
 
 			<TextView

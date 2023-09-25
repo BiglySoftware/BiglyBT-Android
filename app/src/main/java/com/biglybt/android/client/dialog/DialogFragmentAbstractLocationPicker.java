@@ -594,6 +594,11 @@ public abstract class DialogFragmentAbstractLocationPicker
 				addPath(list, PathInfo.buildPathInfo(defaultDLDir));
 			}
 		}
+		
+		if (DEBUG) {
+			addPath(list, PathInfo.buildPathInfo(new File("/storage/emulated/0/Music/NoAccessDir")));
+			addPath(list, PathInfo.buildPathInfo(new File("/storage/emulated/0/Download/NoExistsDir/NoExistsSubDir")));
+		}
 
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
 			File[] externalFilesDirs = context.getExternalFilesDirs(null);
@@ -727,7 +732,10 @@ public abstract class DialogFragmentAbstractLocationPicker
 									: pathInfo.isReadOnly() ? "(skipped: RO) " : "")
 							+ "addPath: " + pathInfo.fullPath + " ; file: " + pathInfo.file);
 		}
-		if (contains || !pathInfo.exists()) {
+		if (contains) {
+			return;
+		}
+		if (!pathInfo.exists() && !DEBUG_ALWAYS_ALLOW_RO) {
 			return;
 		}
 		// Force isReadOnly check on worker thread. Subsequent calls will be cached
