@@ -275,11 +275,6 @@ public class Session_Torrent
 	private static void coreAuthCheck(ContentResolver contentResolver,
 			Map<?, ?> old, Map mapUpdatedTorrent) {
 
-		if (MapUtils.getMapBoolean(old, TransmissionVars.FIELD_TORRENT_NEEDSAUTH,
-				false)) {
-			return;
-		}
-
 		String newDlDir = MapUtils.getMapString(mapUpdatedTorrent,
 				TransmissionVars.FIELD_TORRENT_DOWNLOAD_DIR, null);
 		String oldDlDir = MapUtils.getMapString(old,
