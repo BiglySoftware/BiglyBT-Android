@@ -665,6 +665,7 @@ The data sent is as follows:</string>
 	<string name="ask_for_folder_auth">BiglyBT needs permissions to\n\n&lt;b>%1$s&lt;/b> for\n\n%2$s</string>
 	<string name="ask_for_folder_auth_old">You will be shown Android\'s folder selection app. You must navigate to the path and click "%1$s" to authorize</string>
 	<string name="ask_for_folder_auth_new">You will be shown Android\'s folder selection app with the folder needed. Click "%1$s" to authorize</string>
+	<string name="folder_auth_shieldtv">For &lt;b&gt;Shield TV users&lt;/b&gt; experiencing difficulty with the select button: move up one folder and then return to the folder to automatically highlight the button. Alternatively, you can use the SHIELD TV REMOTE app\'s trackpad.</string>
 	<string name="os_select_button_old">SELECT</string>
 	<string name="os_select_button_new">USE THIS FOLDER</string>
 	<string name="folder_permission_missing">Folder Permission Missing</string>

@@ -959,6 +959,10 @@ public class FileUtils
 								resources.getString(
 										VERSION.SDK_INT >= 30 ? R.string.os_select_button_new
 												: R.string.os_select_button_old));
+
+				if ("SHIELD Android TV".equals(Build.MODEL)) {
+					s += "\n\n" + resources.getString(R.string.folder_auth_shieldtv);
+				}
 				builder.setMessage(AndroidUtils.fromHTML(s));
 				builder.setPositiveButton(R.string.authorize,
 						(dialog, which) -> launcher.launch(
