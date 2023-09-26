@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-	xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
 	xmlns:tools="http://schemas.android.com/tools"
 	android:layout_width="match_parent"
 	android:layout_height="match_parent"
+	xmlns:app="http://schemas.android.com/apk/res-auto"
 	android:clickable="false"
 	android:descendantFocusability="blocksDescendants"
-	android:padding="6dip">
+	android:padding="6dip"
+	>
 
 	<TextView
 		android:id="@+id/profilerow_alias"
@@ -44,12 +45,14 @@
 		android:layout_alignParentEnd="true"
 		android:layout_alignParentRight="true"
 		android:layout_alignParentTop="true"
+		android:minHeight="48dp"
 		android:background="@null"
 		android:contentDescription="@string/edit_profile"
 		android:paddingEnd="5dip"
 		android:paddingLeft="5dip"
 		android:paddingRight="5dip"
 		android:paddingStart="5dip"
+		app:tint="?android:attr/textColorPrimary"
 		android:src="@drawable/ic_action_settings"/>
 
 </RelativeLayout>
