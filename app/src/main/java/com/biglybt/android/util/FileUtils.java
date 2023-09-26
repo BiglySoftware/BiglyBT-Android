@@ -694,7 +694,10 @@ public class FileUtils
 		}
 
 		if (VERSION.SDK_INT >= VERSION_CODES.R) {
-			return storageVolume.getDirectory().toString();
+			File directory = storageVolume.getDirectory();
+			if (directory != null) {
+				return directory.toString();
+			}
 		}
 
 		Object oPath = null;
