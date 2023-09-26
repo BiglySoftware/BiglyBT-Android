@@ -126,7 +126,8 @@ class AppLifecycleCallbacks
 				} catch (Throwable ignore) {
 				}
 			}
-			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M
+					&& Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
 				try {
 					Object systemService = activity.getSystemService(Class.forName(
 							"com.samsung.android.content.clipboard.SemClipboardManager"));
