@@ -1,0 +1,59 @@
+plugins {
+    id 'com.android.library'
+}
+
+/*
+To use this in Android Studio, place something like the following in your root settings.gradle
+    include ':BiglyBT-plugin-azutp'
+    project(':BiglyBT-plugin-azutp').buildFileName = 'android-build.gradle'
+or, just rename this file to build.gradle
+*/
+
+android {
+    namespace 'com.vuze.client.plugins.utp'
+    compileSdk rootProject.ext.compileSdkVersion
+
+    defaultConfig {
+        minSdkVersion 14
+        multiDexEnabled true
+    }
+
+
+    compileOptions {
+        encoding = "UTF-8"
+
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+
+    sourceSets {
+        main {
+            manifest.srcFile 'AndroidManifest.xml'
+
+            java {
+                srcDirs = [
+                        '../../BiglyBT-plugin-azutp'
+                ]
+            }
+
+            resources {
+                includes = ['**/*.properties']
+                srcDirs = [
+                        '../../BiglyBT-plugin-azutp'
+                ]
+                exclude 'plugin.properties'
+                exclude 'plugin_install.properties'
+                exclude 'build/**'
+                exclude 'build'
+            }
+        }
+    }
+    lint {
+        abortOnError false
+    }
+}
+
+dependencies {
+    implementation project(path: ':core')
+}
