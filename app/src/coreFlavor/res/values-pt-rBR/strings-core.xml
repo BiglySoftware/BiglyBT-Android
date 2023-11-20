@@ -36,9 +36,9 @@
 	<string name="core_remote_access_summary_enabled">Acesso remoto está habilitado em %1$s</string>
 	<string name="core_remote_access_summary_enabled_secure">Proteção por senha para acesso remoto está habilitado em %1$s</string>
 	<string name="pref_conn_trans_encryption_plain">Simples</string>
-	<string name="pref_conn_trans_encryption_none">Nenhum</string>
-	<string name="pref_conn_trans_encryption_RC4">RC4 (CPU Intensivo)</string>
-	<string name="fileaccess_saf">Acesso SAF</string>
+	<string name="pref_conn_trans_encryption_none">Nenhuma</string>
+	<string name="pref_conn_trans_encryption_RC4">RC4 (Uso Intensivo da CPU)</string>
+	<string name="fileaccess_saf">Acesso ao SAF</string>
 	<string name="fileaccess_direct">Acesso Direto</string>
 	<string name="fileaccess_direct_short">Direto</string>
 	<string name="saf_warning_title">Seletor de Pasta</string>
