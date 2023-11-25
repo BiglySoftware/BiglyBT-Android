@@ -210,6 +210,11 @@ class AndroidFileAccessor
 		}
 	}
 
+	@Override
+	public String getString() {
+		return fallback == null ? "android" : fallback.getString();
+	}
+
 	static class AndroidFileChannel
 		extends FileChannel
 	{
