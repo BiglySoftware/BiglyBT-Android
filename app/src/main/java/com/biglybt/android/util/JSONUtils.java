@@ -19,10 +19,10 @@ package com.biglybt.android.util;
 import java.io.Reader;
 import java.util.*;
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONReader;
-import com.alibaba.fastjson.parser.Feature;
-import com.alibaba.fastjson.serializer.SerializerFeature;
+import com.alibaba.fastjson2.JSON;
+import com.alibaba.fastjson2.JSONReader;
+import com.alibaba.fastjson2.JSONReader.Feature;
+import com.alibaba.fastjson2.JSONWriter;
 import com.biglybt.android.client.AnalyticsTracker;
 
 import androidx.annotation.Nullable;
@@ -40,9 +40,8 @@ public class JSONUtils
 {
 
 	private static final String TAG = "JSONUtils";
-
-	private static final int features = Feature.SortFeidFastMatch.mask
-			| Feature.IgnoreNotMatch.mask | Feature.DisableSpecialKeyDetect.mask;
+	
+	private static final Feature features = Feature.AllowUnQuotedFieldNames;
 
 	private static final String DEFAULT_MAP_KEY = "value";
 
@@ -99,7 +98,7 @@ public class JSONUtils
 
 	private static Object parseWithException(Reader reader) {
 		//return new JSONParser(JSONParser.MODE_PERMISSIVE).parse(reader);
-		JSONReader jsonReader = new JSONReader(reader);
+		JSONReader jsonReader = JSONReader.of(reader);
 		Object readObject = jsonReader.readObject();
 		jsonReader.close();
 		return readObject;
@@ -139,7 +138,7 @@ public class JSONUtils
 	*/
 
 	public static String encodeToJSON(@Nullable Map<?, ?> map) {
-		return JSON.toJSONString(map, SerializerFeature.WriteMapNullValue);
+		return JSON.toJSONString(map, JSONWriter.Feature.WriteMapNullValue, JSONWriter.Feature.WriteNulls);
 	}
 
 	public static String encodeToJSON(Collection<?> list) {
