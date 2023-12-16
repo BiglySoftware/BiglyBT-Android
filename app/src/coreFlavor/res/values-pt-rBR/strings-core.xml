@@ -18,6 +18,7 @@
 	<string name="core_torrent_service_options">Opções de Serviço Torrent</string>
 	<string name="core_auto_start_on_boot">Auto-iniciar no Boot</string>
 	<string name="core_auto_start_on_boot_desc">Auto-iniciar serviço de torrent quando o sistema iniciar</string>
+	<string name="core_auto_start_on_boot_auth">A inicialização automática no Boot requer que as configurações de otimização da bateria sejam definidas como Irrestrita ou Desligada</string>
 	<string name="core_only_transfer_data_when_plugged_in">Só transferir dados quando conectado</string>
 	<string name="core_data_transfer_over_mobile_data_plan">Transferência de dados sob plano de dados móvel</string>
 	<string name="core_disable_wi_fi_sleep_mode_while_transfering_data">Desabilitar hibernação no modo Wi-Fi enquanto transferir dados</string>
@@ -36,9 +37,9 @@
 	<string name="core_remote_access_summary_enabled">Acesso remoto está habilitado em %1$s</string>
 	<string name="core_remote_access_summary_enabled_secure">Proteção por senha para acesso remoto está habilitado em %1$s</string>
 	<string name="pref_conn_trans_encryption_plain">Simples</string>
-	<string name="pref_conn_trans_encryption_none">Nenhum</string>
-	<string name="pref_conn_trans_encryption_RC4">RC4 (CPU Intensivo)</string>
-	<string name="fileaccess_saf">Acesso SAF</string>
+	<string name="pref_conn_trans_encryption_none">Nenhuma</string>
+	<string name="pref_conn_trans_encryption_RC4">RC4 (Uso Intensivo da CPU)</string>
+	<string name="fileaccess_saf">Acesso ao SAF</string>
 	<string name="fileaccess_direct">Acesso Direto</string>
 	<string name="fileaccess_direct_short">Direto</string>
 	<string name="saf_warning_title">Seletor de Pasta</string>
@@ -48,4 +49,5 @@
 	<string name="saf_warning_useOS">Usar Seletor de Pasta do OS</string>
 	<string name="saf_warning_useInternal">Usar Seletor Interno</string>
 	<string name="no_saf_support">Acesso ao armazenamento externo (Cartão SD) via Estrutura de Acesso ao Armazenamento do Android (SAF) não está disponível nesta versão do dispositivo &amp; Sistema operacional.</string>
+	<string name="disable_auto_start">Desabilitar início automático</string>
 </resources>

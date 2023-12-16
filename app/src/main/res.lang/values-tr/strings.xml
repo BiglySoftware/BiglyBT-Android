@@ -582,4 +582,15 @@ Gönderilen veriler aşağıdaki gibidir:</string>
 	<string name="settings_no_value">&lt;Ayarlanmadı&gt;</string>
 	<string name="AskResetToDefault">Ayar varsayılan değere sıfırlansın mı?</string>
 	<string name="AlreadyDefault">Ayar zaten varsayılan değerde</string>
+	<string name="folder_permissions_needed">Klasör İzinleri Gerekli</string>
+	<string name="ask_for_folder_auth">BiglyBT’nin\n\n%2$s için\n\n&lt;b&gt;%1$s&lt;/b&gt; izinlerine ihtiyacı var</string>
+	<string name="ask_for_folder_auth_old">Size Android’in klasör seçim uygulaması gösterilecektir. Yetkilendirmek için bulunduğu yola gitmek ve \"%1$s\" seçeneğine tıklamak zorundasınız</string>
+	<string name="ask_for_folder_auth_new">Size gerekli klasörün bulunduğu Android’in klasör seçim uygulaması gösterilecektir. Yetkilendirmek için \"%1$s\" seçeneğini tıklayın</string>
+	<string name="folder_auth_shieldtv">Seçme düğmesiyle zorluk yaşayan &lt;b&gt;Shield TV kullanıcıları&lt;/b&gt; için: bir klasör yukarı çıkın ve ardından düğmeyi otomatik olarak vurgulamak için klasöre dönün. Alternatif olarak SHIELD TV REMOTE uygulamasının izleme dörtgenini kullanabilirsiniz.</string>
+	<string name="os_select_button_old">SEÇ</string>
+	<string name="os_select_button_new">BU KLASÖRÜ KULLAN</string>
+	<string name="folder_permission_missing">Klasör İzni Eksik</string>
+	<string name="authorize">Yetkilendir</string>
+	<string name="authorized_wrong_path_title">Yetkilendirme Uyarısı</string>
+	<string name="authorized_wrong_path">Görünüşe göre &lt;b&gt;%2$s&lt;/b&gt; yerine &lt;b&gt;%1$s&lt;/b&gt; için yetki vermişsiniz</string>
 </resources>

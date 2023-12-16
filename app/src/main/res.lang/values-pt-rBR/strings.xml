@@ -30,7 +30,7 @@
 		<item>Nome</item>
 		<item>Sementes</item>
 		<item>Tamanho</item>
-		<item>Data de publicação</item>
+		<item>Data de Publicação</item>
 	</string-array>
 	<string-array name="sortby_rcm_list">
 		<item>Rank</item>
@@ -180,7 +180,7 @@
 	<string name="torrentInfo_row_startedOn">Iniciado em</string>
 	<string name="torrentInfo_row_lastActiveOn">Ativo pela última vez</string>
 	<string name="torrentInfo_row_completedOn">Completado Em</string>
-	<string name="torrentInfo_row_downloadingFor">Baixando Para</string>
+	<string name="torrentInfo_row_downloadingFor">Baixando Por</string>
 	<string name="torrentInfo_row_seedingFor">Semeando Por</string>
 	<string name="torrentInfo_row_eta">ETA para Conclusão</string>
 	<string name="torrentInfo_title_content">Conteúdo</string>

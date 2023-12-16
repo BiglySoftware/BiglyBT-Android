@@ -1,4 +1,4 @@
-1.3.3
+1.3.3/4
 ★ Android 13’e (Tiramisu) güncellendi 
 ★ Artık Android 13’te, Android’in durum çubuğunda torrent hizmeti simgesinin gösterilmesi için "Bildirimleri Gönder" iznine ihtiyaç duyulmaktadır. Tercih ederseniz torrent hizmeti yine de izinsiz çalıştırılabilir.
 ★ Torrent etkinken ayar dosyasının her zaman çalışmayan İstenmeyen olarak düzeltildi
