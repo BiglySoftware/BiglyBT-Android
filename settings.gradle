@@ -1,15 +1,23 @@
-include ':recyclerview-fastscroll', ':jiechic-tray', ':Android-DirectoryChooser'
 include ':app'
+
 include ":net.i2p.android-helper"
-project(':jiechic-tray').projectDir = new File('jiechic-tray-version/jiechic-tray')
-project(':Android-DirectoryChooser').projectDir = new File('Android-DirectoryChooser/library')
+include ':recyclerview-fastscroll'
 include ':core'
 include ':mldht'
 include ':BiglyBT-plugin-mlDHT'
-include ":BiglyBT-plugin-aercm"
-project(':BiglyBT-plugin-aercm').buildFileName = 'android-build.gradle'
-include ':BiglyBT-plugin-xmwebui'
-project(':BiglyBT-plugin-xmwebui').buildFileName = 'android-build.gradle'
-include ':BiglyBT-plugin-azutp'
-project(':BiglyBT-plugin-azutp').buildFileName = 'android-build.gradle'
 include ':BiglyBT-plugin-mlDHT-Java6'
+
+include ':jiechic-tray'
+project(':jiechic-tray').projectDir = new File('jiechic-tray-version/jiechic-tray')
+
+include ':Android-DirectoryChooser'
+project(':Android-DirectoryChooser').projectDir = new File('Android-DirectoryChooser/library')
+
+include 'BiglyBT-plugin-aercm'
+project(':BiglyBT-plugin-aercm').projectDir = new File(rootDir, 'modules-with-root-src/aercm')
+
+include ':BiglyBT-plugin-xmwebui'
+project(':BiglyBT-plugin-xmwebui').projectDir = new File(rootDir, 'modules-with-root-src/xmwebui')
+
+include 'BiglyBT-plugin-azutp'
+project(':BiglyBT-plugin-azutp').projectDir = new File(rootDir, 'modules-with-root-src/azutp')

@@ -265,13 +265,15 @@ public class TorrentInfoFragment
 
 				OffThread.runOnUIThread(a, false, activity -> {
 					View viewRow = a.findViewById(R.id.torrentInfo_row_saveLocation);
-					if (viewRow.getVisibility() != View.VISIBLE) {
+					if (viewRow != null && viewRow.getVisibility() != View.VISIBLE) {
 						viewRow.setVisibility(View.VISIBLE);
 					}
 
 					TextView tv = a.findViewById(R.id.torrentInfo_val_saveLocation);
 
-					AndroidUtilsUI.setText(getResources(), tv, pathInfo);
+					if (tv != null) {
+						AndroidUtilsUI.setText(getResources(), tv, pathInfo);
+					}
 
 				});
 			});

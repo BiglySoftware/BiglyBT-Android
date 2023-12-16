@@ -148,13 +148,13 @@ public class Session_Torrent
 		"unchecked"
 	})
 	@Thunk
-	void addRemoveTorrents(String callID, List<?> addedTorrentIDs,
+	void addRemoveTorrents(String callID, List<?> addedTorrentMaps,
 			List<String> fields, final int[] fileIndexes, List<?> removedTorrentIDs) {
 		session.ensureNotDestroyed();
 
 		if (AndroidUtils.DEBUG) {
-//			if (addedTorrentIDs.size() > 0) {
-//				Log.d(TAG, "adding torrents " + addedTorrentIDs.size());
+//			if (addedTorrentMaps.size() > 0) {
+//				Log.d(TAG, "adding torrents " + addedTorrentMaps.size());
 //			}
 			if (removedTorrentIDs != null) {
 				Log.d(TAG, "Removing Torrents "
@@ -164,17 +164,16 @@ public class Session_Torrent
 		int numAddedOrRemoved = 0;
 		boolean requireStringUnescape = session.transmissionRPC.isRequireStringUnescape();
 		synchronized (session.mLock) {
-			if (addedTorrentIDs.size() > 0) {
-				numAddedOrRemoved = addedTorrentIDs.size();
+			if (addedTorrentMaps.size() > 0) {
+				numAddedOrRemoved = addedTorrentMaps.size();
 				boolean addTorrentSilently = session.getRemoteProfile().isAddTorrentSilently();
 				List<String> listOpenOptionHashes = addTorrentSilently ? null
 						: session.remoteProfile.getOpenOptionsWaiterList();
 
 				boolean isCore = session.remoteProfile.getRemoteType() == RemoteProfile.TYPE_CORE;
-				ContentResolver contentResolver = isCore
-						? BiglyBTApp.getContext().getContentResolver() : null;
+				List<Long> listNeedsAuthCheck = isCore ? new ArrayList<>() : null;
 
-				for (Object item : addedTorrentIDs) {
+				for (Object item : addedTorrentMaps) {
 					if (!(item instanceof Map)) {
 						continue;
 					}
@@ -210,7 +209,8 @@ public class Session_Torrent
 
 					// Check path perms when dlDir changes
 					if (isCore) {
-						coreAuthCheck(contentResolver, old, mapUpdatedTorrent);
+						coreAuthCheck(torrentID, old, mapUpdatedTorrent,
+								listNeedsAuthCheck);
 					}
 
 					if (old != null) {
@@ -232,6 +232,12 @@ public class Session_Torrent
 						activateOpenOptionsDialog(torrentID, mapUpdatedTorrent,
 								listOpenOptionHashes);
 					}
+				}
+
+				if (isCore && !listNeedsAuthCheck.isEmpty()) {
+					new Thread(() -> doCoreAuthChecks(
+							BiglyBTApp.getContext().getContentResolver(),
+							listNeedsAuthCheck)).start();
 				}
 
 				// only clean up open options after we got a non-empty torrent list,
@@ -267,23 +273,27 @@ public class Session_Torrent
 		}
 
 		for (TorrentListReceivedListener l : receivedListeners) {
-			l.rpcTorrentListReceived(callID, addedTorrentIDs, fields, fileIndexes,
+			l.rpcTorrentListReceived(callID, addedTorrentMaps, fields, fileIndexes,
 					removedTorrentIDs);
 		}
 	}
 
-	private static void coreAuthCheck(ContentResolver contentResolver,
-			Map<?, ?> old, Map mapUpdatedTorrent) {
+	private static void coreAuthCheck(long torrentID, Map<?, ?> old,
+			Map mapUpdatedTorrent, @NonNull List<Long> listNeedsAuthCheck) {
+
+		boolean needRecheck = MapUtils.getMapBoolean(old,
+				TransmissionVars.FIELD_TORRENT_RECHECKAUTH, false);
+		if (needRecheck) {
+			listNeedsAuthCheck.add(torrentID);
+			return;
+		}
 
 		String newDlDir = MapUtils.getMapString(mapUpdatedTorrent,
 				TransmissionVars.FIELD_TORRENT_DOWNLOAD_DIR, null);
 		String oldDlDir = MapUtils.getMapString(old,
 				TransmissionVars.FIELD_TORRENT_DOWNLOAD_DIR, null);
 
-		boolean needRecheck = MapUtils.getMapBoolean(old,
-				TransmissionVars.FIELD_TORRENT_RECHECKAUTH, false);
-
-		if (!needRecheck && newDlDir != null) {
+		if (newDlDir != null) {
 			needRecheck = !newDlDir.equals(oldDlDir);
 		}
 
@@ -302,8 +312,8 @@ public class Session_Torrent
 		}
 
 		if (AndroidUtils.DEBUG) {
-			Log.d(TAG, "addRemoveTorrents: coreAuthCheck; old=" + oldDlDir
-					+ "; new=" + newDlDir);
+			Log.d(TAG, "addRemoveTorrents: coreAuthCheck; old=" + oldDlDir + "; new="
+					+ newDlDir);
 		}
 
 		String authCheckDir = newDlDir == null ? oldDlDir : newDlDir;
@@ -311,43 +321,86 @@ public class Session_Torrent
 			return;
 		}
 
-		if (old != null) {
-			old.remove(TransmissionVars.FIELD_TORRENT_RECHECKAUTH);
-		}
+		listNeedsAuthCheck.add(torrentID);
+		mapUpdatedTorrent.put(TransmissionVars.FIELD_TORRENT_RECHECKAUTH, true);
+	}
 
-		boolean hasAuth;
-		if (FileUtils.isContentPath(authCheckDir)) {
-			// DL Dir changed
-			Uri uri = Uri.parse(authCheckDir);
-			hasAuth = FileUtils.hasFileAuth(contentResolver, uri);
-		} else {
-			// OMG HACK. Android can have a bunch of files in a folder,
-			// but File.list() returns blank, or only the files you just created.
-			// If you access a "hidden" file in that folder that does exist,
-			// it has file.exists() and file.canWrite() as true, but you can't
-			// actually open a stream to it. (Throws EACCES Permission denied)
-			// The kicker is you can create new files in the folder and write to them,
-			// so checking for folder perms returns true. Thus FileUtils.canWrite
-			// says it's ok.  We gotta hack :(
-			String errorString = MapUtils.getMapString(mapUpdatedTorrent,
-					TransmissionVars.FIELD_TORRENT_ERROR_STRING, "");
-			if (errorString.contains("EACCES") || errorString.contains("Permission denied")) {
-				mapUpdatedTorrent.put(TransmissionVars.FIELD_TORRENT_NEEDSAUTH, true);
-				return;
+	private void doCoreAuthChecks(ContentResolver contentResolver,
+			List<Long> listNeedsAuthCheck) {
+
+		List<Map> updatedTorrents = new ArrayList<>();
+		for (Iterator<Long> iter = listNeedsAuthCheck.iterator(); iter.hasNext();) {
+			Long torrentId = iter.next();
+			Map<String, Object> torrent = getCachedTorrent(torrentId);
+
+			if (torrent == null || !MapUtils.getMapBoolean(torrent,
+					TransmissionVars.FIELD_TORRENT_RECHECKAUTH, false)) {
+				iter.remove();
+				continue;
 			}
 
-			File f = new File(authCheckDir);
-			while (f != null && !f.exists()) {
-				f = f.getParentFile();
+			String authCheckDir = MapUtils.getMapString(torrent,
+					TransmissionVars.FIELD_TORRENT_DOWNLOAD_DIR, null);
+			if (authCheckDir == null) {
+				iter.remove();
+				continue;
 			}
-			hasAuth = f != null && FileUtils.canWrite(f);
+
+			boolean hasAuth;
+			if (FileUtils.isContentPath(authCheckDir)) {
+				// DL Dir changed
+				Uri uri = Uri.parse(authCheckDir);
+				hasAuth = FileUtils.hasFileAuth(contentResolver, uri);
+			} else {
+				// OMG HACK. Android can have a bunch of files in a folder,
+				// but File.list() returns blank, or only the files you just created.
+				// If you access a "hidden" file in that folder that does exist,
+				// it has file.exists() and file.canWrite() as true, but you can't
+				// actually open a stream to it. (Throws EACCES Permission denied)
+				// The kicker is you can create new files in the folder and write to them,
+				// so checking for folder perms returns true. Thus FileUtils.canWrite
+				// says it's ok.  We gotta hack :(
+				String errorString = MapUtils.getMapString(torrent,
+						TransmissionVars.FIELD_TORRENT_ERROR_STRING, "");
+				if (errorString.contains("EACCES")
+						|| errorString.contains("Permission denied")) {
+					hasAuth = false;
+				} else {
+					File f = new File(authCheckDir);
+					while (f != null && !f.exists()) {
+						f = f.getParentFile();
+					}
+					hasAuth = f != null && FileUtils.canWrite(f);
+				}
+			}
+
+			if (AndroidUtils.DEBUG) {
+				Log.d(TAG,
+						"addRemoveTorrents: " + authCheckDir + " hasAuth? " + hasAuth);
+			}
+
+			synchronized (session.mLock) {
+				Map<String, Object> lockedTorrent = getCachedTorrent(torrentId);
+				if (torrent != lockedTorrent) {
+					continue;
+				}
+				torrent.remove(TransmissionVars.FIELD_TORRENT_RECHECKAUTH);
+				torrent.put(TransmissionVars.FIELD_TORRENT_NEEDSAUTH, !hasAuth);
+				torrent.put(TransmissionVars.FIELD_LAST_UPDATED,
+						System.currentTimeMillis());
+				updatedTorrents.add(torrent);
+			}
 		}
 
-		if (AndroidUtils.DEBUG) {
-			Log.d(TAG, "addRemoveTorrents: " + authCheckDir + " hasAuth? " + hasAuth);
+		for (TorrentListReceivedListener l : receivedListeners) {
+			// Note: updatedTorrents (aka addedTorrentMaps) should be 
+			// restructured to torrentIDs.
+			// Most listeners don't use addedTorrentMaps, and those that do only
+			// check its count/isEmpty.
+			// FilesFragment retrieves "id" from addedTorrentMaps 
+			l.rpcTorrentListReceived("AuthCheck", updatedTorrents, null, null, null);
 		}
 
-		mapUpdatedTorrent.put(TransmissionVars.FIELD_TORRENT_NEEDSAUTH, !hasAuth);
 	}
 
 	private static void mergeFiles(Map mapUpdatedTorrent, Map old,

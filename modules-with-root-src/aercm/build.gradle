@@ -1,0 +1,58 @@
+plugins {
+    id 'com.android.library'
+}
+
+android {
+    namespace 'com.aelitis.plugins.rcmplugin'
+    compileSdk rootProject.ext.compileSdkVersion
+
+    defaultConfig {
+        minSdkVersion 14
+        multiDexEnabled true
+    }
+
+
+    compileOptions {
+        encoding = "UTF-8"
+
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+
+    sourceSets {
+        main {
+            manifest.srcFile 'AndroidManifest.xml'
+            java {
+                srcDirs = [
+                        '../../BiglyBT-plugin-aercm'
+                ]
+                exclude 'com/aelitis/plugins/rcmplugin/RelatedContentUISWT**'
+                exclude 'com/aelitis/plugins/rcmplugin/SBC_RCMView*'
+                exclude 'com/aelitis/plugins/rcmplugin/RCM_SubViewHolder*'
+                exclude 'com/aelitis/plugins/rcmplugin/RCM_SubView*'
+                exclude 'com/aelitis/plugins/rcmplugin/columns/**'           
+            }
+    
+            resources {
+                includes = [
+                        'com/aelitis/plugins/rcmplugin/internat/*.properties',
+                        'com/aelitis/plugins/rcmplugin/resources/**'
+                ]
+                srcDirs = [
+                        '../../BiglyBT-plugin-aercm'
+                ]
+                exclude 'plugin.properties'
+                exclude 'build/**'
+                exclude 'build'
+            }
+        }
+    }
+    lint {
+        abortOnError false
+    }
+}
+
+dependencies {
+    implementation project(path: ':core')
+}

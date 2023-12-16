@@ -1504,7 +1504,7 @@ public class AndroidUtils
 			// and we don't want to know what they call their device
 		}
 
-		if (deviceName == null) {
+		if (deviceName == null || deviceName.isEmpty()) {
 			deviceName = Build.MODEL == null ? "" : Build.MODEL;
 			if (Build.BRAND != null
 					&& !deviceName.toLowerCase().startsWith(Build.BRAND.toLowerCase())) {
