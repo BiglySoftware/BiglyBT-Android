@@ -111,7 +111,7 @@
 	<string name="move_data_storeinhistory">Хранить местоположение в истории</string>
 	<string name="biglybt_logo">Логотип BiglyBT</string>
 	<string name="action_refresh">Обновить</string>
-	<string name="about_ideas">Если вам нравится наше приложение, пожалуйста, рассмотрите a&lt;a href=\"подпишись\"&gt;подписка&lt;/a &amp; gt;, Чтобы помочь продолжить разработку. Или, если у вас нет возможности, оцените нас в &lt;a href=\"market://details?id=com.biglybt.android.client\"&gt;Google Play Store&lt;/a&gt;!</string>
+	<string name="about_ideas">Если вам нравится наше приложение, пожалуйста, рассмотрите &lt;a href=\"subscribe\"&gt;подписку&lt;/a&gt;, чтобы помочь продолжить разработку. Или, если у вас нет возможности, оцените нас в &lt;a href=\"market://details?id=com.biglybt.android.client\"&gt;Google Play Store&lt;/a&gt;!</string>
 	<string name="addtorrent_info">Если у вас нет торрент-файла, вы можете искать его с помощью поиска в интернете.  Просто нажмите на кнопку поиска и введите поисковый запрос.</string>
 	<string name="profile_ac_explain">Ваши параметры подключения, такие как IP-адрес и порт, управляются вашим кодом доступа</string>
 	<string name="biglybt_required">К сожалению, функция \"%s \" требует подключения к клиенту BiglyBT. Мы будем очень рады если вы перейдёте! ^_^</string>
@@ -181,7 +181,7 @@
 	<string name="torrentInfo_row_activePeerCount">Активные пиры</string>
 	<string name="torrentInfo_row_connectedPeers">Подключённые пиры</string>
 	<string name="action_issues">Сообщить об ошибке</string>
-	<string name="action_giveback">Вернуть</string>
+	<string name="action_giveback">Поблагодарить</string>
 	<string name="action_rate">Оценить приложение</string>
 	<string name="edit_profile">Редактировать профиль</string>
 	<string name="toast_adding_xxx">Добавление %1$s</string>
@@ -360,7 +360,11 @@
 	<string name="weeks">недели</string>
 	<string name="months">месяцы</string>
 	<string name="years">лет</string>
-	<string name="giveback_title">Вернуть</string>
+	<string name="giveback_consider_subscription">Пожалуйста, рассмотрите возможность приобретения подписки, чтобы мы могли продолжать поддержку и развитие BiglyBT для Android.</string>
+	<string name="giveback_already_subscribed">Вы уже являетесь владельцем подписки. Большое спасибо! Вы можете отменить подписку в любое время, используя Google Play-&gt;Профиль-&gt;Подписки&lt;br&gt;&lt;br&gt;Если вы хотите внести свой вклад другими способами, пожалуйста, ознакомьтесь с нашей страницей &lt;a href=\"https://www.biglybt.com/contribute\"&gt;Contributing&lt;/a&gt;.</string>
+	<string name="giveback_firstline">BiglyBT не взимает плату за дополнительные возможности и не урезает функционал до тех пор, пока вы не заплатите.</string>
+	<string name="giveback_title">Поблагодарить</string>
+	<string name="giveback_no_google">Пожалуйста, посетите &lt;a href=\"https://www.biglybt.com/contribute\"&gt;biglybt.com/contribute&lt;/a&gt; или проголосуйте за идеи для приложения Android на &lt;a href=\"https://vote.biglybt.com/android\"&gt;vote.biglybt.com/android&lt;/a&gt;</string>
 	<string name="movedata_currentlocation"><![CDATA[Текущее местоположение <b>%1$s</b>]]></string>
 	<string name="movedata_available_locations">Доступные местоположения</string>
 	<string name="biglybt_tagline">Битторрент-клиент с открытым исходным кодом</string>
@@ -516,6 +520,7 @@
 	<string name="pref_peerport_random">Выбрано случайно</string>
 	<string name="pref_peerport_random_button">Выбрать случайно</string>
 	<string name="gdpr_dialog_title">Уведомление GDPR</string>
+	<string name="gdpr_code_lookup">Сейчас будет произведён поиск местоположения вашего удалённого устройства. Для этого мы безопасно отправим ваш код доступа на наши серверы, которые вернут последний известный IP-адрес устройства.</string>
 	<string name="gdpr_one_time">Если вы согласны продолжить, мы не будем показывать это уведомление снова.</string>
 	<string name="preftitle_port_settings">Настройки порта</string>
 	<string name="title_username">Имя пользователя</string>
@@ -551,4 +556,9 @@
 	<string name="settings_no_value">&lt;Не задано&gt;</string>
 	<string name="AskResetToDefault">Сбросить к значению по умолчанию?</string>
 	<string name="AlreadyDefault">Параметр уже имеет значение по умолчанию</string>
+	<string name="os_select_button_old">ВЫБРАТЬ</string>
+	<string name="os_select_button_new">ИСПОЛЬЗОВАТЬ ЭТУ ПАПКУ</string>
+	<string name="authorize">Авторизовать</string>
+	<string name="authorized_wrong_path_title">Предупреждение об авторизации</string>
+	<string name="authorized_wrong_path">Похоже, что вы авторизовали &lt;b&gt;%1$s&lt;/b&gt; вместо &lt;b&gt;%2$s&lt;/b&gt;</string>
 </resources>
