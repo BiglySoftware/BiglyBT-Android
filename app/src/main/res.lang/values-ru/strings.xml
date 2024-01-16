@@ -131,6 +131,7 @@
 	<string name="torrent_status_checking">Проверка файлов</string>
 	<string name="local_name">Локальный BiglyBT в %s</string>
 	<string name="local_vuze_name">Локальное Vuze приложение на %s</string>
+	<string name="local_vuze_remote_name">Локальный Vuze Remote на %s</string>
 	<string name="dialog_delete_datatoo">Также удалить загруженные файлы</string>
 	<string name="multi_select_tip">Нажмите &amp; Удерживайте для мульти-выбора</string>
 	<string name="generic_x_of_y">%1$s из %2$s</string>
@@ -556,8 +557,10 @@
 	<string name="settings_no_value">&lt;Не задано&gt;</string>
 	<string name="AskResetToDefault">Сбросить к значению по умолчанию?</string>
 	<string name="AlreadyDefault">Параметр уже имеет значение по умолчанию</string>
+	<string name="folder_permissions_needed">Необходимы разрешения на папку</string>
 	<string name="os_select_button_old">ВЫБРАТЬ</string>
 	<string name="os_select_button_new">ИСПОЛЬЗОВАТЬ ЭТУ ПАПКУ</string>
+	<string name="folder_permission_missing">Разрешения для папки отсутствуют</string>
 	<string name="authorize">Авторизовать</string>
 	<string name="authorized_wrong_path_title">Предупреждение об авторизации</string>
 	<string name="authorized_wrong_path">Похоже, что вы авторизовали &lt;b&gt;%1$s&lt;/b&gt; вместо &lt;b&gt;%2$s&lt;/b&gt;</string>
