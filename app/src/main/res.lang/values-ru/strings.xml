@@ -145,6 +145,30 @@
 	<string name="action_sel_save">Сохранить на устройство</string>
 	<string name="action_sel_priority_up">Повысить приоритет</string>
 	<string name="action_sel_priority_down">Понизить приоритет</string>
+	<plurals name="action_sel_folder_filtered_wanted">
+		<item quantity="one">Назначить %1$s отфильтрованный файл желанным</item>
+		<item quantity="few">Назначить %1$s отфильтрованных файла желанными</item>
+		<item quantity="many">Назначить %1$s отфильтрованных файлов желанными</item>
+		<item quantity="other">Назначить %1$s отфильтрованных файлов желанными</item>
+	</plurals>
+	<plurals name="action_sel_folder_filtered_unwanted">
+		<item quantity="one">Назначить %1$s отфильтрованный файл нежеланным</item>
+		<item quantity="few">Назначить %1$s отфильтрованных файла нежеланными</item>
+		<item quantity="many">Назначить %1$s отфильтрованных файлов нежеланными</item>
+		<item quantity="other">Назначить %1$s отфильтрованных файлов нежеланными</item>
+	</plurals>
+	<plurals name="action_sel_folder_all_wanted" tools:ignore="ImpliedQuantity">
+		<item quantity="one">Назначить файл в папке желанным</item>
+		<item quantity="few">Назначить все %1$s файла в папке желанными</item>
+		<item quantity="many">Назначить все %1$s файлов в папке желанными</item>
+		<item quantity="other">Назначить все %1$s файлов в папке желанными</item>
+	</plurals>
+	<plurals name="action_sel_folder_all_unwanted" tools:ignore="ImpliedQuantity">
+		<item quantity="one">Назначить файл в папке нежеланным</item>
+		<item quantity="few">Назначить все %1$s файла в папке нежеланными</item>
+		<item quantity="many">Назначить все %1$s файлов в папке нежеланными</item>
+		<item quantity="other">Назначить все %1$s файлов в папке нежеланными</item>
+	</plurals>
 	<string name="action_set_wanted">Сделать желаемым</string>
 	<string name="action_set_unwanted">Убрать из желаемого</string>
 	<string name="details_tab_files">Файлов</string>
@@ -197,6 +221,9 @@
 	<string name="decline">Отклонить</string>
 	<string name="rcm_na">Вид %1$s требует последнюю версию BiglyBT.\n\nКогда вы находитесь рядом с удалённой машиной, выберите |Справку| &gt; |Проверить обновления| в BiglyBT для обновления до последней сборки.</string>
 	<string name="change_name_title">Изменить имя торрента</string>
+	<string name="change_name_message">Изменение этого отображаемого имени не изменит место сохранения данных торрента</string>
+	<string name="torrent_url_add_failed">&lt;b&gt;%1$s&lt;/b&gt; не является допустимым торрент файлом. Первые пять байтов — &lt;b&gt;%2$s&lt;/b&gt;
+\n\nВозможно, вам повезёт больше, если вы загрузите торрент файл с помощью этого устройства и добавите сохранённый торрент файл.</string>
 	<string name="torrent_url_add_failed_openurl">Перейти по ссылке</string>
 	<string name="button_add">Добавить</string>
 	<string name="check_dont_ask_again">Не спрашивать снова</string>
@@ -210,6 +237,7 @@
 	<string name="filerow_expando">Развернуть/свернуть папку</string>
 	<string name="openoptions_lbl_name">Имя торрента</string>
 	<string name="torrent_open_options_title">Открыть торрент</string>
+	<string name="not_torrent_file_kitkat">Не удалось открыть &lt;b&gt;%1$s&lt;/b&gt;. Поскольку вы используете Kitkat (Android v4), скорее всего это вызвано тем, что файл находится на внешнем носителе или сохранён другим приложением в папку, на которую у нас нет прав на чтение.</string>
 	<string name="x_space_free">%1$s свободно</string>
 	<string name="ask_rating_message">Спасибо за вашу поддержку. : 3 \n\nЕсли вам нравится BiglyBT, пожалуйста, оцените наше приложение в Play Маркете.</string>
 	<string name="no_thanks">Нет, спасибо</string>
@@ -228,6 +256,8 @@
 	<!-- This fits in the completion progress ring.  Text must be short in order to fit nicely.  Up to 4 lines (where 1st and 4th have to be super short), but 2 - 3 lines recommended -->
 	<string name="torrent_row_share_ratio_circle">%.01f\nрейтинг</string>
 	<string name="torrent_row_share_ratio">%.01f рейтинг</string>
+	<string name="torrent_row_peers"><xliff:g example="2" id="num_peers_active">%1$s</xliff:g> из <xliff:g example="10" id="num_peers_connected">%2$s</xliff:g> активных пиров</string>
+	<string name="connerror_pairing">Не удалось получить расположение вашей удалённой машины. Пожалуйста, убедитесь, что у вас есть доступ к Интернету и повторите попытку.</string>
 	<string name="connerror_hostconnect">Не удалось подключиться к вашему удалённой машине</string>
 	<string name="about_version">Версия %1$s (сборка %2$s). GPLv2+</string>
 	<string name="details_tab_tags">Теги</string>
@@ -257,6 +287,18 @@
 		<item quantity="many">%1$d торрентов</item>
 		<item quantity="other">%1$d торрентов</item>
 	</plurals>
+	<plurals name="ms_results_header">
+		<item quantity="one">&lt;b&gt;%1$s&lt;/b&gt; результат для &lt;b&gt;%2$s&lt;/b&gt;</item>
+		<item quantity="few">&lt;b&gt;%1$s&lt;/b&gt; результата для &lt;b&gt;%2$s&lt;/b&gt;</item>
+		<item quantity="many">&lt;b&gt;%1$s&lt;/b&gt; результатов для &lt;b&gt;%2$s&lt;/b&gt;</item>
+		<item quantity="other">&lt;b&gt;%1$s&lt;/b&gt; результатов для &lt;b&gt;%2$s&lt;/b&gt;</item>
+	</plurals>
+	<plurals name="ms_filtered_results_header">
+		<item quantity="one">&lt;b&gt;%1$s&lt;/b&gt; из &lt;b&gt;%2$s&lt;/b&gt; результат для &lt;b&gt;%3$s&lt;/b&gt;</item>
+		<item quantity="few">&lt;b&gt;%1$s&lt;/b&gt; из &lt;b&gt;%2$s&lt;/b&gt; результата для &lt;b&gt;%3$s&lt;/b&gt;</item>
+		<item quantity="many">&lt;b&gt;%1$s&lt;/b&gt; из &lt;b&gt;%2$s&lt;/b&gt; результатов для &lt;b&gt;%3$s&lt;/b&gt;</item>
+		<item quantity="other">&lt;b&gt;%1$s&lt;/b&gt; из &lt;b&gt;%2$s&lt;/b&gt; результатов для &lt;b&gt;%3$s&lt;/b&gt;</item>
+	</plurals>
 	<string name="ms_results_info">%1$s сиды • %2$s пиры</string>
 	<string name="ms_engines">Движки</string>
 	<string name="search_filter">Фильтры</string>
@@ -281,6 +323,12 @@
 		<item quantity="few">%1$s находки в рое</item>
 		<item quantity="many">%1$s находкок в рое</item>
 		<item quantity="other">%1$s находкок в рое</item>
+	</plurals>
+	<plurals name="rcm_filtered_results_count">
+		<item quantity="one">%1$s из %2$s находок в рое</item>
+		<item quantity="few">%1$s из %2$s находок в рое</item>
+		<item quantity="many">%1$s из %2$s находок в рое</item>
+		<item quantity="other">%1$s из %2$s находки в рое</item>
 	</plurals>
 	<string name="time_ago">%s назад</string>
 	<string name="filter_date_starting">Начиная с %1$s</string>
@@ -354,6 +402,7 @@
 	<string name="TorrentListSectionName_Progress_100" formatted="false">100% завершено</string>
 	<string name="TorrentListSectionName_Progress">%1$d%% в %2$d%% выполнено</string>
 	<string name="action_collapse">Свернуть</string>
+	<string name="i2p_remote_client_needs_i2p">I2P-адрес не найден. Удалённый клиент должен иметь установленный плагин I2P и опция Подключение-&gt;Сопряжение-&gt;«Включить регистрацию адресов непубличных сетевых сервисов» должна быть включена</string>
 	<string name="day">день</string>
 	<string name="week">неделя</string>
 	<string name="month">месяц</string>
@@ -367,6 +416,7 @@
 	<string name="giveback_firstline">BiglyBT не взимает плату за дополнительные возможности и не урезает функционал до тех пор, пока вы не заплатите.</string>
 	<string name="giveback_title">Поблагодарить</string>
 	<string name="giveback_no_google">Пожалуйста, посетите &lt;a href=\"https://www.biglybt.com/contribute\"&gt;biglybt.com/contribute&lt;/a&gt; или проголосуйте за идеи для приложения Android на &lt;a href=\"https://vote.biglybt.com/android\"&gt;vote.biglybt.com/android&lt;/a&gt;</string>
+	<string name="movedata_place_in_subfolder">Разместить в подпапке &lt;b&gt;%1$s&lt;/b&gt;</string>
 	<string name="movedata_currentlocation"><![CDATA[Текущее местоположение <b>%1$s</b>]]></string>
 	<string name="movedata_available_locations">Доступные местоположения</string>
 	<string name="biglybt_tagline">Битторрент-клиент с открытым исходным кодом</string>
@@ -389,6 +439,7 @@
 	<string name="rp_update_interval_mobile_same">Такой же, что и немобильный</string>
 	<string name="private_external_storage">Личное внешнее хранилище BiglyBT</string>
 	<string name="private_internal_storage">Личное внутреннее хранилище BiglyBT</string>
+	<string name="private_internal_storage_warning">Предупреждение: Файлы, хранящиеся во внутреннем приватном хранилище, будут стёрты, если вы удалите BiglyBT</string>
 	<string name="dialog_remove_profile_title">Удалить профиль?</string>
 	<string name="dialog_remove_profile_text">Настройки конфигурации профиля «%1$s» будут удалены.</string>
 	<string name="button_remove">Убрать</string>
@@ -523,7 +574,20 @@
 	<string name="pref_peerport_random_button">Выбрать случайно</string>
 	<string name="gdpr_dialog_title">Уведомление GDPR</string>
 	<string name="gdpr_code_lookup">Сейчас будет произведён поиск местоположения вашего удалённого устройства. Для этого мы безопасно отправим ваш код доступа на наши серверы, которые вернут последний известный IP-адрес устройства.</string>
+	<string name="gdpr_code_creation">Если удалённый доступ с помощью кода доступа разрешён, мы сохраняем запись о нём и последний известный IP-адрес этого устройства.</string>
+	<string name="gdpr_we_dont_process">Мы не используем эти данные каким-либо иным образом. Эти данные не передаются сторонним организациям, занимающимся обработкой данных.</string>
+	<string name="gdpr_ip_warning">Однако злоумышленник (хакер) может использовать IP-адрес вместе с данными из других источников для определения вашей личности.</string>
 	<string name="gdpr_one_time">Если вы согласны продолжить, мы не будем показывать это уведомление снова.</string>
+	<string name="gdpr_full_client">При запуске полного клиента на вашем Android-устройстве, мы связываемся с нашими серверами, чтобы определить возможности, доступные для вашего устройства.
+Ничего из этих данных не содержит информацию позволяющую установить личность и не могут быть использованы с внешними данными для определения вашей личности.
+Сведения не передаются сторонним обработчикам данных и не хранятся постоянно на наших серверах.
+Отправляются следующие данные:</string>
+	<string name="gdpr_full_client_data">* ИД приложения (всегда «az»)\n
+* Имя приложения (всегда «BiglyBT»)\n
+* Текущая &amp; 1-я версия клиента\n
+* Имя ОС &amp; версия &amp; архитектура\n
+* Пользовательский интерфейс (всегда «ac»)\n
+* Состояние PHE</string>
 	<string name="preftitle_port_settings">Настройки порта</string>
 	<string name="title_username">Имя пользователя</string>
 	<string name="title_password">Пароль</string>
@@ -531,8 +595,11 @@
 	<string name="password_is_set">Пароль установлен</string>
 	<string name="action_remote_access_qr"><![CDATA[Сохранить и показать QR-код]]></string>
 	<string name="dialog_title_remote_access_qr">QR-код удалённого доступа</string>
+	<string name="dialog_remote_access_biglybt_qr_info">Сканируйте этот QR-код на Android с установленным BiglyBT.\n&lt;small&gt;Старые клиенты BiglyBT для Android покажут ошибку &lt;b&gt;Код доступа «PROFILE» неизвестен&lt;/b&gt;&lt;/small&gt;.</string>
+	<string name="dialog_remote_access_webui_qr_info">Отсканируйте этот QR-код для доступа к веб-интерфейсу в любом современном браузере.</string>
 	<string name="dialog_remote_access_webui_qr_button">QR-код веб-интерфейса</string>
 	<string name="dialog_remote_access_biglybt_qr_button">QR-код BiglyBT</string>
+	<string name="rpc_not_authorized_adv">Не авторизовано. Пожалуйста, убедитесь, что имя пользователя и пароль верны.</string>
 	<string name="password_is_required">Требуется пароль</string>
 	<string name="prefsummary_proxy_port">Порт: %1$d</string>
 	<string name="backspace">Backspace</string>
@@ -544,6 +611,15 @@
 	<string name="sideactions_tag_header">Действия меток</string>
 	<string name="filter_only_complete">Только завершённые</string>
 	<string name="filter_only_wanted">Только желаемые</string>
+	<plurals name="folder_summary_simple">
+		<item quantity="one"><xliff:g id="numFiles">%1$s</xliff:g> файл, <xliff:g id="totalSize">%2$s</xliff:g></item>
+		<item quantity="few"><xliff:g id="numFiles">%1$s</xliff:g> файла, <xliff:g id="totalSize">%2$s</xliff:g></item>
+		<item quantity="many"><xliff:g id="numFiles">%1$s</xliff:g> файлов, <xliff:g id="totalSize">%2$s</xliff:g></item>
+		<item quantity="other"><xliff:g id="numFiles">%1$s</xliff:g> файлов, <xliff:g id="totalSize">%2$s</xliff:g></item>
+	</plurals>
+	<string name="folder_summary">Хочу <xliff:g example="334" id="numFiles_want">%1$s</xliff:g> из <xliff:g example="358" id="numFiles_total">%2$s</xliff:g> файлов,
+<xliff:g example="2.57MB" id="size_want">%3$s</xliff:g> из <xliff:g example="2.69MB" id="size_total">%4$s</xliff:g>.</string>
+	<string name="folder_summary_filtered">Фильтровано к <xliff:g example="217" id="numFiles_filtered">%3$s</xliff:g> с <xliff:g example="188" id="numFiles_filtered_want">%1$s</xliff:g> желанными (<xliff:g example="1.17MB" id="size_filtered_want">%2$s</xliff:g>).</string>
 	<string name="folder_summary_filtered_all_wanted">Отфильтровано по <xliff:g example="217" id="numFiles_filtered">%1$s</xliff:g> желаемых (<xliff:g example="1.17MB" id="size_filtered_want">%2$s</xliff:g>).</string>
 	<string name="show_only_chosen">Показать только выбранные</string>
 	<string name="read_only">Только для чтения</string>
@@ -559,6 +635,10 @@
 	<string name="AskResetToDefault">Сбросить к значению по умолчанию?</string>
 	<string name="AlreadyDefault">Параметр уже имеет значение по умолчанию</string>
 	<string name="folder_permissions_needed">Необходимы разрешения на папку</string>
+	<string name="ask_for_folder_auth">BiglyBT требуются разрешения в\n\n&lt;b&gt;%1$s&lt;/b&gt; для\n\n%2$s</string>
+	<string name="ask_for_folder_auth_old">Вам будет показано приложение для выбора папок Android. Вы должны перейти к пути и нажать «%1$s» для авторизации</string>
+	<string name="ask_for_folder_auth_new">Вам будет показано приложение для выбора папок Android с нужной папкой. Нажмите «%1$s», чтобы авторизовать</string>
+	<string name="folder_auth_shieldtv">Для пользователей &lt;b&gt;Shield TV&lt;/b&gt; испытывающих трудности с кнопкой выбора: переместите вверх по одной папке и затем вернитесь к папке, чтобы автоматически выделить кнопку. В качестве альтернативы можно использовать трекпад приложения SHIELD TV REMOTE.</string>
 	<string name="os_select_button_old">ВЫБРАТЬ</string>
 	<string name="os_select_button_new">ИСПОЛЬЗОВАТЬ ЭТУ ПАПКУ</string>
 	<string name="folder_permission_missing">Разрешения для папки отсутствуют</string>
