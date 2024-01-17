@@ -195,6 +195,7 @@
 	<string name="title_activity_rcm">Торренты у других пиров</string>
 	<string name="accept">Принять</string>
 	<string name="decline">Отклонить</string>
+	<string name="rcm_na">Вид %1$s требует последнюю версию BiglyBT.\n\nКогда вы находитесь рядом с удалённой машиной, выберите |Справку| &gt; |Проверить обновления| в BiglyBT для обновления до последней сборки.</string>
 	<string name="change_name_title">Изменить имя торрента</string>
 	<string name="torrent_url_add_failed_openurl">Перейти по ссылке</string>
 	<string name="button_add">Добавить</string>
