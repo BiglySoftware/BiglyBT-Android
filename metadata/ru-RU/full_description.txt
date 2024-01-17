@@ -11,7 +11,7 @@ BiglyBT - это <b>свободный от рекламы</b>, полнофун
 ★ Использование Swarm Discoveries для <b>поиска похожих</b> торрентов
 ★ Все основные функции торрент-клиента: Mainline DHT, Vuze DHT, UPnP, uTP, PEX, UDP трекер, шифрование
 ★ Загружать на SD-карту через SAF (фреймворк доступа к хранилищу)
-★ Control other BiglyBT, and Transmission RPC compatible desktop torrent clients
+★ Управление другими настольными торрент клиентами, совместимыми с BiglyBT и Transmission RPC
 ★ Возможность удаленного доступа через LAN
 ★ Темная или светлая тема
 ★ Только полное торрент-приложение для <b>Android TV</b> использует Leanback UI.

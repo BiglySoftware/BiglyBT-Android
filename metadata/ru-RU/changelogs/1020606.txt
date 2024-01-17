@@ -1,5 +1,5 @@
 1.2.6.6
 ★ Исправление ANR при выключении ядра
-★ Fix crash on Preferences for Skyworth Asia device
+★ Исправление сбоя в настройках для устройств Skyworth Asia
 ★ Исправлено несохранение состояния отключения mlDHT или DDB
-★ When BiglyBT Service is out of memory, it will crash & not restart until the UI is activated. Мы работаем над этим. You can disable DHT or DDB in Full Settings->Plugins to save memory.
+★ Когда у службы BiglyBT заканчивается память, она аварийно завершает работу и не перезапускается до тех пор, пока не будет активирован пользовательский интерфейс. Мы работаем над этим. Вы можете отключить DHT или DDB в Полных настройках->Плагины для сохранения памяти.

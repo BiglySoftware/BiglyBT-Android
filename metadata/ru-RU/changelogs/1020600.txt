@@ -1,6 +1,6 @@
 1.2.6
-★ Add all relevant config screens from desktop client (ie. Настройки представлены в меню Сервис->Настройки)
-★ Fix bottom of dialog overlapping on-screen system navigation bar
-★ Option for sequential downloading
-★ Fix error when launching BiglyBT with torrent from Browser or other external app.
-★ Fix crash when folding up a group of torrents
+★ Добавлены все соответствующие экраны настроек из клиента для ПК (напр., Настройки представлены в меню Сервис->Настройки)
+★ Опция для последовательной загрузки
+★ Исправлена ошибка при запуске BiglyBT с торрентом из браузера или другого внешнего приложения.
+★ Исправление сбоев при свертывании группы торрентов
+★ Исправлена ​​ошибка, из-за которой нижняя часть диалогового окна перекрывала экранную панель навигации системы

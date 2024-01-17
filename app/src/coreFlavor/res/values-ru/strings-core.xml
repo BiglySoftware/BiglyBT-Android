@@ -20,6 +20,7 @@
 	<string name="core_torrent_service_options">Опции торрента</string>
 	<string name="core_auto_start_on_boot">Автозапуск при загрузке</string>
 	<string name="core_auto_start_on_boot_desc">Автоматический запуск торрента при запуске системы</string>
+	<string name="core_auto_start_on_boot_auth">Автозапуск при загрузке требует, чтобы настройки оптимизации батареи были установлены в \"Не ограничено\" или \"Отключено\"</string>
 	<string name="core_only_transfer_data_when_plugged_in">Передавать данные только при подключении</string>
 	<string name="core_data_transfer_over_mobile_data_plan">Передача данных по мобильному тарифному плану</string>
 	<string name="core_disable_wi_fi_sleep_mode_while_transfering_data">Отключение режима ожидания Wi-Fi при передаче данных</string>
@@ -42,6 +43,7 @@
 	<string name="pref_conn_trans_encryption_RC4">Шифрование RC4</string>
 	<string name="fileaccess_saf">Доступ к SAF</string>
 	<string name="fileaccess_direct">Прямой доступ</string>
+	<string name="fileaccess_direct_short">Напрямую</string>
 	<string name="saf_warning_title">Выбор папок</string>
 	<string name="saf_warning_text">Некоторые производители Android TV поломали или отключили просмотр папок.
 		\n\nЕсли у вас возникли проблемы с выбором папок ОС, вы можете использовать встроенный просмотр.
@@ -49,4 +51,5 @@
 	<string name="saf_warning_useOS">Использовать выбор папок ОС</string>
 	<string name="saf_warning_useInternal">Использовать внутренний выбор</string>
 	<string name="no_saf_support">Доступ к внешнему хранилищу (SD-карте) через фреймворк для хранения данных Android (SAF) не возможен для этого устройств и версии ОС.</string>
+	<string name="disable_auto_start">Отключить автозапуск</string>
 </resources>
