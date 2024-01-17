@@ -1,2 +1,2 @@
 1.3.0.6
-★ Marking file unwanted now deletes/shrinks file, instead of marking it as "Do Not Download"
+★ Пометка файла нежеланным удаляет/уменьшает файл, вместо того, чтобы помечать его как «Не загружать»
