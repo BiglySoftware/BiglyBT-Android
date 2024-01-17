@@ -1,6 +1,6 @@
 1.3.1
 ★ Ускорен поиск по магнит-ссылокам и улучшено отображение прогресса
-★ Fixed bug in "Move on Complete" when torrent files have spaces
-★ Display "Stopping", "Checking", and "Moving" states
-★ Preferences in "Full Settings" can be reset to default by long-click
+★ Исправлена ошибка в «Перемещении по окончании», когда в торрент файлах есть пробелы
+★ Отображение состояний «Стоп», «Проверка» и «Перемещение»
+★ Параметры в «Полных настройках» можно сбросить на стандартные при долгом нажатии
 ★ Обновление ядра BiglyBT до 2.6.0.0
