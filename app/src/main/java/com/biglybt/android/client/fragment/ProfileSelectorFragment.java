@@ -127,7 +127,7 @@ public class ProfileSelectorFragment
 			if (item instanceof RemoteProfile) {
 				RemoteProfile remote = (RemoteProfile) item;
 				boolean isMain = activity.getIntent().getData() != null;
-				RemoteUtils.openRemote(activity, remote, isMain, isMain);
+				RemoteUtils.openRemote(activity, remote, isMain, null);
 			}
 		});
 

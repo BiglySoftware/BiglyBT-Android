@@ -405,7 +405,7 @@ public class LoginActivity
 	private void openRemote(String ac) {
 		RemoteProfile remoteProfile = RemoteProfileFactory.create(
 				RemoteProfile.DEFAULT_USERNAME, ac);
-		RemoteUtils.openRemote(this, remoteProfile, false, false);
+		RemoteUtils.openRemote(this, remoteProfile, false, null);
 	}
 
 	@SuppressWarnings("UnusedParameters")
@@ -443,7 +443,7 @@ public class LoginActivity
 	@Override
 	public void profileEditDone(RemoteProfile oldProfile,
 			RemoteProfile newProfile) {
-		RemoteUtils.openRemote(this, newProfile, false, false);
+		RemoteUtils.openRemote(this, newProfile, false, null);
 	}
 
 }

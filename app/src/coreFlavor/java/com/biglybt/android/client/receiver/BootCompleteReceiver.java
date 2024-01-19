@@ -19,15 +19,13 @@ package com.biglybt.android.client.receiver;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.os.Build;
+import android.os.SystemClock;
 import android.util.Log;
 
 import androidx.core.content.ContextCompat;
 
 import com.biglybt.android.client.*;
 import com.biglybt.android.client.service.BiglyBTService;
-import com.biglybt.android.client.session.RemoteProfile;
-import com.biglybt.util.Thunk;
 
 /**
  * Simple Broadcast Receiver that launches BiglyBT Core on boot if configured by
@@ -42,6 +40,11 @@ public class BootCompleteReceiver
 
 	@Override
 	public void onReceive(final Context context, Intent intent) {
+		final long startedOn = SystemClock.elapsedRealtime();
+		final IAnalyticsTracker tracker = AnalyticsTracker.getInstance();
+		tracker.setDeviceName(
+				AndroidUtils.getDeviceNameForLogger(context.getContentResolver()));
+
 		if (AndroidUtils.DEBUG) {
 			Log.d(TAG, "BroadcastReceiver.onReceive");
 		}
@@ -51,9 +54,12 @@ public class BootCompleteReceiver
 		if (!intent.getAction().equals(Intent.ACTION_BOOT_COMPLETED)) {
 			return;
 		}
+		if (AndroidUtils.DEBUG) {
+			Log.d(TAG, "BroadcastReceiver.onReceive ACTION_BOOT_COMPLETED");
+		}
 		final PendingResult pendingResult = goAsync();
 
-		StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();
+		final StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();
 		new Thread(() -> {
 			try {
 				if (RemoteUtils.getCoreProfile() == null
@@ -64,21 +70,15 @@ public class BootCompleteReceiver
 				if (AndroidUtils.DEBUG) {
 					Log.d(TAG, "startForegroundService BiglyBTService");
 				}
-				
+
 				ContextCompat.startForegroundService(context,
 						new Intent(BiglyBTService.INTENT_ACTION_START, null, context,
 								BiglyBTService.class));
 				//BiglyCoreUtils.startBiglyBTCoreService() does bindings which BroadcastReceivers shouldn't do
 
 			} catch (Throwable t) {
-				// TODO: We get an IllegalAccessError on certain devices (Skyworth; Android 8.0)
-				//       due to R8/Proguard.  Hopefully it will get fixed, but since it's
-				//       only been reported on one device on one OS version, it may not be
-				//       We could warn the user, provide a non-optimized apk for them
-				//       via non-Google Play
-				IAnalyticsTracker tracker = AnalyticsTracker.getInstance();
-				tracker.setDeviceName(
-						AndroidUtils.getDeviceNameForLogger(context.getContentResolver()));
+				tracker.setLastViewName(
+						(SystemClock.elapsedRealtime() - startedOn) + "ms");
 				tracker.logError(t, stackTrace);
 			} finally {
 				pendingResult.finish();

@@ -21,6 +21,8 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 
+import androidx.annotation.AnyThread;
+import androidx.annotation.WorkerThread;
 import androidx.fragment.app.FragmentManager;
 
 import com.biglybt.android.client.*;
@@ -50,25 +52,22 @@ public class IntentHandler
 		super.onCreate(savedInstanceState);
 
 		setContentView(R.layout.activity_splash);
-		handleIntent(getIntent());
+		OffThread.runOffUIThread(() -> handleIntent(getIntent()));
 	}
 
+	@AnyThread
+	private void showProfileSelector() {
+		// .commit will send it over to UI thread for us
+		FragmentManager fm = getSupportFragmentManager();
+		if (fm.isDestroyed() || fm.findFragmentByTag("PSF") != null) {
+			return;
+		}
+		fm.beginTransaction().add(R.id.fragment_container,
+				new ProfileSelectorFragment(), "PSF").commit();
+	}
+
+	@WorkerThread
 	private void handleIntent(Intent intent) {
-		OffThread.runOffUIThread(() -> {
-			boolean handled = handleIntent2(intent);
-			if (!handled) {
-				// .commit will send it over to UI thread for us
-				FragmentManager fm = getSupportFragmentManager();
-				if (fm.isDestroyed() || fm.findFragmentByTag("PSF") != null) {
-					return;
-				}
-				fm.beginTransaction().add(R.id.fragment_container,
-						new ProfileSelectorFragment(), "PSF").commit();
-			}
-		});
-	}
-
-	private boolean handleIntent2(Intent intent) {
 		boolean forceProfileListOpen = false;
 
 		if (AndroidUtils.DEBUG) {
@@ -124,17 +123,19 @@ public class IntentHandler
 						openAfterEdit = true;
 						RemoteUtils.editProfile(remoteProfile, getSupportFragmentManager(),
 								"1".equals(reqPW));
-						return false;
+						showProfileSelector();
+						return;
 					} else if (ac.length() < 100) {
 						RemoteProfile remoteProfile = RemoteProfileFactory.create("vuze",
 								ac);
-						return RemoteUtils.openRemote(this, remoteProfile, true, true);
+						RemoteUtils.openRemote(this, remoteProfile, true,
+								() -> showProfileSelector());
+						return;
 					}
 				}
 
-				// check for http[s]://remote.vuze.com/ac=*
-				if (("remote.vuze.com".equals(host)
-						|| "remote.biglybt.com".equals(host))
+				// check for http[s]://remote.biglybt.com/ac=*
+				if ("remote.biglybt.com".equals(host)
 						&& data.getQueryParameter("ac") != null) {
 					String ac = data.getQueryParameter("ac");
 					if (AndroidUtils.DEBUG) {
@@ -144,7 +145,9 @@ public class IntentHandler
 					if (ac != null && ac.length() < 100) {
 						RemoteProfile remoteProfile = RemoteProfileFactory.create("vuze",
 								ac);
-						return RemoteUtils.openRemote(this, remoteProfile, true, true);
+						RemoteUtils.openRemote(this, remoteProfile, true,
+								() -> showProfileSelector());
+						return;
 					}
 				}
 			} catch (Exception e) {
@@ -169,7 +172,7 @@ public class IntentHandler
 				}
 				// New User: Send them to Login (Account Creation)
 				LoginActivity.launch(this);
-				return true;
+				return;
 			}
 
 			if (!clearTop && noSavedInstanceState) {
@@ -178,7 +181,8 @@ public class IntentHandler
 					if (AndroidUtils.DEBUG) {
 						Log.d(TAG, "No last remote");
 					}
-					return false;
+					showProfileSelector();
+					return;
 				}
 
 				if (intent.getData() == null
@@ -188,14 +192,17 @@ public class IntentHandler
 								+ appPreferences.getRemotes().length);
 					}
 					try {
-						return RemoteUtils.openRemote(this, remoteProfile, true, true);
+						RemoteUtils.openRemote(this, remoteProfile, true,
+								() -> showProfileSelector());
+						return;
 					} catch (Throwable t) {
 						AnalyticsTracker.getInstance(this).logError(t);
 					}
 				}
 			}
 		}
-		return false;
+
+		showProfileSelector();
 	}
 
 	@Override
@@ -205,14 +212,15 @@ public class IntentHandler
 			Log.d(TAG, "onNewIntent " + intent);
 		}
 		setIntent(intent);
-		handleIntent(intent);
+		OffThread.runOffUIThread(() -> handleIntent(intent));
 	}
 
 	@Override
 	public void profileEditDone(RemoteProfile oldProfile,
 			RemoteProfile newProfile) {
 		if (openAfterEdit) {
-			RemoteUtils.openRemote(this, newProfile, true, true);
+			RemoteUtils.openRemote(this, newProfile, true,
+					() -> showProfileSelector());
 		}
 	}
 }

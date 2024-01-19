@@ -17,13 +17,18 @@
 package com.biglybt.android.client;
 
 import android.Manifest.permission;
+import android.app.ActivityManager;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build.VERSION;
 import android.os.Build.VERSION_CODES;
 import android.os.Bundle;
+import android.os.PowerManager;
+import android.provider.Settings;
+import android.util.Log;
 
 import androidx.annotation.*;
+import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
@@ -40,7 +45,11 @@ import com.biglybt.android.client.session.RemoteProfile;
 import com.biglybt.android.client.session.RemoteProfileFactory;
 import com.biglybt.android.client.session.SessionManager;
 import com.biglybt.android.util.JSONUtils;
+import com.biglybt.util.RunnableUIThread;
 import com.biglybt.util.Thunk;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+
+import net.grandcentrix.tray.TrayPreferences;
 
 import java.util.List;
 import java.util.Map;
@@ -54,13 +63,11 @@ public class RemoteUtils
 	//private static final String TAG = "RemoteUtils";
 	public static String lastOpenDebug = null;
 
-	/**
-	 * 
-	 * @return true if opened immediately
-	 */
-	public static boolean openRemote(final AppCompatActivityM activity,
+	public static void openRemote(final AppCompatActivityM activity,
 			final RemoteProfile remoteProfile, final boolean isMain,
-			final boolean closeActivityOnSuccess) {
+			final RunnableUIThread runOnNoOpen) {
+
+		// Ensure remote is saved in AppPreferences
 		OffThread.runOffUIThread(() -> {
 			AppPreferences appPreferences = BiglyBTApp.getAppPreferences();
 
@@ -69,21 +76,73 @@ public class RemoteUtils
 			}
 		});
 
+		// Ensure remote can autostart if option enabled
+		if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M
+				&& remoteProfile.isLocalHost()) {
+			AppPreferences appPreferences = BiglyBTApp.getAppPreferences();
+			TrayPreferences prefs = appPreferences.getPreferences();
+			if (prefs.getBoolean(CorePrefs.PREF_CORE_AUTOSTART, false)) {
+
+				PowerManager pm = (PowerManager) activity.getSystemService(
+						Context.POWER_SERVICE);
+				boolean isIgnoringBatteryOptimizations = pm.isIgnoringBatteryOptimizations(
+						activity.getApplicationContext().getPackageName());
+
+				boolean isRestricted = false;
+				if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.P) {
+					ActivityManager am = (ActivityManager) activity.getSystemService(
+							Context.ACTIVITY_SERVICE);
+					isRestricted = am.isBackgroundRestricted();
+				}
+
+				if (AndroidUtils.DEBUG) {
+					Log.d("BatteryOpt",
+							"isIgnoringBatteryOptimizations: "
+									+ isIgnoringBatteryOptimizations + "; isRestricted: "
+									+ isRestricted);
+				}
+				if (isRestricted || !isIgnoringBatteryOptimizations) {
+					OffThread.runOnUIThread(activity, false, (a) -> {
+						AlertDialog.Builder builder = new MaterialAlertDialogBuilder(
+								activity).setCancelable(true);
+						builder.setTitle(R.string.core_auto_start_on_boot);
+						builder.setMessage(R.string.core_auto_start_on_boot_auth);
+						builder.setPositiveButton(R.string.settings, (dialog, which) -> {
+							Intent intent = new Intent();
+							intent.setAction(
+									Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS);
+							activity.startActivity(intent);
+							if (runOnNoOpen != null) {
+								runOnNoOpen.run();
+							}
+						});
+						builder.setNegativeButton(R.string.disable_auto_start,
+								(dialog, which) -> OffThread.runOffUIThread(() -> {
+									prefs.put(CorePrefs.PREF_CORE_AUTOSTART, false);
+
+									OffThread.runOnUIThread(
+											() -> reallyOpenRemote(activity, remoteProfile, isMain));
+								}));
+						if (runOnNoOpen != null) {
+							builder.setOnCancelListener(dialog -> runOnNoOpen.run());
+						}
+						builder.show();
+					});
+					return;
+				}
+			}
+		}
+
+		// Ensure permissions
 		List<String> requiredPermissions = remoteProfile.getRequiredPermissions();
 		if (requiredPermissions.size() > 0) {
-			return activity.requestPermissions(
-					requiredPermissions.toArray(new String[0]),
+			activity.requestPermissions(requiredPermissions.toArray(new String[0]),
 					new PermissionResultHandler() {
 						@WorkerThread
 						@Override
 						public void onAllGranted() {
-							OffThread.runOnUIThread(() -> {
-
-								if (closeActivityOnSuccess && !isMain) {
-									activity.finish();
-								}
-								reallyOpenRemote(activity, remoteProfile, isMain);
-							});
+							OffThread.runOnUIThread(
+									() -> reallyOpenRemote(activity, remoteProfile, isMain));
 						}
 
 						@WorkerThread
@@ -96,23 +155,19 @@ public class RemoteUtils
 							if (denies.size() > 0) {
 								AndroidUtilsUI.showDialog(activity, R.string.permission_denied,
 										R.string.error_client_requires_permissions);
+								if (runOnNoOpen != null) {
+									OffThread.runOnUIThread(runOnNoOpen);
+								}
 							} else {
-								OffThread.runOnUIThread(() -> {
-									if (closeActivityOnSuccess && !isMain) {
-										activity.finish();
-									}
-									reallyOpenRemote(activity, remoteProfile, isMain);
-								});
+								OffThread.runOnUIThread(
+										() -> reallyOpenRemote(activity, remoteProfile, isMain));
 							}
 						}
 					});
+			return;
 		}
 
-		if (closeActivityOnSuccess && !isMain) {
-			activity.finish();
-		}
 		reallyOpenRemote(activity, remoteProfile, isMain);
-		return true;
 	}
 
 	@Thunk
