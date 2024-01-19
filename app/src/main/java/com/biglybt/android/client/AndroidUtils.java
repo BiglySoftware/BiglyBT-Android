@@ -648,7 +648,10 @@ public class AndroidUtils
 				// Used to be cnShort@fileName.java:lineNumber, but
 				// AS won't make file clickable without brackets
 				if (fileName != null) {
-					sb.append('(').append(fileName).append(".java");
+					sb.append('(').append(fileName);
+					if (!fileName.endsWith(".java")) {
+						sb.append(".java");
+					}
 				}
 				if (showLineNumber) {
 					int lineNumber = element.getLineNumber();
