@@ -158,16 +158,14 @@
 				<category android:name="android.intent.category.LEANBACK_LAUNCHER"/>
 			</intent-filter>
 
-			<intent-filter android:label="BiglyBT Remote">
+			<intent-filter android:label="BiglyBT Remote" android:autoVerify="true">
 				<action android:name="android.intent.action.VIEW"/>
 
 				<category android:name="android.intent.category.BROWSABLE"/>
 				<category android:name="android.intent.category.DEFAULT"/>
 
-				<data android:scheme="http" android:host="remote.vuze.com"/>
-				<data android:scheme="https" android:host="remote.vuze.com"/>
-				<data android:scheme="http" android:host="remote.biglybt.com"/>
-				<data android:scheme="https" android:host="remote.biglybt.com"/>
+				<data android:scheme="http" android:host="remote.biglybt.com" android:pathPrefix="/android"/>
+				<data android:scheme="https" android:host="remote.biglybt.com" android:pathPrefix="/android"/>
 			</intent-filter>
 
 			<intent-filter android:label="BiglyBT Torrent Url Opener">
