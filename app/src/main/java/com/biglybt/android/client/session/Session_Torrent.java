@@ -755,13 +755,14 @@ public class Session_Torrent
 			Log.d(TAG, "openTorrent " + scheme);
 		}
 		if ("file".equals(scheme) || "content".equals(scheme)) {
+			String stackTrace = AndroidUtils.getCompressedStackTrace();
 			activity.requestPermissions(new String[] {
 				Manifest.permission.READ_EXTERNAL_STORAGE
 			}, new PermissionResultHandler() {
 				@WorkerThread
 				@Override
 				public void onAllGranted() {
-					openTorrent_perms(activity, uri);
+					openTorrent_perms(activity, uri, stackTrace);
 				}
 
 				@WorkerThread
@@ -795,7 +796,7 @@ public class Session_Torrent
 
 	@Thunk
 	@WorkerThread
-	void openTorrent_perms(FragmentActivity activity, Uri uri) {
+	void openTorrent_perms(FragmentActivity activity, Uri uri, String stackTrace) {
 		try {
 			InputStream stream = FileUtils.getInputStream(activity, uri);
 			if (stream != null) {
@@ -805,14 +806,15 @@ public class Session_Torrent
 			if (AndroidUtils.DEBUG) {
 				e.printStackTrace();
 			}
-			AnalyticsTracker.getInstance(activity).logError(e);
+			// API >= 30: SecurityException: com.biglybt.android.client has no access to <media uri>
+			AnalyticsTracker.getInstance(activity).logError(e, stackTrace);
 			String s = "Security Exception trying to access <b>" + uri + "</b>";
 			CustomToast.showText(AndroidUtils.fromHTML(s), Toast.LENGTH_LONG);
 		} catch (FileNotFoundException e) {
 			if (AndroidUtils.DEBUG) {
 				e.printStackTrace();
 			}
-			AnalyticsTracker.getInstance(activity).logError(e);
+			AnalyticsTracker.getInstance(activity).logError(e, stackTrace);
 			String s = "<b>" + uri + "</b> not found";
 			if (e.getCause() != null) {
 				s += ". " + e.getCause().getMessage();
