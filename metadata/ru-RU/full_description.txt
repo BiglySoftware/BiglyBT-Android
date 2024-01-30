@@ -18,4 +18,4 @@ BiglyBT - это <b>свободный от рекламы</b>, полнофун
 
 Наш исходный код развивается с 2003 года (на основе Azureus) и под лицензией GPL.  Если вы желаете присоединиться к нашей команде, посетите наш <a href="https://github.com/BiglySoftware/BiglyBT-Android">GitHub репозиторий</a> - https://github.com/BiglySoftware/BiglyBT-Android
 
-Если у вас есть идеи, как сделать загрузку torrent t проще и лучше в BiglyBT, посетите наш <a href="https://vote.biglybt.com/android">список задач</a> - https://vote.biglybt.com/android
+Если у вас есть идеи, как сделать загрузку торрентов проще и лучше в BiglyBT, посетите наш <a href="https://vote.biglybt.com/android">Список задач</a> - https://vote.biglybt.com/android
