@@ -3,7 +3,7 @@
     <string name="contribute_monthly">Ежемесячная поддержка BiglyBT</string>
     <string name="contribute_yearly">Ежегодная поддержка BiglyBT</string>
     <string name="contribute_onetime">Единоразовая поддержка</string>
-    <string name="contribute_monthly_description">Ежемесячная поддержка, отказ от подписки в Google Pay в любой момент.</string>
-    <string name="contribute_yearly_description">Ежемесячная поддержка, отказ от подписки в Google Pay в любой момент.</string>
+    <string name="contribute_monthly_description">Ежемесячная поддержка, отказ от подписки в Google Pay в любой момент</string>
+    <string name="contribute_yearly_description">Ежегодная поддержка, отказ от подписки в Google Pay в любой момент</string>
     <string name="contribute_onetime_description">Всего один раз, но незабываемо. ;)</string>
 </resources>
