@@ -12,18 +12,18 @@
 		<item quantity="other">▼ %1$s, ▲ %2$s. %3$s активных торрентов.</item>
 	</plurals>
 	<string name="core_noti_sleeping">Сон, пока не онлайн</string>
-	<string name="core_noti_sleeping_oncellular">Сон, пока по мобильному тарифному плану</string>
-	<string name="core_noti_sleeping_battery">Сон, пока не подключён</string>
-	<string name="core_noti_stop_button">Закрытие</string>
+	<string name="core_noti_sleeping_oncellular">Сон, пока по мобильному интернету</string>
+	<string name="core_noti_sleeping_battery">Сон, пока не подключён к электросети</string>
+	<string name="core_noti_stop_button">Остановить</string>
 	<string name="core_noti_pause_button">Пауза</string>
 	<string name="core_noti_resume_button">Продолжить</string>
-	<string name="core_torrent_service_options">Опции торрента</string>
+	<string name="core_torrent_service_options">Опции службы торрентов</string>
 	<string name="core_auto_start_on_boot">Автозапуск при загрузке</string>
-	<string name="core_auto_start_on_boot_desc">Автоматический запуск торрента при запуске системы</string>
+	<string name="core_auto_start_on_boot_desc">Автоматический запуск службы торрентов при запуске системы</string>
 	<string name="core_auto_start_on_boot_auth">Автозапуск при загрузке требует, чтобы настройки оптимизации батареи были установлены в \"Не ограничено\" или \"Отключено\"</string>
 	<string name="core_only_transfer_data_when_plugged_in">Передавать данные только при подключении</string>
-	<string name="core_data_transfer_over_mobile_data_plan">Передача данных по мобильному тарифному плану</string>
-	<string name="core_disable_wi_fi_sleep_mode_while_transfering_data">Отключение режима ожидания Wi-Fi при передаче данных</string>
+	<string name="core_data_transfer_over_mobile_data_plan">Передача данных по мобильному интернету</string>
+	<string name="core_disable_wi_fi_sleep_mode_while_transfering_data">Отключение режима ожидания Wi-Fi при мобильном интернете</string>
 	<string name="preftitle_remote_access_lan">Разрешить удаленное управление в локальной сети</string>
 	<string name="preftitle_core_proxy_settings">Настройки прокси</string>
 	<string name="prefsummary_applied_after_closing">Изменения в %1$s будет применяться после закрытия этого экрана.</string>
@@ -40,7 +40,7 @@
 	<string name="core_remote_access_summary_enabled_secure">Включить запароленный удалённый доступ на %1$s</string>
 	<string name="pref_conn_trans_encryption_plain">Обычный</string>
 	<string name="pref_conn_trans_encryption_none">Не использовать</string>
-	<string name="pref_conn_trans_encryption_RC4">Шифрование RC4</string>
+	<string name="pref_conn_trans_encryption_RC4">Шифрование RC4 (нагружает ЦП)</string>
 	<string name="fileaccess_saf">Доступ к SAF</string>
 	<string name="fileaccess_direct">Прямой доступ</string>
 	<string name="fileaccess_direct_short">Напрямую</string>
