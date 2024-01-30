@@ -26,14 +26,14 @@
 		<item># Файлов</item>
 	</string-array>
 	<string-array name="sortby_ms_list">
-		<item>Ранг</item>
+		<item>Рейтинг</item>
 		<item>Название</item>
 		<item>Сидов</item>
 		<item>Размер</item>
 		<item>Дата публикации</item>
 	</string-array>
 	<string-array name="sortby_rcm_list">
-		<item>Ранг</item>
+		<item>Рейтинг</item>
 		<item>Название</item>
 		<item>Сидов</item>
 		<item>Размер</item>
@@ -72,12 +72,12 @@
 	<string name="title_activity_metasearch">Поиск</string>
 	<string name="action_logout">Выйти</string>
 	<string name="hint_filter">Фильтр</string>
-	<string name="wv_center_default">Подключение к удаленному</string>
+	<string name="wv_center_default">Подключение к удалённому клиенту</string>
 	<string name="state_connecting">Соединение</string>
 	<string name="rp_download_speed">Скорость загрузки</string>
 	<string name="kbps">Кб/с</string>
 	<string name="rp_upload_speed">Скорость раздачи</string>
-	<string name="rp_update_interval">Интервал обновления</string>
+	<string name="rp_update_interval">Период обновления</string>
 	<string name="profile_nickname">Псевдоним</string>
 	<string name="profile_host_explain">Имя хоста или IP-адрес хост-машины</string>
 	<string name="profile_port">Порт (*)</string>
@@ -95,7 +95,7 @@
 	<string name="no_intent">Не найдено необходимое приложение для запуска</string>
 	<string name="intent_security_fail">Ошибка безопасности при попытке запуска приложения</string>
 	<string name="button_browse">Обзор&#8230;</string>
-	<string name="error_remote_not_found">Не удается подключиться к удаленному клиенту. Похоже, что он не работает.</string>
+	<string name="error_remote_not_found">Не удаётся подключиться к удалённому клиенту. Похоже, что он не работает.</string>
 	<string name="error_connecting">Ошибка подключения</string>
 	<string name="button_continue">Продолжить</string>
 	<string name="action_about">О BiglyBT</string>
@@ -243,7 +243,7 @@
 	<string name="no_thanks">Нет, спасибо</string>
 	<string name="rate_now">Оценить сейчас</string>
 	<string name="later">Позже</string>
-	<string name="rp_update_interval_mobile">Интервал обновления мобильных устройств</string>
+	<string name="rp_update_interval_mobile">Период обновления мобильных устройств</string>
 	<string name="manual_refresh">Обновление вручную</string>
 	<string name="menu_global_actions">Глобальные действия</string>
 	<string name="menu_actions">Действия</string>
@@ -252,7 +252,7 @@
 	<string name="openoptions_state_queued">В очереди</string>
 	<string name="openoptions_state_stopped">Остановлен</string>
 	<string name="profile_use_https">Использовать https</string>
-	<string name="rp_small_lists">Краткий список</string>
+	<string name="rp_small_lists">Использовать краткие списки</string>
 	<!-- This fits in the completion progress ring.  Text must be short in order to fit nicely.  Up to 4 lines (where 1st and 4th have to be super short), but 2 - 3 lines recommended -->
 	<string name="torrent_row_share_ratio_circle">%.01f\nрейтинг</string>
 	<string name="torrent_row_share_ratio">%.01f рейтинг</string>
@@ -274,7 +274,7 @@
 	<string name="action_add_profile">Добавить профиль</string>
 	<string name="toast_core_starting">Запуск ядра BiglyBT</string>
 	<string name="toast_core_restarting">Перезапуск ядра BiglyBT</string>
-	<string name="action_shutdown_core">Служба выключения</string>
+	<string name="action_shutdown_core">Выключить службу</string>
 	<plurals name="torrent_actions_for_multiple">
 		<item quantity="one">Действия для %1$d торрента</item>
 		<item quantity="few">Действия для торрентов %1$d</item>
@@ -337,7 +337,7 @@
 	<string name="filterby_header_age">Возраст</string>
 	<string name="filterby_header_lastseen">Был в посл. раз</string>
 	<string name="filterby_header_minimum_rank">Минимальный рейтинг</string>
-	<string name="filterby_header_minimum_seeds">Минимальное число сидов</string>
+	<string name="filterby_header_minimum_seeds">Минимум сидов</string>
 	<string name="button_clear">Очистить</string>
 	<string name="select_download_source">Выберите источник загрузки</string>
 	<string name="download_source_item_from_url">Адрес из %1$s</string>
@@ -360,7 +360,7 @@
 	<string name="rangepicker_minimum_size">Минимальный размер</string>
 	<string name="rangepicker_maximum_size">Максимальный размер</string>
 	<string name="button_set">Указать</string>
-	<string name="button_clear_filters">Сбросить фильтры</string>
+	<string name="button_clear_filters">Очистить фильтры</string>
 	<string name="mark_all_seen">Отметить всё как просмотренное</string>
 	<string name="textbubble_new">Непросмотрено</string>
 	<string name="only_unseen">Только непросмотренные</string>
@@ -464,10 +464,10 @@
 	<string name="prefcat_advanced">Расширенные</string>
 	<string name="preftitle_max_dl_speed">Макс. скорость загрузки</string>
 	<string name="preftitle_max_ul_speed">Макс. скорость раздачи</string>
-	<string name="preftitle_refresh_interval">Интервал обновления</string>
+	<string name="preftitle_refresh_interval">Период обновления</string>
 	<string name="preftitle_show_open_options">Показать параметры открытия</string>
 	<string name="prefsummary_show_open_options">Показать окно параметров при добавлении нового торрента</string>
-	<string name="preftitle_ui_theme">Тема пользовательского интерфейса</string>
+	<string name="preftitle_ui_theme">Тема интерфейса</string>
 	<string name="prefsummary_theme_light">Текущий светлый интерфейс</string>
 	<string name="prefsummary_theme_dark">Текущий тёмный интерфейс</string>
 	<string name="prefswitch_theme_dark">Тёмная</string>
@@ -570,7 +570,7 @@
 	<string name="pref_proxy_disabled">Прокси отключен</string>
 	<string name="pref_proxy_enabled">Прокси %1$s включен</string>
 	<string name="pref_peerport_current">Текущий порт: %d</string>
-	<string name="pref_peerport_random">Выбрано случайно</string>
+	<string name="pref_peerport_random">Выбран случайно</string>
 	<string name="pref_peerport_random_button">Выбрать случайно</string>
 	<string name="gdpr_dialog_title">Уведомление GDPR</string>
 	<string name="gdpr_code_lookup">Сейчас будет произведён поиск местоположения вашего удалённого устройства. Для этого мы безопасно отправим ваш код доступа на наши серверы, которые вернут последний известный IP-адрес устройства.</string>
