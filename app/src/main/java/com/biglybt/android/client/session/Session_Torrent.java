@@ -149,7 +149,7 @@ public class Session_Torrent
 	})
 	@Thunk
 	void addRemoveTorrents(String callID, List<?> addedTorrentMaps,
-			List<String> fields, final int[] fileIndexes, List<?> removedTorrentIDs) {
+			HashSet<String> fields, final int[] fileIndexes, List<?> removedTorrentIDs) {
 		session.ensureNotDestroyed();
 
 		if (AndroidUtils.DEBUG) {
