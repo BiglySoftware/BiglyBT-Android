@@ -42,6 +42,7 @@ import com.biglybt.util.RunnableUIThread;
 import com.biglybt.util.Thunk;
 import com.google.android.material.tabs.TabLayout;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
@@ -148,7 +149,7 @@ public class TorrentDetailsActivity
 
 	@Override
 	public void rpcTorrentListReceived(String callID, List<?> addedTorrentMaps,
-			List<String> fields, final int[] fileIndexes,
+			HashSet<String> fields, final int[] fileIndexes,
 			final List<?> removedTorrentIDs) {
 		runOnUiThread(() -> {
 			if (isFinishing()) {

@@ -324,7 +324,7 @@ public class TorrentListFragment
 
 										@Override
 										public void rpcTorrentListReceived(String callID,
-												List<?> addedTorrentMaps, List<String> fields,
+												List<?> addedTorrentMaps, HashSet<String> fields,
 												final int[] fileIndexes, List<?> removedTorrentIDs) {
 											OffThread.runOnUIThread(TorrentListFragment.this, false,
 													activity -> {
@@ -915,7 +915,7 @@ public class TorrentListFragment
 
 	@Override
 	public void rpcTorrentListReceived(String callID, List<?> addedTorrentMaps,
-			List<String> fields, final int[] fileIndexes, List<?> removedTorrentIDs) {
+			HashSet<String> fields, final int[] fileIndexes, List<?> removedTorrentIDs) {
 		if ((addedTorrentMaps == null || addedTorrentMaps.size() == 0)
 				&& (removedTorrentIDs == null || removedTorrentIDs.size() == 0)) {
 			if (torrentListAdapter.isNeverSetItems()) {

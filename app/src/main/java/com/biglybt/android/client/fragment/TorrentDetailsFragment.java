@@ -48,9 +48,7 @@ import com.google.android.material.appbar.CollapsingToolbarLayout;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
 
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Torrent Details Fragment<br>
@@ -450,7 +448,7 @@ public class TorrentDetailsFragment
 
 	@Override
 	public void rpcTorrentListReceived(String callID, List<?> addedTorrentMaps,
-			List<String> fields, final int[] fileIndexes,
+			HashSet<String> fields, final int[] fileIndexes,
 			final List<?> removedTorrentIDs) {
 		OffThread.runOnUIThread(this, false, activity -> {
 			Map<?, ?> mapTorrent = session.torrent.getCachedTorrent(torrentID);

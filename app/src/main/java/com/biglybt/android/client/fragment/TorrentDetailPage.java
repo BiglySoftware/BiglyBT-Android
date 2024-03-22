@@ -36,6 +36,7 @@ import com.biglybt.android.client.sidelist.*;
 import com.biglybt.util.Thunk;
 import com.google.android.material.progressindicator.BaseProgressIndicator;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
@@ -396,7 +397,7 @@ public abstract class TorrentDetailPage
 
 	@Override
 	public void rpcTorrentListReceived(String callID, List<?> addedTorrentMaps,
-			List<String> fields, final int[] fileIndexes,
+			HashSet<String> fields, final int[] fileIndexes,
 			@Nullable List<?> removedTorrentIDs) {
 		if (!viewActive) {
 			return;

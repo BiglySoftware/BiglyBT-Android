@@ -426,8 +426,8 @@ public class TransmissionRPC
 			return;
 		}
 
-		List<String> ourFields = fields == null ? new ArrayList<>()
-				: new ArrayList<>(fields);
+		HashSet<String> ourFields = fields == null ? new HashSet<>()
+				: new HashSet<>(fields);
 
 		Map<String, Object> map = new HashMap<>(2);
 		map.put(RPCKEY_METHOD, TransmissionVars.METHOD_TORRENT_GET);
@@ -902,7 +902,7 @@ public class TransmissionRPC
 
 					@Override
 					public void rpcTorrentListReceived(String callID,
-							List<?> addedTorrentMaps, List<String> fields,
+							List<?> addedTorrentMaps, HashSet<String> fields,
 							final int[] fileIndexes, List<?> removedTorrentIDs) {
 						long diff = System.currentTimeMillis() - lastRecentTorrentGet;
 						if (!doingAll && addedTorrentMaps.size() == 0) {

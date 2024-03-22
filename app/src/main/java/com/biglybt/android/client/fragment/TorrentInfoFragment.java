@@ -137,7 +137,7 @@ public class TorrentInfoFragment
 		setRefreshing(true);
 
 		session.executeRpc(rpc -> rpc.getTorrent(TAG, torrentID, fields,
-				(String callID, List<?> addedTorrentMaps, List<String> fields2,
+				(String callID, List<?> addedTorrentMaps, HashSet<String> fields2,
 						int[] fileIndexes, List<?> removedTorrentIDs) -> {
 					neverRefreshed = false;
 					lastUpdated = System.currentTimeMillis();
@@ -152,7 +152,7 @@ public class TorrentInfoFragment
 
 	@Override
 	public void rpcTorrentListReceived(String callID, List<?> addedTorrentMaps,
-			List<String> fields, final int[] fileIndexes, List<?> removedTorrentIDs) {
+			HashSet<String> fields, final int[] fileIndexes, List<?> removedTorrentIDs) {
 		super.rpcTorrentListReceived(callID, addedTorrentMaps, fields, fileIndexes,
 				removedTorrentIDs);
 

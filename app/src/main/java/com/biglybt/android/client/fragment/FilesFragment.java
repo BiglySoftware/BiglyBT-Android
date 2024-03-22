@@ -1371,7 +1371,7 @@ public class FilesFragment
 	@SuppressWarnings("rawtypes")
 	@Override
 	public void rpcTorrentListReceived(String callID,
-			final List<?> addedTorrentMaps, List<String> fields,
+			final List<?> addedTorrentMaps, HashSet<String> fields,
 			final int[] fileIndexes, List<?> removedTorrentIDs) {
 		super.rpcTorrentListReceived(callID, addedTorrentMaps, fields, fileIndexes,
 				removedTorrentIDs);

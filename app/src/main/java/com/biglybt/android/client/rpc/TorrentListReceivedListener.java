@@ -16,6 +16,7 @@
 
 package com.biglybt.android.client.rpc;
 
+import java.util.HashSet;
 import java.util.List;
 
 import androidx.annotation.AnyThread;
@@ -31,6 +32,6 @@ public interface TorrentListReceivedListener
 	 */
 	@AnyThread
 	void rpcTorrentListReceived(String callID, List<?> addedTorrentMaps,
-			List<String> fields, int[] fileIndexes,
+			HashSet<String> fields, int[] fileIndexes,
 			@Nullable List<?> removedTorrentIDs);
 }
