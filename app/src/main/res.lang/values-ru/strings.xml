@@ -100,7 +100,7 @@
 	<string name="button_continue">Продолжить</string>
 	<string name="action_about">О BiglyBT</string>
 	<string name="about_thanks_header">Части этого приложения благодаря:</string>
-	<string name="about_translator">%1$s перевод от adem</string>
+	<string name="about_translator">%1$s перевод: Андрей Степанов, Alex117, Anton Soroko, xopx, sbld, Me_Shock, Ronner, Natalia Shilova, Владимир Орлов, Георгий Прощарук, lem</string>
 	<string name="login_guide">Перейдите в|Инструменты|&amp; gt;|Удалённое Сопряжение|в настольном клиенте BiglyBT или Vuze, чтобы найти свой код удалённого доступа.</string>
 	<string name="login_guide2">Чтобы настроить управление вручную, попробуйте в &lt;а href=\"biglybt://управление/cmd=advlogin\"&gt;расширенный логин&lt;/а&gt;.  См. @@а&lt;а href=\"http://wiki.biglybt.com/w/Android_Remote_Guide\"и gt;Руководство&lt;/а&gt; для получения дополнительной помощи.</string>
 	<string name="dialog_delete_title">Удалить торрент?</string>
@@ -175,7 +175,7 @@
 	<string name="details_tab_info">Инфо</string>
 	<string name="details_tab_general">Основные</string>
 	<string name="details_tab_peers">Подключения</string>
-	<string name="on_mobile">Вы подключены к интернету через мобильный сеть. Вы уверены, что хотите %1$s продолжить?</string>
+	<string name="on_mobile">Вы подключены к интернету через мобильную сеть. Уверены, что хотите %1$s сейчас?</string>
 	<string name="stream_content">поток &lt;b&gt;%1$s&lt;/b&gt;</string>
 	<string name="save_content">скачать &lt;b&gt;%1$s&lt;/b&gt; на ваше устройство</string>
 	<string name="content_saved">Сохранено &lt;b&gt;%1$s&lt;/b&gt; to &lt;b&gt;%2$s&lt;/b&gt;</string>
@@ -251,7 +251,7 @@
 	<string name="openoptions_position_last">Последняя</string>
 	<string name="openoptions_state_queued">В очереди</string>
 	<string name="openoptions_state_stopped">Остановлен</string>
-	<string name="profile_use_https">Использовать https</string>
+	<string name="profile_use_https">Использовать HTTPS</string>
 	<string name="rp_small_lists">Использовать краткие списки</string>
 	<!-- This fits in the completion progress ring.  Text must be short in order to fit nicely.  Up to 4 lines (where 1st and 4th have to be super short), but 2 - 3 lines recommended -->
 	<string name="torrent_row_share_ratio_circle">%.01f\nрейтинг</string>
@@ -307,16 +307,16 @@
 	<string name="filter_time_none">Без фильтра времени</string>
 	<string name="filter_size_none">Любой размер</string>
 	<string name="filter_size">%1$s до %2$s</string>
-	<string name="filter_size_atleast">Как минимум %1$s</string>
+	<string name="filter_size_atleast">Хотя бы %1$s</string>
 	<string name="filter_size_upto">До %1$s</string>
 	<string name="filter_rank_none">Любой рейтинг</string>
-	<string name="filter_rank">По меньшей мере рейтинг %1$d</string>
+	<string name="filter_rank">Хотя бы ранг %1$d</string>
 	<string name="filter_seeds_none">Счётчик любых сидов</string>
 	<plurals name="filter_seeds">
-		<item quantity="one">Минимум %1$d сид</item>
-		<item quantity="few">Минимум %1$d сида</item>
-		<item quantity="many">Минимум %1$d сидов</item>
-		<item quantity="other">Минимум %1$d сидов</item>
+		<item quantity="one">Хотя бы %1$d сид</item>
+		<item quantity="few">Хотя бы %1$d сида</item>
+		<item quantity="many">Хотя бы %1$d сидов</item>
+		<item quantity="other">Хотя бы %1$d сидов</item>
 	</plurals>
 	<plurals name="rcm_results_count">
 		<item quantity="one">%1$s находка в рое</item>
@@ -341,7 +341,7 @@
 	<string name="button_clear">Очистить</string>
 	<string name="select_download_source">Выберите источник загрузки</string>
 	<string name="download_source_item_from_url">Адрес из %1$s</string>
-	<string name="download_source_item_from_hash">Магнет-ссылка с использованием DHT</string>
+	<string name="download_source_item_from_hash">Магнит-ссылка с использованием DHT</string>
 	<string name="ms_result_row_age">%1$s из %2$s</string>
 	<string name="ms_result_unknown_age">&lt;Нет даты публикации&gt;</string>
 	<string name="ms_result_unknown_size">&lt;Неизвестный размер&gt;</string>
@@ -567,8 +567,8 @@
 	<string name="proxy_user">Имя прокси</string>
 	<string name="proxy_pw">Пароль прокси</string>
 	<string name="proxy_port">Порт прокси</string>
-	<string name="pref_proxy_disabled">Прокси отключен</string>
-	<string name="pref_proxy_enabled">Прокси %1$s включен</string>
+	<string name="pref_proxy_disabled">Прокси отключён</string>
+	<string name="pref_proxy_enabled">Прокси %1$s включён</string>
 	<string name="pref_peerport_current">Текущий порт: %d</string>
 	<string name="pref_peerport_random">Выбран случайно</string>
 	<string name="pref_peerport_random_button">Выбрать случайно</string>
