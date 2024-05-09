@@ -32,7 +32,9 @@
 	<string name="subscription_add_hint">RSS-канал</string>
 	<string name="title_activity_subscription">Описание</string>
 	<string name="subscription_remove_title">Удалить подписку?</string>
-	<string name="subscription_remove_text">Вы действительно хотите удалить подписку &lt;b&gt;%1$s&lt;/b&gt;? \n\nЭто не приведет к удалению торрентов, которые были добавлены для загрузки.</string>
+	<string name="subscription_remove_text">Уверены, что хотите удалить подписку &lt;b&gt;%1$s&lt;/b&gt;?\n\n
+Это не приведёт к удалению торрентов, которые были добавлены для загрузки.</string>
 	<string name="subscriptions_remove_title">Удалить подписки?</string>
-	<string name="subscriptions_remove_text">Вы уверены, что хотите удалить %1$s подписок? \n\n Это не приведет к удалению добавленных для загрузки торрентов.</string>
+	<string name="subscriptions_remove_text">Уверены, что хотите удалить %1$s подписок?\n\n
+Это не приведёт к удалению добавленных для загрузки торрентов.</string>
 </resources>
