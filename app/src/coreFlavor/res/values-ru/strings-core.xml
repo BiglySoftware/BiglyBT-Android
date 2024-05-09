@@ -11,7 +11,7 @@
 		<item quantity="many">▼ %1$s, ▲ %2$s. %3$s активных торрентов.</item>
 		<item quantity="other">▼ %1$s, ▲ %2$s. %3$s активных торрентов.</item>
 	</plurals>
-	<string name="core_noti_sleeping">Сон, пока не онлайн</string>
+	<string name="core_noti_sleeping">Сон, пока не в сети</string>
 	<string name="core_noti_sleeping_oncellular">Сон, пока по мобильному интернету</string>
 	<string name="core_noti_sleeping_battery">Сон, пока не подключён к электросети</string>
 	<string name="core_noti_stop_button">Остановить</string>
@@ -37,7 +37,7 @@
 	<string name="ps_core_remote_access">Удалённый доступ</string>
 	<string name="core_remote_access_summary_disabled">Удалённый доступ отключён</string>
 	<string name="core_remote_access_summary_enabled">Включить удалённый доступ на %1$s</string>
-	<string name="core_remote_access_summary_enabled_secure">Включить запароленный удалённый доступ на %1$s</string>
+	<string name="core_remote_access_summary_enabled_secure">Включить удалённый доступ на %1$s по паролю</string>
 	<string name="pref_conn_trans_encryption_plain">Обычный</string>
 	<string name="pref_conn_trans_encryption_none">Нет</string>
 	<string name="pref_conn_trans_encryption_RC4">Шифрование RC4 (нагружает ЦП)</string>
