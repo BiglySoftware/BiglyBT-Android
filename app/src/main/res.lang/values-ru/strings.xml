@@ -10,7 +10,7 @@
 	<string-array name="filterby_list">
 		<item>8,все</item>
 		<item>4,Активен</item>
-		<item>9,авершено</item>
+		<item>9,Завершено</item>
 		<item>1,Не завершено</item>
 		<item>2,Остановлено</item>
 	</string-array>
@@ -19,7 +19,7 @@
 		<item>Активность</item>
 		<item>Возраст</item>
 		<item>Прогресс</item>
-		<item>Рейтинг Обмена</item>
+		<item>Рейтинг</item>
 		<item>Размер</item>
 		<item>Состояние</item>
 		<item>Осталось</item>
@@ -43,7 +43,7 @@
 	<string-array name="sortby_sl_list">
 		<item>Название</item>
 		<item>Последний раз проверялось</item>
-		<item># Непросмотрено</item>
+		<item># Новое</item>
 	</string-array>
 	<string-array name="sortby_file_list">
 		<item>Каталог файлов</item>
@@ -75,16 +75,16 @@
 	<string name="wv_center_default">Подключение к удалённому клиенту</string>
 	<string name="state_connecting">Соединение</string>
 	<string name="rp_download_speed">Скорость загрузки</string>
-	<string name="kbps">Кб/с</string>
+	<string name="kbps">кбит/с</string>
 	<string name="rp_upload_speed">Скорость раздачи</string>
 	<string name="rp_update_interval">Период обновления</string>
 	<string name="profile_nickname">Псевдоним</string>
 	<string name="profile_host_explain">Имя хоста или IP-адрес хост-машины</string>
-	<string name="profile_port">Порт (*)</string>
+	<string name="profile_port">Порт</string>
 	<string name="profile_user_name">Имя пользователя</string>
 	<string name="profile_password">Пароль</string>
 	<string name="profile_host_hint">Имя хоста или IP-адрес</string>
-	<string name="profile_nick_explain">Понятное имя для удаленного хоста</string>
+	<string name="profile_nick_explain">Понятное имя для удалённого хоста</string>
 	<string name="profile_localnick_explain">Приемлемое имя для раздачи, работающей на этом Android устройстве</string>
 	<string name="profile_rpc_path">Путь RPC</string>
 	<string name="action_edit_pref">Редактировать профиль</string>
@@ -104,7 +104,7 @@
 	<string name="login_guide">Перейдите в|Инструменты|&amp; gt;|Удалённое Сопряжение|в настольном клиенте BiglyBT или Vuze, чтобы найти свой код удалённого доступа.</string>
 	<string name="login_guide2">Чтобы настроить управление вручную, попробуйте в &lt;а href=\"biglybt://управление/cmd=advlogin\"&gt;расширенный логин&lt;/а&gt;.  См. @@а&lt;а href=\"http://wiki.biglybt.com/w/Android_Remote_Guide\"и gt;Руководство&lt;/а&gt; для получения дополнительной помощи.</string>
 	<string name="dialog_delete_title">Удалить торрент?</string>
-	<string name="dialog_delete_message">Торрент \'%s\' будет удалён.</string>
+	<string name="dialog_delete_message">Торрент «%s» будет удалён.</string>
 	<string name="dialog_delete_button_remove">Убрать</string>
 	<string name="profile_list_header">Доступные клиенты</string>
 	<string name="movedata_history">История</string>
@@ -115,13 +115,13 @@
 	<string name="addtorrent_info">Если у вас нет торрент-файла, вы можете искать его с помощью поиска в интернете.  Просто нажмите на кнопку поиска и введите поисковый запрос.</string>
 	<string name="profile_ac_explain">Ваши параметры подключения, такие как IP-адрес и порт, управляются вашим кодом доступа</string>
 	<string name="biglybt_required">К сожалению, функция \"%s \" требует подключения к клиенту BiglyBT. Мы будем очень рады если вы перейдёте! ^_^</string>
-	<string name="old_rpc">На вашей удаленной системе старая версия приложения. Некоторые (или все!) функции могут не работать. Для лучших результатов, пожалуйста, обновите приложение до 2.40 (RPC 14) или выше</string>
+	<string name="old_rpc">На вашей удалённой системе запущена старая версия приложения. Некоторые (или все!) функции могут не работать. Для лучших результатов, пожалуйста, обновите приложение до 2.40 (RPC 14) или выше</string>
 	<string name="last_used_ago">Последнее подключение: %1$s</string>
 	<string name="last_used_never">Никогда не подключался</string>
 	<string name="last_updated">Последнее обновление: %s</string>
 	<plurals name="torrent_row_info">
 		<item quantity="one">%d файл</item>
-		<item quantity="few">%d файлов</item>
+		<item quantity="few">%d файла</item>
 		<item quantity="many">%d файлов</item>
 		<item quantity="other">%d файлов</item>
 	</plurals>
@@ -130,7 +130,7 @@
 	<string name="torrent_status_queued_ul">В очереди для раздачи</string>
 	<string name="torrent_status_checking">Проверка файлов</string>
 	<string name="local_name">Локальный BiglyBT в %s</string>
-	<string name="local_vuze_name">Локальное Vuze приложение на %s</string>
+	<string name="local_vuze_name">Локальное приложение Vuze на %s</string>
 	<string name="local_vuze_remote_name">Локальный Vuze Remote на %s</string>
 	<string name="dialog_delete_datatoo">Также удалить загруженные файлы</string>
 	<string name="multi_select_tip">Нажмите &amp; Удерживайте для мульти-выбора</string>
@@ -176,7 +176,7 @@
 	<string name="details_tab_general">Основные</string>
 	<string name="details_tab_peers">Подключения</string>
 	<string name="on_mobile">Вы подключены к интернету через мобильный сеть. Вы уверены, что хотите %1$s продолжить?</string>
-	<string name="stream_content">Поток &lt;b&gt;%1$s&lt;/b&gt;</string>
+	<string name="stream_content">поток &lt;b&gt;%1$s&lt;/b&gt;</string>
 	<string name="save_content">скачать &lt;b&gt;%1$s&lt;/b&gt; на ваше устройство</string>
 	<string name="content_saved">Сохранено &lt;b&gt;%1$s&lt;/b&gt; to &lt;b&gt;%2$s&lt;/b&gt;</string>
 	<string name="content_saving">Сохранение &lt;b&gt;%1$s&lt;/b&gt; to &lt;b&gt;%2$s&lt;/b&gt;</string>
@@ -191,8 +191,8 @@
 	<string name="torrentInfo_row_lastActiveOn">Последняя активность</string>
 	<string name="torrentInfo_row_completedOn">Дата завершения</string>
 	<string name="torrentInfo_row_downloadingFor">Загружаем уже</string>
-	<string name="torrentInfo_row_seedingFor">Сидируем уже</string>
-	<string name="torrentInfo_row_eta">Завершение ETA</string>
+	<string name="torrentInfo_row_seedingFor">Время раздачи</string>
+	<string name="torrentInfo_row_eta">Расчётное время завершения</string>
 	<string name="torrentInfo_title_content">Содержание</string>
 	<string name="torrentInfo_row_position">Позиция в очереди</string>
 	<string name="torrentInfo_row_createdBy">Автор</string>
@@ -200,9 +200,9 @@
 	<string name="torrentInfo_row_userComment">Ваш комментарий</string>
 	<string name="torrentInfo_row_saveLocation">Сохранить местоположение</string>
 	<string name="torrentInfo_row_hash">Хэш торрента</string>
-	<string name="torrentInfo_title_sharing">Share-торренты (свои ресурсы)</string>
-	<string name="torrentInfo_row_bytesUploaded">Роздано</string>
-	<string name="torrentInfo_row_shareRatio">Рейтинг Обмена</string>
+	<string name="torrentInfo_title_sharing">Раздача</string>
+	<string name="torrentInfo_row_bytesUploaded">Отдано</string>
+	<string name="torrentInfo_row_shareRatio">Рейтинг</string>
 	<string name="torrentInfo_row_activePeerCount">Активные пиры</string>
 	<string name="torrentInfo_row_connectedPeers">Подключённые пиры</string>
 	<string name="action_issues">Сообщить об ошибке</string>
@@ -210,9 +210,9 @@
 	<string name="action_rate">Оценить приложение</string>
 	<string name="edit_profile">Редактировать профиль</string>
 	<string name="toast_adding_xxx">Добавление %1$s</string>
-	<string name="toast_added">Добавлено: \'%1$s\'</string>
-	<string name="toast_already_added">\'%1$s\' уже добавлено</string>
-	<string name="not_torrent_file">&lt;b&gt;%1$s&lt;/b&gt; не допустимый торрент-файл. Первые пять байтов - это &lt;b&gt;%2$s&lt;/b&gt;</string>
+	<string name="toast_added">«%1$s» было добавлено</string>
+	<string name="toast_already_added">«%1$s» уже было добавлено</string>
+	<string name="not_torrent_file">&lt;b&gt;%1$s&lt;/b&gt; — недопустимый торрент-файл. Первые пять байтов — это &lt;b&gt;%2$s&lt;/b&gt;</string>
 	<string name="action_update_tracker">Запросить больше пиров</string>
 	<string name="drawer_open">Открыть ящик</string>
 	<string name="drawer_close">Закрыть ящик</string>
@@ -260,10 +260,10 @@
 	<string name="connerror_pairing">Не удалось получить расположение вашей удалённой машины. Пожалуйста, убедитесь, что у вас есть доступ к Интернету и повторите попытку.</string>
 	<string name="connerror_hostconnect">Не удалось подключиться к вашему удалённой машине</string>
 	<string name="about_version">Версия %1$s (сборка %2$s). GPLv2+</string>
-	<string name="details_tab_tags">Теги</string>
-	<string name="create_new_tag">Создать новый тег</string>
-	<string name="newtag.name">Имя тега</string>
-	<string name="tag_filter">Фильтр тегов</string>
+	<string name="details_tab_tags">Метки</string>
+	<string name="create_new_tag">Создать новую метку</string>
+	<string name="newtag.name">Имя метки</string>
+	<string name="tag_filter">Фильтр меток</string>
 	<string name="text_filter">Текстовый фильтр</string>
 	<string name="select_multiple_items">Выбрать несколько элементов</string>
 	<string name="torrent_actions_for">Действия над торрентом %1$s</string>
@@ -277,9 +277,9 @@
 	<string name="action_shutdown_core">Выключить службу</string>
 	<plurals name="torrent_actions_for_multiple">
 		<item quantity="one">Действия для %1$d торрента</item>
-		<item quantity="few">Действия для торрентов %1$d</item>
-		<item quantity="many">Действия для торрентов %1$d</item>
-		<item quantity="other">Действия для торрентов %1$d</item>
+		<item quantity="few">Действия для %1$d торрентов</item>
+		<item quantity="many">Действия для %1$d торрентов</item>
+		<item quantity="other">Действия для %1$d торрентов</item>
 	</plurals>
 	<plurals name="torrent_count">
 		<item quantity="one">%1$d торрент</item>
@@ -321,8 +321,8 @@
 	<plurals name="rcm_results_count">
 		<item quantity="one">%1$s находка в рое</item>
 		<item quantity="few">%1$s находки в рое</item>
-		<item quantity="many">%1$s находкок в рое</item>
-		<item quantity="other">%1$s находкок в рое</item>
+		<item quantity="many">%1$s находок в рое</item>
+		<item quantity="other">%1$s находок в рое</item>
 	</plurals>
 	<plurals name="rcm_filtered_results_count">
 		<item quantity="one">%1$s из %2$s находок в рое</item>
@@ -345,7 +345,7 @@
 	<string name="ms_result_row_age">%1$s из %2$s</string>
 	<string name="ms_result_unknown_age">&lt;Нет даты публикации&gt;</string>
 	<string name="ms_result_unknown_size">&lt;Неизвестный размер&gt;</string>
-	<string name="title_message_from_client">Сообщение от удаленного клиента</string>
+	<string name="title_message_from_client">Сообщение от удалённого клиента</string>
 	<string name="list_filtered_empty">Никакие результаты не соответствуют вашим текущим фильтрам.</string>
 	<string name="empty_list">Список пуст :(</string>
 	<string name="torrent_list_empty">Нет торрентов для отображения.\n\nВы можете найти торренты с помощью «Метапоиска», обнаружить торренты с помощью «Находок в рое», подписаться на существующие RSS-каналы или вручную добавить торренты.</string>
@@ -392,7 +392,7 @@
 	<string name="TorrentListSectionName_ETA_none">Нет времени окончания</string>
 	<string name="TorrentListSectionName_ETA_available">Есть время окончания</string>
 	<string name="TorrentListSectionName_Activity_active">В работе</string>
-	<string name="TorrentListSectionName_Activity_inactive">Неактивнен</string>
+	<string name="TorrentListSectionName_Activity_inactive">Неактивен</string>
 	<string name="TorrentListSectionName_Activity_today">Активен сегодня</string>
 	<string name="TorrentListSectionName_Activity_yesterday">Активен вчера</string>
 	<string name="TorrentListSectionName_Activity_lastactive">Последняя активность %1$s</string>
@@ -402,7 +402,7 @@
 	<string name="TorrentListSectionName_Progress_100" formatted="false">100% завершено</string>
 	<string name="TorrentListSectionName_Progress">%1$d%% в %2$d%% выполнено</string>
 	<string name="action_collapse">Свернуть</string>
-	<string name="i2p_remote_client_needs_i2p">I2P-адрес не найден. Удалённый клиент должен иметь установленный плагин I2P и опция Подключение-&gt;Сопряжение-&gt;«Включить регистрацию адресов непубличных сетевых сервисов» должна быть включена</string>
+	<string name="i2p_remote_client_needs_i2p">I2P-адрес не найден. Удалённый клиент должен иметь установленный плагин I2P, и параметр Подключение-&gt;Сопряжение-&gt;«Включить регистрацию адресов непубличных сетевых сервисов» должен быть включён</string>
 	<string name="day">день</string>
 	<string name="week">неделя</string>
 	<string name="month">месяц</string>
@@ -419,11 +419,11 @@
 	<string name="movedata_place_in_subfolder">Разместить в подпапке &lt;b&gt;%1$s&lt;/b&gt;</string>
 	<string name="movedata_currentlocation"><![CDATA[Текущее местоположение <b>%1$s</b>]]></string>
 	<string name="movedata_available_locations">Доступные местоположения</string>
-	<string name="biglybt_tagline">Битторрент-клиент с открытым исходным кодом</string>
+	<string name="biglybt_tagline">БитТоррент-клиент с открытым исходным кодом</string>
 	<string name="dialog_nobrowser_message"><![CDATA[Пожалуйста, перейдите вручную на <b>%1$s</b>]]></string>
 	<string name="dialog_nobrowser_title">Веб-браузер не найден</string>
 	<string name="error_client_requires_permissions">Невозможно создать торрент-клиент на устройстве без запрошенных разрешений</string>
-	<string name="permission_denied">Доступ запрещен</string>
+	<string name="permission_denied">Доступ запрещён</string>
 	<string name="remove_subscription">Удалить подписку</string>
 	<string name="error_x">Ошибка: %1$s</string>
 	<string name="failure">Ошибка</string>
@@ -431,7 +431,7 @@
 	<string name="button_clipboard_url">Адрес буфера обмена</string>
 	<string name="login_server_title">Торрент с использованием этого устройства</string>
 	<string name="login_server_subtitle">Запустите полноценный торрент-клиент на вашем устройстве</string>
-	<string name="login_remote_title">Подключиться к удаленному клиенту</string>
+	<string name="login_remote_title">Подключиться к удалённому клиенту</string>
 	<string name="login_remote_subtitle">Управляйте удалённо запущенными клиентами BiglyBT, Transmission или Vuze</string>
 	<string name="setting_speed_on_summary">Включено в %1$s</string>
 	<string name="unlimited">Неограниченно</string>
@@ -476,15 +476,15 @@
 	<string name="prefcat_power_management">Управление энергопотреблением</string>
 	<plurals name="x_items">
 		<item quantity="one">%1$s позиция</item>
-		<item quantity="few">%1$s позиций</item>
+		<item quantity="few">%1$s позиции</item>
 		<item quantity="many">%1$s позиций</item>
 		<item quantity="other">%1$s позиций</item>
 	</plurals>
 	<plurals name="x_new">
 		<item quantity="one">%1$s новый</item>
-		<item quantity="few">%1$s новые</item>
-		<item quantity="many">%1$s новые</item>
-		<item quantity="other">%1$s новые</item>
+		<item quantity="few">%1$s новых</item>
+		<item quantity="many">%1$s новых</item>
+		<item quantity="other">%1$s новых</item>
 	</plurals>
 	<plurals name="seconds">
 		<item quantity="one">%d секунда</item>
@@ -579,7 +579,7 @@
 	<string name="gdpr_ip_warning">Однако злоумышленник (хакер) может использовать IP-адрес вместе с данными из других источников для определения вашей личности.</string>
 	<string name="gdpr_one_time">Если вы согласны продолжить, мы не будем показывать это уведомление снова.</string>
 	<string name="gdpr_full_client">При запуске полного клиента на вашем Android-устройстве, мы связываемся с нашими серверами, чтобы определить возможности, доступные для вашего устройства.
-Ничего из этих данных не содержит информацию позволяющую установить личность и не могут быть использованы с внешними данными для определения вашей личности.
+Ничего из этих данных не содержит информацию позволяющую установить личность, и они не могут быть использованы с внешними данными для определения вашей личности.
 Сведения не передаются сторонним обработчикам данных и не хранятся постоянно на наших серверах.
 Отправляются следующие данные:</string>
 	<string name="gdpr_full_client_data">* ИД приложения (всегда «az»)\n
