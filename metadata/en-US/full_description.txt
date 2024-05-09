@@ -18,4 +18,4 @@ BiglyBT is an <b>ad-free</b>, fully featured open source torrent client and remo
 
 Our source code has been in development since 2003 (under Azureus) and is GPL licensed.  If you would like to join our team, visit our <a href="https://github.com/BiglySoftware/BiglyBT-Android">GitHub Source Repository</a> - https://github.com/BiglySoftware/BiglyBT-Android
 
-If you have ideas to make torren t downloading easier and better in BiglyBT, visit our <a href="https://vote.biglybt.com/android">Issue Voting</a> site - https://vote.biglybt.com/android
+If you have ideas to make torrent downloading easier and better in BiglyBT, visit our <a href="https://vote.biglybt.com/android">Issue Voting</a> site - https://vote.biglybt.com/android
