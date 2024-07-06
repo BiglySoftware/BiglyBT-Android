@@ -72,7 +72,7 @@
 	<string name="title_activity_metasearch">Поиск</string>
 	<string name="action_logout">Выйти</string>
 	<string name="hint_filter">Фильтр</string>
-	<string name="wv_center_default">Подключение к удалённому клиенту</string>
+	<string name="wv_center_default">Удалённое подключение</string>
 	<string name="state_connecting">Соединение</string>
 	<string name="rp_download_speed">Скорость загрузки</string>
 	<string name="kbps">кбит/с</string>
@@ -274,7 +274,7 @@
 	<string name="action_add_profile">Добавить профиль</string>
 	<string name="toast_core_starting">Запуск ядра BiglyBT</string>
 	<string name="toast_core_restarting">Перезапуск ядра BiglyBT</string>
-	<string name="action_shutdown_core">Выключить службу</string>
+	<string name="action_shutdown_core">Отключить службу</string>
 	<plurals name="torrent_actions_for_multiple">
 		<item quantity="one">Действия для %1$d торрента</item>
 		<item quantity="few">Действия для %1$d торрентов</item>
