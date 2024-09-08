@@ -16,8 +16,8 @@
 	</string-array>
 	<string-array name="sortby_list">
 		<item>队列</item>
-		<item>活动性</item>
-		<item>寿命</item>
+		<item>最后活动</item>
+		<item>时间</item>
 		<item>进度</item>
 		<item>分享率</item>
 		<item>大小</item>
