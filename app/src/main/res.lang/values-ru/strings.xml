@@ -336,7 +336,7 @@
 	<string name="filterby_header_filesize">Размер файла</string>
 	<string name="filterby_header_age">Возраст</string>
 	<string name="filterby_header_lastseen">Был в посл. раз</string>
-	<string name="filterby_header_minimum_rank">Минимальный рейтинг</string>
+	<string name="filterby_header_minimum_rank">Мин. ранг</string>
 	<string name="filterby_header_minimum_seeds">Минимум сидов</string>
 	<string name="button_clear">Очистить</string>
 	<string name="select_download_source">Выберите источник загрузки</string>
