@@ -17,6 +17,7 @@
 	<string name="core_torrent_service_options">比特流服务选项</string>
 	<string name="core_auto_start_on_boot">启动时自动运行</string>
 	<string name="core_auto_start_on_boot_desc">系统启动时自动运行比特流服务</string>
+	<string name="core_auto_start_on_boot_auth">开机自启动需要将电池优化设置为“无限制”或“关闭”</string>
 	<string name="core_only_transfer_data_when_plugged_in">仅在电源插入时传输数据</string>
 	<string name="core_data_transfer_over_mobile_data_plan">通过移动网络传输数据</string>
 	<string name="core_disable_wi_fi_sleep_mode_while_transfering_data">传输数据时禁用Wi-Fi睡眠模式</string>
@@ -39,6 +40,7 @@
 	<string name="pref_conn_trans_encryption_RC4">RC4 (CPU 密集型)</string>
 	<string name="fileaccess_saf">存储访问框架 (SAF) 访问</string>
 	<string name="fileaccess_direct">直接访问</string>
+	<string name="fileaccess_direct_short">直接</string>
 	<string name="saf_warning_title">文件夹选择器</string>
 	<string name="saf_warning_text">一些Android电视制造商破坏或禁用了文件夹浏览器。
  \n\n如果你在使用操作系统文件夹选择器时遇到问题，你可以使用内部
@@ -48,4 +50,5 @@
 	<string name="saf_warning_useOS">使用系统文件夹选择器</string>
 	<string name="saf_warning_useInternal">使用内部选择器</string>
 	<string name="no_saf_support">通过Android的存储访问框架(SAF) 访问外部存储(SD卡) 在这台设备 &amp; 操作系统版本上不可用。</string>
+	<string name="disable_auto_start">禁用自动启动</string>
 </resources>
