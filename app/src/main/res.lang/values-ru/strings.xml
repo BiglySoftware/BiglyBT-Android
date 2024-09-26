@@ -26,14 +26,14 @@
 		<item># Файлов</item>
 	</string-array>
 	<string-array name="sortby_ms_list">
-		<item>Рейтинг</item>
+		<item>Ранг</item>
 		<item>Название</item>
 		<item>Сидов</item>
 		<item>Размер</item>
 		<item>Дата публикации</item>
 	</string-array>
 	<string-array name="sortby_rcm_list">
-		<item>Рейтинг</item>
+		<item>Ранг</item>
 		<item>Название</item>
 		<item>Сидов</item>
 		<item>Размер</item>
@@ -309,7 +309,7 @@
 	<string name="filter_size">%1$s до %2$s</string>
 	<string name="filter_size_atleast">Хотя бы %1$s</string>
 	<string name="filter_size_upto">До %1$s</string>
-	<string name="filter_rank_none">Любой рейтинг</string>
+	<string name="filter_rank_none">Любой ранг</string>
 	<string name="filter_rank">Хотя бы ранг %1$d</string>
 	<string name="filter_seeds_none">Счётчик любых сидов</string>
 	<plurals name="filter_seeds">
