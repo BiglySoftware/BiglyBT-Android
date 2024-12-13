@@ -22,7 +22,7 @@
 		<item>Рейтинг</item>
 		<item>Размер</item>
 		<item>Состояние</item>
-		<item>Осталось</item>
+		<item>Расч. время</item>
 		<item># Файлов</item>
 	</string-array>
 	<string-array name="sortby_ms_list">
@@ -54,14 +54,14 @@
 	<string name="action_start_all">Запустить всё</string>
 	<string name="action_stop_all">Остановить всё</string>
 	<string name="action_add_torrent">Добавить</string>
-	<string name="action_sel_start">Старт</string>
+	<string name="action_sel_start">Пуск</string>
 	<string name="action_sel_launch">Открыть</string>
 	<string name="action_sel_stop">Остановить</string>
 	<string name="action_sel_move">Перестановка</string>
 	<string name="action_sel_remove">Убрать</string>
 	<string name="search">Поиск</string>
 	<string name="action_sel_relocate">Сменить папку сохранения</string>
-	<string name="action_sel_forcestart">Форсированный Старт</string>
+	<string name="action_sel_forcestart">Принудительный пуск</string>
 	<string name="action_adv_login">Расширенный вход</string>
 	<string name="action_sel_move_up">Выше</string>
 	<string name="action_sel_move_down">Ниже</string>
@@ -85,7 +85,7 @@
 	<string name="profile_password">Пароль</string>
 	<string name="profile_host_hint">Имя хоста или IP-адрес</string>
 	<string name="profile_nick_explain">Понятное имя для удалённого хоста</string>
-	<string name="profile_localnick_explain">Приемлемое имя для раздачи, работающей на этом Android устройстве</string>
+	<string name="profile_localnick_explain">Дружественное имя для торрент-клиента, запущенного на этом устройстве Android</string>
 	<string name="profile_rpc_path">Путь RPC</string>
 	<string name="action_edit_pref">Редактировать профиль</string>
 	<string name="action_delete_pref">Удалить профиль</string>
