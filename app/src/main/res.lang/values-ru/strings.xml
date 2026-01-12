@@ -22,7 +22,7 @@
 		<item>Рейтинг</item>
 		<item>Размер</item>
 		<item>Состояние</item>
-		<item>Расч. время</item>
+		<item>Ост. время</item>
 		<item># Файлов</item>
 	</string-array>
 	<string-array name="sortby_ms_list">
@@ -85,7 +85,7 @@
 	<string name="profile_password">Пароль</string>
 	<string name="profile_host_hint">Имя хоста или IP-адрес</string>
 	<string name="profile_nick_explain">Понятное имя для удалённого хоста</string>
-	<string name="profile_localnick_explain">Дружественное имя для торрент-клиента, запущенного на этом устройстве Android</string>
+	<string name="profile_localnick_explain">Понятное имя для торрент-клиента, работающего на этом устройстве Android</string>
 	<string name="profile_rpc_path">Путь RPC</string>
 	<string name="action_edit_pref">Редактировать профиль</string>
 	<string name="action_delete_pref">Удалить профиль</string>
@@ -129,7 +129,7 @@
 	<string name="torrent_status_queued_dl">В очереди для загрузки</string>
 	<string name="torrent_status_queued_ul">В очереди для раздачи</string>
 	<string name="torrent_status_checking">Проверка файлов</string>
-	<string name="local_name">Локальный BiglyBT в %s</string>
+	<string name="local_name">Локальный BiglyBT на %s</string>
 	<string name="local_vuze_name">Локальное приложение Vuze на %s</string>
 	<string name="local_vuze_remote_name">Локальный Vuze Remote на %s</string>
 	<string name="dialog_delete_datatoo">Также удалить загруженные файлы</string>
@@ -216,7 +216,7 @@
 	<string name="action_update_tracker">Запросить больше пиров</string>
 	<string name="drawer_open">Открыть ящик</string>
 	<string name="drawer_close">Закрыть ящик</string>
-	<string name="title_activity_rcm">Торренты у других пиров</string>
+	<string name="title_activity_rcm">Находки в рое</string>
 	<string name="accept">Принять</string>
 	<string name="decline">Отклонить</string>
 	<string name="rcm_na">Вид %1$s требует последнюю версию BiglyBT.\n\nКогда вы находитесь рядом с удалённой машиной, выберите |Справку| &gt; |Проверить обновления| в BiglyBT для обновления до последней сборки.</string>
