@@ -19,6 +19,7 @@ package com.biglybt.android.util;
 import android.app.Activity;
 import android.content.*;
 import android.content.pm.ComponentInfo;
+import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.content.res.Resources;
@@ -29,11 +30,13 @@ import android.net.Uri.Builder;
 import android.os.Build;
 import android.os.Build.VERSION;
 import android.os.Build.VERSION_CODES;
+import android.os.Environment;
 import android.os.Parcelable;
 import android.os.storage.StorageManager;
 import android.os.storage.StorageVolume;
 import android.provider.DocumentsContract;
 import android.provider.OpenableColumns;
+import android.provider.Settings;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
@@ -273,6 +276,51 @@ public class FileUtils
 
 	public static boolean canUseSAF(Context context) {
 		return numOSFolderChoosers(context) > 0;
+	}
+
+	/**
+	 * @return true when this build declares MANAGE_EXTERNAL_STORAGE (fossFlavor),
+	 * the OS supports it (Android 11+) and "All files access" is not granted yet.
+	 */
+	public static boolean canRequestAllFilesAccess(@NonNull Context context) {
+		if (VERSION.SDK_INT < VERSION_CODES.R
+				|| Environment.isExternalStorageManager()) {
+			return false;
+		}
+		try {
+			PackageInfo info = context.getPackageManager().getPackageInfo(
+					context.getPackageName(), PackageManager.GET_PERMISSIONS);
+			if (info.requestedPermissions == null) {
+				return false;
+			}
+			for (String permission : info.requestedPermissions) {
+				if ("android.permission.MANAGE_EXTERNAL_STORAGE".equals(permission)) {
+					return true;
+				}
+			}
+		} catch (PackageManager.NameNotFoundException ignore) {
+		}
+		return false;
+	}
+
+	/**
+	 * @return Intent to the OS "All files access" screen, or null when the
+	 * device has no such screen (common on Android TV)
+	 */
+	@Nullable
+	public static Intent buildAllFilesAccessIntent(@NonNull Context context) {
+		if (VERSION.SDK_INT < VERSION_CODES.R) {
+			return null;
+		}
+		PackageManager pm = context.getPackageManager();
+		Intent intent = new Intent(
+				Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION,
+				Uri.parse("package:" + context.getPackageName()));
+		if (intent.resolveActivity(pm) != null) {
+			return intent;
+		}
+		intent = new Intent(Settings.ACTION_MANAGE_ALL_FILES_ACCESS_PERMISSION);
+		return intent.resolveActivity(pm) != null ? intent : null;
 	}
 
 	public static void launchFolderChooser(@NonNull Activity activity,

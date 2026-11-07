@@ -472,6 +472,10 @@ public abstract class DialogFragmentAbstractLocationPicker
 				}
 				int numOSFolderChoosers = FileUtils.numOSFolderChoosers(
 						offThreadContext);
+				boolean canRequestAllFiles = numOSFolderChoosers == 0
+						&& FileUtils.canRequestAllFilesAccess(offThreadContext);
+				Intent allFilesIntent = canRequestAllFiles
+						? FileUtils.buildAllFilesAccessIntent(offThreadContext) : null;
 
 				OffThread.runOnUIThread(() -> {
 					if (isRemoving() || isDetached()) {
@@ -484,6 +488,9 @@ public abstract class DialogFragmentAbstractLocationPicker
 						TextView tvWarning = dialogView.findViewById(R.id.no_saf_warning);
 						if (tvWarning != null) {
 							tvWarning.setVisibility(View.VISIBLE);
+							if (canRequestAllFiles) {
+								showAllFilesAccessHint(tvWarning, allFilesIntent);
+							}
 						}
 					}
 					int selectPos = -1;
@@ -709,6 +716,31 @@ public abstract class DialogFragmentAbstractLocationPicker
 		}
 
 		return list;
+	}
+
+	/**
+	 * Without SAF, removable storage is only writable with "All files access".
+	 * Link to the OS screen when there is one, otherwise show the adb command.
+	 */
+	@UiThread
+	private void showAllFilesAccessHint(@NonNull TextView tvWarning,
+			@Nullable Intent allFilesIntent) {
+		String hint = allFilesIntent == null
+				? getString(R.string.all_files_access_hint_adb,
+						requireContext().getPackageName())
+				: getString(R.string.all_files_access_hint_settings);
+		tvWarning.setText(getString(R.string.no_saf_support) + "\n\n" + hint);
+		if (allFilesIntent == null) {
+			return;
+		}
+		tvWarning.setFocusable(true);
+		tvWarning.setOnClickListener(v -> {
+			try {
+				startActivity(allFilesIntent);
+				dismissAllowingStateLoss();
+			} catch (ActivityNotFoundException ignore) {
+			}
+		});
 	}
 
 	@WorkerThread

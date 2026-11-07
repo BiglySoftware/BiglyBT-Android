@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:tools="http://schemas.android.com/tools">
+
+	<!--
+	Not in googleFlavor: Google Play restricts this permission.
+	Devices without SAF (many Android TVs) only allow writing to removable
+	storage when the user grants "All files access".
+	-->
+	<uses-permission
+		android:name="android.permission.MANAGE_EXTERNAL_STORAGE"
+		tools:ignore="ScopedStorage" />
+
+	<queries>
+		<intent>
+			<action android:name="android.settings.MANAGE_APP_ALL_FILES_ACCESS_PERMISSION" />
+			<data android:scheme="package" />
+		</intent>
+		<intent>
+			<action android:name="android.settings.MANAGE_ALL_FILES_ACCESS_PERMISSION" />
+		</intent>
+	</queries>
+</manifest>
