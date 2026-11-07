@@ -650,6 +650,8 @@ The data sent is as follows:</string>
 	<string name="folder_summary_filtered_all_wanted">Filtered to <xliff:g example="217" id="numFiles_filtered">%1$s</xliff:g> wanted (<xliff:g example="1.17MB" id="size_filtered_want">%2$s</xliff:g>).</string>
 	<string name="show_only_chosen">Show only chosen</string>
 	<string name="read_only">Read Only</string>
+	<string name="all_files_access_hint_settings">To save to any folder on removable storage, grant BiglyBT \"All files access\". Click here to open the setting, then reopen this dialog.</string>
+	<string name="all_files_access_hint_adb">To save to any folder on removable storage, grant BiglyBT \"All files access\". This device has no screen for it; grant it once from a computer:\nadb shell appops set <xliff:g example="com.biglybt.android.client" id="package">%1$s</xliff:g> MANAGE_EXTERNAL_STORAGE allow</string>
 	<string name="menu_donate">Donate</string>
 	<string name="menu_vote">Feature Vote</string>
 	<string name="menu_contribute">Contribute</string>
