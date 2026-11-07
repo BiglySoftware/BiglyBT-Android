@@ -439,10 +439,15 @@ public class BiglyBTService
 
 			updateNotification();
 
+			MediaScanOnComplete mediaScanOnComplete = new MediaScanOnComplete(
+					BiglyBTService.this);
+
 			core.getGlobalManager().addListener(new GlobalManagerListener() {
 
 				@Override
 				public void downloadManagerAdded(DownloadManager dm) {
+					dm.addListener(mediaScanOnComplete);
+
 					if (lowResourceMode && !dm.getAssumedComplete()) {
 						int state = dm.getState();
 						if (state == DownloadManager.STATE_QUEUED
